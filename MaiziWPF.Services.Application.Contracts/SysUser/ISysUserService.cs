@@ -9,42 +9,34 @@ namespace MaiziWPF.Services.Application.Contracts
 {
     public interface ISysUserService: ITransientDependency
     {
-        /**
-        * 通过用户名查询用户
-        * 
-        * @param userName 用户名
-        * @return 用户对象信息
-        */
-        public SysUser SelectUserByUserName(String userName);
-        /**
-        * 根据条件分页查询用户列表
-        * 
-        * @param user 用户信息
-        * @return 用户信息集合信息
-        */
-        public List<SysUser> SelectUserList(QueryUserInput input);
-        /**
-        * 新增用户信息
-        * 
-        * @param user 用户信息
-        * @return 结果
-        */
-        public long InsertUser(SysUser user);
-        
-        /**
-        * 删除用户信息
-        * 
-        * @param userId 用户ID
-        * @return 结果
-        */
-        public bool DeleteUser(long userId);
-        
-        /**
-        * 修改用户信息
-        * 
-        * @param user 用户信息
-        * @return 结果
-        */
-        public bool UpdateUser(SysUser user);
+        SysUser SelectUserByUserName(String userName);
+
+        SysUser SelectUserById(long userId);
+
+        List<SysUser> SelectUserList(QueryUserInput input);
+
+        long InsertUser(SysUser user);
+
+        bool DeleteUser(long userId);
+
+        bool UpdateUser(SysUser user);
+
+        bool CheckUserNameUnique(SysUser user);
+
+        bool CheckPhoneUnique(SysUser user);
+
+        bool CheckEmailUnique(SysUser user);
+
+        void InsertUserPost(SysUser user);
+
+        void InsertUserRole(SysUser user);
+
+        void InsertUserDept(SysUser user);
+
+        List<long> SelectUserRoleIds(long userId);
+
+        List<long> SelectUserPostIds(long userId);
+
+        List<long> SelectUserDeptIds(long userId);
     }
 }

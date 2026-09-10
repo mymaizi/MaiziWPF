@@ -20,7 +20,7 @@ namespace MaiziWPF.Services.Domain
         [Column(Name = "nick_name", DbType = "varchar(30)")]
         public String NickName { get; set; }
         /** 用户类型 */
-        [Column(Name = "user_type", DbType = "varchar(2)")]
+        [Column(Name = "user_type", DbType = "varchar(10)")]
         public String UserType { get; set; }
         /** 用户邮箱 */
         [Column(Name = "email", DbType = "varchar(50)")]

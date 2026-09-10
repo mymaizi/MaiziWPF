@@ -13,30 +13,70 @@ namespace MaiziWPF.Services.Application
         {
             _repository = repository;
         }
+
+        public SysUser SelectUserByUserName(string userName)
+        {
+            return _repository.SelectUserByUserName(userName);
+        }
+
+        public SysUser SelectUserById(long userId)
+        {
+            return _repository.SelectUserById(userId);
+        }
+
+        public List<SysUser> SelectUserList(QueryUserInput input)
+        {
+            return _repository.SelectUserList(input);
+        }
+
         [Transactional]
         public long InsertUser(SysUser user)
         {
-            // 新增用户信息
             long userId = _repository.InsertUser(user);
             user.UserId = userId;
-            // 新增用户岗位关联
-            //InsertUserPost(user);
-            // 新增用户与角色管理
-            //InsertUserRole(user);
-            // 新增用户与部门管理
-            //InsertUserDept(user);
+            InsertUserPost(user);
+            InsertUserRole(user);
+            InsertUserDept(user);
             return userId;
         }
-        /**
-          * 新增用户岗位信息
-          * 
-          * @param user 用户对象
-          */
+
+        [Transactional]
+        public bool UpdateUser(SysUser user)
+        {
+            var result = _repository.UpdateUser(user);
+            _repository.DeleteUserRoles(user.UserId);
+            _repository.DeleteUserPosts(user.UserId);
+            _repository.DeleteUserDepts(user.UserId);
+            InsertUserPost(user);
+            InsertUserRole(user);
+            InsertUserDept(user);
+            return result;
+        }
+
+        public bool DeleteUser(long userId)
+        {
+            return _repository.DeleteUser(userId);
+        }
+
+        public bool CheckUserNameUnique(SysUser user)
+        {
+            return _repository.CheckUserNameUnique(user);
+        }
+
+        public bool CheckPhoneUnique(SysUser user)
+        {
+            return _repository.CheckPhoneUnique(user);
+        }
+
+        public bool CheckEmailUnique(SysUser user)
+        {
+            return _repository.CheckEmailUnique(user);
+        }
+
         public void InsertUserPost(SysUser user)
         {
-            if (user.Posts!=null&&user.Posts.Any())
+            if (user.Posts != null && user.Posts.Any())
             {
-                // 新增用户与岗位管理
                 List<SysUserPost> list = new();
                 user.Posts.ForEach(post =>
                 {
@@ -48,17 +88,11 @@ namespace MaiziWPF.Services.Application
                 _repository.BatchUserPost(list);
             }
         }
-        /**
-        * 新增用户角色信息
-        * 
-        * @param userId 用户ID
-        * @param roleIds 角色组
-        */
+
         public void InsertUserRole(SysUser user)
         {
             if (user.Roles != null && user.Roles.Any())
             {
-                // 新增用户与岗位管理
                 List<SysUserRole> list = new();
                 user.Roles.ForEach(role =>
                 {
@@ -70,48 +104,36 @@ namespace MaiziWPF.Services.Application
                 _repository.BatchUserRole(list);
             }
         }
-        /**
-         * 新增用户部门信息
-         * 
-         * @param user 用户对象
-         */
+
         public void InsertUserDept(SysUser user)
         {
             if (user.Depts != null && user.Depts.Any())
             {
-                // 新增用户与岗位管理
                 List<SysUserDept> list = new();
-                user.Depts.ForEach(post =>
+                user.Depts.ForEach(dept =>
                 {
-                    SysUserDept up = new SysUserDept();
-                    up.UserId = user.UserId;
-                    up.DeptId = post.Id;
-                    list.Add(up);
+                    SysUserDept ud = new SysUserDept();
+                    ud.UserId = user.UserId;
+                    ud.DeptId = dept.Id;
+                    list.Add(ud);
                 });
                 _repository.BatchUserDept(list);
             }
         }
 
-        public SysUser SelectUserByUserName(string userName)
+        public List<long> SelectUserRoleIds(long userId)
         {
-           return _repository.SelectUserByUserName(userName);
+            return _repository.SelectUserRoleIds(userId);
         }
 
-        public List<SysUser> SelectUserList(QueryUserInput input)
+        public List<long> SelectUserPostIds(long userId)
         {
-            return _repository.SelectUserList(input);
+            return _repository.SelectUserPostIds(userId);
         }
 
-        public bool DeleteUser(long userId)
+        public List<long> SelectUserDeptIds(long userId)
         {
-            // 逻辑删除用户，设置删除标志
-            return _repository.DeleteUser(userId);
-        }
-
-        public bool UpdateUser(SysUser user)
-        {
-            // 更新用户信息
-            return _repository.UpdateUser(user);
+            return _repository.SelectUserDeptIds(userId);
         }
     }
 }

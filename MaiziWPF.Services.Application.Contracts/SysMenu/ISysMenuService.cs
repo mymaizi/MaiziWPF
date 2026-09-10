@@ -1,22 +1,25 @@
 ﻿using MaiziWPF.Services.Domain;
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using Volo.Abp.DependencyInjection;
 
 namespace MaiziWPF.Services.Application.Contracts
 {
     public interface ISysMenuService : ITransientDependency
     {
-      
-        /**
-        * 根据用户查询系统菜单列表
-        * 
-        * @param menu 菜单信息
-        * @param userId 用户ID
-        * @return 菜单列表
-        */
-        public List<SysMenu> SelectMenuList(SysMenu menu, Int64 userId);
+        List<SysMenu> SelectMenuList(SysMenu menu, long userId);
+
+        SysMenu SelectMenuById(long menuId);
+
+        int InsertMenu(SysMenu menu);
+
+        int UpdateMenu(SysMenu menu);
+
+        int DeleteMenuById(long menuId);
+
+        bool HasChildByMenuId(long menuId);
+
+        bool CheckMenuExistRole(long menuId);
+
+        bool CheckMenuNameUnique(SysMenu menu);
     }
 }

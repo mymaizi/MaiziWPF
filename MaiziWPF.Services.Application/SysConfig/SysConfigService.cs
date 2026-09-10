@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MaiziWPF.Services.Application
 {
-    public class SysConfigService:ISysConfigService
+    public class SysConfigService : ISysConfigService
     {
         private readonly ISysConfigRepository _repository;
 
@@ -15,15 +15,34 @@ namespace MaiziWPF.Services.Application
             _repository = repository;
         }
 
-        /**
-       * 查询参数配置列表
-       * 
-       * @param config 参数配置信息
-       * @return 参数配置集合
-       */
         public List<SysConfig> SelectConfigList(QueryConfigInput input)
         {
             return _repository.SelectConfigList(input);
+        }
+
+        public SysConfig SelectConfigById(long configId)
+        {
+            return _repository.SelectConfigById(configId);
+        }
+
+        public int InsertConfig(SysConfig config)
+        {
+            return _repository.InsertConfig(config);
+        }
+
+        public int UpdateConfig(SysConfig config)
+        {
+            return _repository.UpdateConfig(config);
+        }
+
+        public int DeleteConfigById(long configId)
+        {
+            return _repository.DeleteConfigById(configId);
+        }
+
+        public bool CheckConfigKeyUnique(SysConfig config)
+        {
+            return _repository.CheckConfigKeyUnique(config);
         }
     }
 }

@@ -15,9 +15,45 @@ namespace MaiziWPF.Services.Application
         {
             _repository = repository;
         }
+
         public List<SysPost> SelectPostList(QueryPostInput post)
         {
-          return _repository.SelectPostList(post);
+            return _repository.SelectPostList(post);
+        }
+
+        public SysPost SelectPostById(long postId)
+        {
+            return _repository.SelectPostById(postId);
+        }
+
+        public int InsertPost(SysPost post)
+        {
+            return _repository.InsertPost(post);
+        }
+
+        public int UpdatePost(SysPost post)
+        {
+            return _repository.UpdatePost(post);
+        }
+
+        public int DeletePostById(long postId)
+        {
+            return _repository.DeletePostById(postId);
+        }
+
+        public bool CheckPostNameUnique(SysPost post)
+        {
+            return _repository.CheckPostNameUnique(post);
+        }
+
+        public bool CheckPostCodeUnique(SysPost post)
+        {
+            return _repository.CheckPostCodeUnique(post);
+        }
+
+        public bool CheckPostExistUser(long postId)
+        {
+            return _repository.CheckPostExistUser(postId);
         }
     }
 }

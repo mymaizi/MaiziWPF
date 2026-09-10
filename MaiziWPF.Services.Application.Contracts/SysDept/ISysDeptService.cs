@@ -6,14 +6,22 @@ using Volo.Abp.DependencyInjection;
 
 namespace MaiziWPF.Services.Application.Contracts
 {
-    public interface ISysDeptService: ITransientDependency
+    public interface ISysDeptService : ITransientDependency
     {
-        /**
-        * 查询部门树结构信息
-        * 
-        * @param dept 部门信息
-        * @return 部门树信息集合
-        */
-        public List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true);
+        List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true);
+
+        SysDept SelectDeptById(long deptId);
+
+        int InsertDept(SysDept dept);
+
+        int UpdateDept(SysDept dept);
+
+        int DeleteDeptById(long deptId);
+
+        bool HasChildByDeptId(long deptId);
+
+        bool CheckDeptExistUser(long deptId);
+
+        bool CheckDeptNameUnique(SysDept dept);
     }
 }

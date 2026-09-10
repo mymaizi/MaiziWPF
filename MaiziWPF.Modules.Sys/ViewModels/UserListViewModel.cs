@@ -32,10 +32,11 @@ namespace MaiziWPF.Modules.Sys
             this.NewOrEditButtonCommand = new DelegateCommand<SysUser>(user =>
             {
                 var view = _containerProvider.Resolve<UserFormView>();
-                var model=  view.DataContext as UserFormViewModel;
+                var model = view.DataContext as UserFormViewModel;
                 if (user != null)
                 {
                     model.UserId = user.UserId;
+                    model.UserName = user.UserName;
                     model.NickName = user.NickName;
                     model.PhoneNumber = user.PhoneNumber;
                     model.Email = user.Email;
@@ -43,10 +44,16 @@ namespace MaiziWPF.Modules.Sys
                     model.Remark = user.Remark;
                     model.Sex = user.Sex;
                     model.IsEditMode = true;
+                    model.InitialRoleIds = _userService.SelectUserRoleIds(user.UserId);
+                    model.InitialPostIds = _userService.SelectUserPostIds(user.UserId);
+                    model.InitialDeptIds = _userService.SelectUserDeptIds(user.UserId);
                 }
                 else
                 {
                     model.IsEditMode = false;
+                    model.InitialRoleIds = null;
+                    model.InitialPostIds = null;
+                    model.InitialDeptIds = null;
                 }
                 model.OnSaveSuccessCallback = () =>
                 {

@@ -7,14 +7,18 @@ using Volo.Abp.DependencyInjection;
 
 namespace MaiziWPF.Services.Application
 {
-    public interface ISysConfigService: ITransientDependency
+    public interface ISysConfigService : ITransientDependency
     {
-        /**
-       * 查询参数配置列表
-       * 
-       * @param config 参数配置信息
-       * @return 参数配置集合
-       */
-        public List<SysConfig> SelectConfigList(QueryConfigInput input);
+        List<SysConfig> SelectConfigList(QueryConfigInput input);
+
+        SysConfig SelectConfigById(long configId);
+
+        int InsertConfig(SysConfig config);
+
+        int UpdateConfig(SysConfig config);
+
+        int DeleteConfigById(long configId);
+
+        bool CheckConfigKeyUnique(SysConfig config);
     }
 }

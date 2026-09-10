@@ -16,7 +16,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <!--  条件  -->
             <WrapPanel>
                 <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
                     <TextBox
@@ -61,97 +60,130 @@
                         Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
                 </StackPanel>
             </WrapPanel>
-            <!--  表格  -->
-            <materialDesign:TreeListView
-                Grid.Row="1"
-                FontSize="13"
-                ItemsSource="{Binding DeptItems}">
-                <materialDesign:TreeListView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type domain:SysDept}" ItemsSource="{Binding Childs}" />
-                </materialDesign:TreeListView.Resources>
-                <materialDesign:TreeListView.View>
-                    <GridView>
-                        <GridView.ColumnHeaderContainerStyle>
-                            <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
-                                <Setter Property="FontSize" Value="14" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="GridViewColumnHeader">
-                                            <Border Height="35">
-                                                <ContentPresenter Margin="20,0,0,0" VerticalAlignment="Center" />
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </GridView.ColumnHeaderContainerStyle>
-                        <GridView.Columns>
-                            <GridViewColumn Width="200" Header="部门名称">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding DeptName}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="100" Header="排序">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Margin="10,0,0,0" Text="{Binding OrderNum}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="100" Header="状态">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate DataType="{x:Type domain:SysDept}">
-                                        <Label x:Name="statusLabel" Margin="4,0,0,0" />
-                                        <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding Status}" Value="1">
-                                                <Setter TargetName="statusLabel" Property="Content" Value="停用" />
-                                                <Setter TargetName="statusLabel" Property="Foreground" Value="#999999" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Status}" Value="0">
-                                                <Setter TargetName="statusLabel" Property="Content" Value="正常" />
-                                                <Setter TargetName="statusLabel" Property="Foreground" Value="#1890ff" />
-                                            </DataTrigger>
-                                        </DataTemplate.Triggers>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Width="150" Header="创建时间">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Margin="8,0,0,0" Text="{Binding CreateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='yyyy-MM-dd HH:mm:ss'}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="操作">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Button
-                                                Padding="5"
-                                                Content="修改"
-                                                Foreground="#1890ff"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
-                                            <Button
-                                                Padding="5"
-                                                Content="新增"
-                                                Foreground="#1a7f29"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
-                                            <Button
-                                                Padding="5"
-                                                Content="删除"
-                                                Foreground="#cf3539"
-                                                Style="{StaticResource MaterialDesignFlatLightButton}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView.Columns>
-                    </GridView>
-                </materialDesign:TreeListView.View>
-            </materialDesign:TreeListView>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Margin="0,6,10,6" Orientation="Horizontal">
+                    <Button
+                        Padding="8,4"
+                        Background="#1890ff"
+                        BorderBrush="#1890ff"
+                        Command="{Binding AddDeptCommand}"
+                        Content="新增"
+                        Foreground="#fff"
+                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                </StackPanel>
+                <materialDesign:TreeListView
+                    Grid.Row="1"
+                    FontSize="13"
+                    ItemsSource="{Binding DeptItems}">
+                    <materialDesign:TreeListView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type domain:SysDept}" ItemsSource="{Binding Childs}" />
+                    </materialDesign:TreeListView.Resources>
+                    <materialDesign:TreeListView.View>
+                        <GridView>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type GridViewColumnHeader}}" TargetType="GridViewColumnHeader">
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewColumnHeader">
+                                                <Border Height="35">
+                                                    <ContentPresenter Margin="20,0,0,0" VerticalAlignment="Center" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GridView.ColumnHeaderContainerStyle>
+                            <GridView.Columns>
+                                <GridViewColumn Width="200" Header="部门名称">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DeptName}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="80" Header="排序">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="10,0,0,0" Text="{Binding OrderNum}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="100" Header="负责人">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Leader}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="120" Header="联系电话">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Phone}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="100" Header="状态">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type domain:SysDept}">
+                                            <Label x:Name="statusLabel" Margin="4,0,0,0" />
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="1">
+                                                    <Setter TargetName="statusLabel" Property="Content" Value="停用" />
+                                                    <Setter TargetName="statusLabel" Property="Foreground" Value="#999999" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="0">
+                                                    <Setter TargetName="statusLabel" Property="Content" Value="正常" />
+                                                    <Setter TargetName="statusLabel" Property="Foreground" Value="#1890ff" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="150" Header="创建时间">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="8,0,0,0" Text="{Binding CreateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='yyyy-MM-dd HH:mm:ss'}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="操作">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button
+                                                    Padding="5"
+                                                    Content="修改"
+                                                    Foreground="#1890ff"
+                                                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Command="{Binding DataContext.NewOrEditButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                    CommandParameter="{Binding}" />
+                                                <Button
+                                                    Padding="5"
+                                                    Content="新增"
+                                                    Foreground="#1a7f29"
+                                                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Command="{Binding DataContext.AddDeptCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                                                <Button
+                                                    Padding="5"
+                                                    Content="删除"
+                                                    Foreground="#cf3539"
+                                                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                    CommandParameter="{Binding}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </materialDesign:TreeListView.View>
+                </materialDesign:TreeListView>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>
-

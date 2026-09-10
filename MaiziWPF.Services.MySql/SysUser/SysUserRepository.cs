@@ -98,5 +98,84 @@ namespace MaiziWPF.Services.MySql
             
             return result > 0;
         }
+
+        public SysUser SelectUserById(long userId)
+        {
+            return _fsql.Select<SysUser>()
+                .IncludeMany(a => a.Roles)
+                .IncludeMany(a => a.Depts)
+                .IncludeMany(a => a.Posts)
+                .Where(a => a.UserId == userId && a.DelFlag == "0")
+                .First();
+        }
+
+        public bool CheckUserNameUnique(SysUser user)
+        {
+            var query = _fsql.Select<SysUser>()
+                .Where(u => u.UserName == user.UserName && u.DelFlag == "0");
+            if (user.UserId != 0)
+                query = query.Where(u => u.UserId != user.UserId);
+            return !query.Any();
+        }
+
+        public bool CheckPhoneUnique(SysUser user)
+        {
+            var query = _fsql.Select<SysUser>()
+                .Where(u => u.PhoneNumber == user.PhoneNumber && u.DelFlag == "0");
+            if (user.UserId != 0)
+                query = query.Where(u => u.UserId != user.UserId);
+            return !query.Any();
+        }
+
+        public bool CheckEmailUnique(SysUser user)
+        {
+            var query = _fsql.Select<SysUser>()
+                .Where(u => u.Email == user.Email && u.DelFlag == "0");
+            if (user.UserId != 0)
+                query = query.Where(u => u.UserId != user.UserId);
+            return !query.Any();
+        }
+
+        public int DeleteUserRoles(long userId)
+        {
+            return _fsql.Delete<SysUserRole>()
+                .Where(r => r.UserId == userId)
+                .ExecuteAffrows();
+        }
+
+        public int DeleteUserPosts(long userId)
+        {
+            return _fsql.Delete<SysUserPost>()
+                .Where(p => p.UserId == userId)
+                .ExecuteAffrows();
+        }
+
+        public int DeleteUserDepts(long userId)
+        {
+            return _fsql.Delete<SysUserDept>()
+                .Where(d => d.UserId == userId)
+                .ExecuteAffrows();
+        }
+
+        public List<long> SelectUserRoleIds(long userId)
+        {
+            return _fsql.Select<SysUserRole>()
+                .Where(r => r.UserId == userId)
+                .ToList(r => r.RoleId);
+        }
+
+        public List<long> SelectUserPostIds(long userId)
+        {
+            return _fsql.Select<SysUserPost>()
+                .Where(p => p.UserId == userId)
+                .ToList(p => p.PostId);
+        }
+
+        public List<long> SelectUserDeptIds(long userId)
+        {
+            return _fsql.Select<SysUserDept>()
+                .Where(d => d.UserId == userId)
+                .ToList(d => d.DeptId);
+        }
     }
 }

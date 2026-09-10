@@ -3,6 +3,7 @@ using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MaiziWPF.Modules.Sys
 {
@@ -36,21 +37,21 @@ namespace MaiziWPF.Modules.Sys
             get { return _phoneNumber; }
             set { SetProperty(ref _phoneNumber, value); }
         }
-        
+
         private string _email;
         public string Email
         {
             get { return _email; }
             set { SetProperty(ref _email, value); }
         }
-        
+
         private string _password;
         public string Password
         {
             get { return _password; }
             set { SetProperty(ref _password, value); }
         }
-        private string _status="0";
+        private string _status = "0";
         public string Status
         {
             get { return _status; }
@@ -92,12 +93,32 @@ namespace MaiziWPF.Modules.Sys
             get { return _isEditMode; }
             set { SetProperty(ref _isEditMode, value); }
         }
+
+        private List<long> _initialRoleIds;
+        public List<long> InitialRoleIds
+        {
+            get { return _initialRoleIds; }
+            set { SetProperty(ref _initialRoleIds, value); }
+        }
+
+        private List<long> _initialPostIds;
+        public List<long> InitialPostIds
+        {
+            get { return _initialPostIds; }
+            set { SetProperty(ref _initialPostIds, value); }
+        }
+
+        private List<long> _initialDeptIds;
+        public List<long> InitialDeptIds
+        {
+            get { return _initialDeptIds; }
+            set { SetProperty(ref _initialDeptIds, value); }
+        }
         #endregion
-        
+
         #region 验证方法
         private bool ValidateForm()
         {
-           
             MaiziWPF.Core.NotEmptyValidationRule.ShowValidationErrors = true;
             MaiziWPF.Core.LengthValidationRule.ShowValidationErrors = true;
             MaiziWPF.Core.PasswordValidationRule.ShowValidationErrors = true;
@@ -118,24 +139,24 @@ namespace MaiziWPF.Modules.Sys
             return !string.IsNullOrWhiteSpace(NickName);
         }
         #endregion
-        
+
         private readonly ISysUserService _userService;
         private readonly IDialogHostService _dialogHostService;
-        
-        public UserFormViewModel(ISysUserService userService,IDialogHostService dialogHostService) : base(dialogHostService)
+
+        public UserFormViewModel(ISysUserService userService, IDialogHostService dialogHostService) : base(dialogHostService)
         {
-            _userService=userService;
-            _dialogHostService=dialogHostService;
+            _userService = userService;
+            _dialogHostService = dialogHostService;
             this.AcceptCommand = new DelegateCommand(async () =>
             {
                 if (!ValidateForm())
                 {
                     return;
                 }
-                
-                if (UserId!=0)
+
+                if (UserId != 0)
                 {
-                    var success = _userService.UpdateUser(new SysUser()
+                    var user = new SysUser()
                     {
                         UserId = this.UserId,
                         NickName = this.NickName,
@@ -144,10 +165,12 @@ namespace MaiziWPF.Modules.Sys
                         Status = this.Status,
                         Sex = this.Sex,
                         Remark = this.Remark,
-                        //Posts = this.Posts.Select(p => new SysPost() { PostId = p.Id }).ToList(),
-                        //Roles = this.Roles.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
-                        //Depts = this.Depts.Select(d => new SysDept() { Id = d.Id }).ToList(),
-                    });
+                        Posts = this.Posts?.Select(p => new SysPost() { PostId = p.Id }).ToList(),
+                        Roles = this.Roles?.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
+                        Depts = this.Depts?.Select(d => new SysDept() { Id = d.Id }).ToList(),
+                    };
+
+                    var success = _userService.UpdateUser(user);
 
                     if (success)
                     {
@@ -164,7 +187,7 @@ namespace MaiziWPF.Modules.Sys
                 }
                 else
                 {
-                    _userService.InsertUser(new SysUser()
+                    var user = new SysUser()
                     {
                         UserName = this.UserName,
                         NickName = this.NickName,
@@ -174,15 +197,17 @@ namespace MaiziWPF.Modules.Sys
                         Status = this.Status,
                         Sex = this.Sex,
                         Remark = this.Remark,
-                        //Posts = this.Posts.Select(p => new SysPost() { PostId = p.Id }).ToList(),
-                        //Roles = this.Roles.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
-                        //Depts = this.Depts.Select(d => new SysDept() { Id = d.Id }).ToList(),
-                    });
+                        Posts = this.Posts?.Select(p => new SysPost() { PostId = p.Id }).ToList(),
+                        Roles = this.Roles?.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
+                        Depts = this.Depts?.Select(d => new SysDept() { Id = d.Id }).ToList(),
+                    };
+
+                    _userService.InsertUser(user);
 
                     await _dialogHostService.AlertAsync("添加成功！", () =>
                     {
-                         _dialogHostService.CloseDialogAsync();
-                         OnSaveSuccessCallback?.Invoke();
+                        _dialogHostService.CloseDialogAsync();
+                        OnSaveSuccessCallback?.Invoke();
                     }, "UserDialog");
                 }
             });

@@ -42,6 +42,20 @@ namespace MaiziWPF.Core
         public static readonly DependencyProperty BindFieldProperty =
             DependencyProperty.RegisterAttached("BindField", typeof(object), typeof(DbAssist));
 
+        public static readonly DependencyProperty InitialSelectedIdsProperty =
+            DependencyProperty.RegisterAttached("InitialSelectedIds", typeof(List<long>), typeof(DbAssist),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None));
+
+        public static List<long> GetInitialSelectedIds(DependencyObject obj)
+        {
+            return (List<long>)obj.GetValue(InitialSelectedIdsProperty);
+        }
+
+        public static void SetInitialSelectedIds(DependencyObject obj, List<long> value)
+        {
+            obj.SetValue(InitialSelectedIdsProperty, value);
+        }
+
         private static void OnBindPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             List<Checked> datas = new();
@@ -105,6 +119,61 @@ namespace MaiziWPF.Core
             if (d is ComboBox cb)
             {
                 cb.ItemsSource = datas;
+                cb.Loaded += Cb_Loaded;
+            }
+        }
+
+        private static void Cb_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox cb)
+            {
+                cb.Loaded -= Cb_Loaded;
+                var initialIds = GetInitialSelectedIds(cb);
+                if (initialIds != null && initialIds.Any())
+                {
+                    SetInitialSelections(cb, initialIds);
+                }
+            }
+        }
+
+        private static void SetInitialSelections(ComboBox cb, List<long> selectedIds)
+        {
+            if (cb.ItemsSource is IList<Checked> items)
+            {
+                var selectedItems = new List<Checked>();
+                foreach (var item in items)
+                {
+                    if (selectedIds.Contains(item.Id))
+                    {
+                        item.IsSelected = true;
+                        selectedItems.Add(item);
+                    }
+                    if (item.Childs != null)
+                    {
+                        SetTreeInitialSelections(item.Childs, selectedIds, selectedItems);
+                    }
+                }
+                if (selectedItems.Any())
+                {
+                    cb.Text = selectedItems.Select(p => p.Name).JoinAsString(",");
+                    SetBindField(cb, selectedItems);
+                }
+            }
+        }
+
+        private static void SetTreeInitialSelections(ObservableCollection<Checked> childs, List<long> selectedIds, List<Checked> selectedItems)
+        {
+            foreach (var child in childs)
+            {
+                if (selectedIds.Contains(child.Id))
+                {
+                    child.IsSelected = true;
+                    selectedItems.Add(child);
+                }
+                if (child.Childs != null)
+                {
+                    SetTreeInitialSelections(child.Childs, selectedIds, selectedItems);
+                }
             }
         }
     }

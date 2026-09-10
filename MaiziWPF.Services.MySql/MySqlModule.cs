@@ -15,7 +15,7 @@ namespace MaiziWPF.Services.MySql
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             IFreeSql fsql = new FreeSql.FreeSqlBuilder()
-                  .UseConnectionString(FreeSql.DataType.MySql, "Data Source=127.0.0.1;Port=3306;User ID=root;Password=; Initial Catalog=maiziwpf;Charset=utf8mb4; SslMode=none;Min pool size=1")
+                  .UseConnectionString(FreeSql.DataType.MySql, "Data Source=127.0.0.1;Port=3306;User ID=root;Password=123456; Initial Catalog=maiziwpf;Charset=utf8mb4; SslMode=none;Min pool size=1")
                   .UseMonitorCommand(cmd =>
                   {
                       var logger = context.Services.GetRequiredService<ILogger<MySqlModule>>();

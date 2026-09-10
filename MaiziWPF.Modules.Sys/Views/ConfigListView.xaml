@@ -75,9 +75,24 @@
                         Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
                 </StackPanel>
             </WrapPanel>
+            <!--  工具栏  -->
+            <StackPanel
+                Grid.Row="1"
+                Margin="0,6,0,6"
+                Orientation="Horizontal">
+                <Button
+                    Margin="0,0,8,0"
+                    Background="#1890ff"
+                    BorderBrush="#1890ff"
+                    Command="{Binding AddConfigCommand}"
+                    Content="新增"
+                    Foreground="#fff"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+            </StackPanel>
             <!--  表格  -->
             <DataGrid
                 Grid.Row="1"
+                Margin="0,32,0,0"
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 GridLinesVisibility="None"
@@ -140,11 +155,15 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Button
                                         Padding="5"
+                                        Command="{Binding DataContext.NewOrEditButtonCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
                                         Content="修改"
                                         Foreground="#1890ff"
                                         Style="{StaticResource MaterialDesignFlatLightButton}" />
                                     <Button
                                         Padding="5"
+                                        Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
                                         Content="删除"
                                         Foreground="#cf3539"
                                         Style="{StaticResource MaterialDesignFlatLightButton}" />

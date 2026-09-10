@@ -8,12 +8,20 @@ namespace MaiziWPF.Services.Domain
 {
     public interface ISysDeptRepository : IBaseRepository<SysDept, int>, ITransientDependency
     {
-        /**
-         * 查询部门管理数据
-         * 
-         * @param dept 部门信息
-         * @return 部门信息集合
-         */
-        public List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery);
+        List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery);
+
+        SysDept SelectDeptById(long deptId);
+
+        int InsertDept(SysDept dept);
+
+        int UpdateDept(SysDept dept);
+
+        int DeleteDeptById(long deptId);
+
+        bool HasChildByDeptId(long deptId);
+
+        bool CheckDeptExistUser(long deptId);
+
+        bool CheckDeptNameUnique(SysDept dept);
     }
 }

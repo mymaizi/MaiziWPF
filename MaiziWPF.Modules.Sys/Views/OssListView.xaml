@@ -1,0 +1,110 @@
+<UserControl
+    x:Class="MaiziWPF.Modules.Sys.OssListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:domain="clr-namespace:MaiziWPF.Services.Domain;assembly=MaiziWPF.Services.Domain"
+    xmlns:maiziWPF="clr-namespace:MaiziWPF.Core;assembly=MaiziWPF.Core"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <maiziWPF:DateTimeConverter x:Key="DateTimeConverter" />
+    </UserControl.Resources>
+    <Border Background="WhiteSmoke" CornerRadius="0 0 10 0">
+        <Grid Margin="10,6,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <WrapPanel>
+                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
+                    <TextBox
+                        materialDesign:HintAssist.Hint="文件名称"
+                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        BorderThickness="0"
+                        FontSize="16"
+                        Text="{Binding QueryPageInfo.FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </materialDesign:Card>
+                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
+                    <TextBox
+                        materialDesign:HintAssist.Hint="原始名称"
+                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                        materialDesign:TextFieldAssist.HasClearButton="True"
+                        BorderThickness="0"
+                        FontSize="16"
+                        Text="{Binding QueryPageInfo.OriginalName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </materialDesign:Card>
+                <StackPanel Margin="6,0,0,6" Orientation="Horizontal">
+                    <Button
+                        Margin="0,0,8,0"
+                        Background="#1890ff"
+                        BorderBrush="#1890ff"
+                        Command="{Binding SearchButtonCommand}"
+                        Content="搜索"
+                        Foreground="#fff"
+                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                    <Button
+                        BorderBrush="#dcdfe6"
+                        Content="重置"
+                        Foreground="#606266"
+                        Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+                </StackPanel>
+            </WrapPanel>
+            <DataGrid
+                Grid.Row="1"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                GridLinesVisibility="None"
+                ItemsSource="{Binding DataList}">
+                <DataGrid.CellStyle>
+                    <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding OssId}" Header="文件编号" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding OriginalName}" Header="原始名称" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding FileName}" Header="文件名称" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding FileSuffix}" Header="文件后缀" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Url}" Header="URL地址" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Service}" Header="存储服务" IsReadOnly="True" />
+                    <DataGridTextColumn
+                        Binding="{Binding CreateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='yyyy-MM-dd HH:mm:ss'}"
+                        Header="上传时间"
+                        IsReadOnly="True" />
+                    <DataGridTemplateColumn Header="操作">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Padding="5"
+                                        Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Content="删除"
+                                        Foreground="#cf3539"
+                                        Style="{StaticResource MaterialDesignFlatLightButton}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <maiziWPF:PageControl
+                Grid.Row="2"
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                Count="{Binding Count}"
+                NextCommand="{Binding NextButtonCommand}"
+                PageNumber="{Binding PageNumber}"
+                PageSize="{Binding PageSize}"
+                PrevCommand="{Binding PrevButtonCommand}" />
+        </Grid>
+    </Border>
+</UserControl>

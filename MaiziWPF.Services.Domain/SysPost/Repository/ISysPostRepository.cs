@@ -6,14 +6,20 @@ namespace MaiziWPF.Services.Domain
 {
     public interface ISysPostRepository : IBaseRepository<SysPost, int>, ITransientDependency
     {
-        /**
-        * 查询岗位数据集合
-        * 
-        * @param post 岗位信息
-        * @return 岗位数据集合
-        */
-        public List<SysPost> SelectPostList(QueryPostInput input);
+        List<SysPost> SelectPostList(QueryPostInput input);
 
-     
+        SysPost SelectPostById(long postId);
+
+        int InsertPost(SysPost post);
+
+        int UpdatePost(SysPost post);
+
+        int DeletePostById(long postId);
+
+        bool CheckPostNameUnique(SysPost post);
+
+        bool CheckPostCodeUnique(SysPost post);
+
+        bool CheckPostExistUser(long postId);
     }
 }

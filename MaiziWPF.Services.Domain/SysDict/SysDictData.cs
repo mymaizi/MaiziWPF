@@ -30,6 +30,12 @@ namespace MaiziWPF.Services.Domain
         /** 是否默认（Y是 N否） */
         [Column(Name = "is_default", DbType = "char(1)")]
         public String IsDefault { get; set; }
+        /** 样式属性（其他样式扩展） */
+        [Column(Name = "css_class", DbType = "varchar(100)")]
+        public String CssClass { get; set; }
+        /** 表格回显样式 */
+        [Column(Name = "list_class", DbType = "varchar(100)")]
+        public String ListClass { get; set; }
         /** 状态（0正常 1停用） */
         [Column(Name = "status", DbType = "char(1)")]
         public String Status { get; set; }

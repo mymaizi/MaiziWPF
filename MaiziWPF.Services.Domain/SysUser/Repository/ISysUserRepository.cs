@@ -65,5 +65,24 @@ namespace MaiziWPF.Services.Domain
         */
         public bool UpdateUser(SysUser user);
 
+        SysUser SelectUserById(long userId);
+
+        bool CheckUserNameUnique(SysUser user);
+
+        bool CheckPhoneUnique(SysUser user);
+
+        bool CheckEmailUnique(SysUser user);
+
+        int DeleteUserRoles(long userId);
+
+        int DeleteUserPosts(long userId);
+
+        int DeleteUserDepts(long userId);
+
+        List<long> SelectUserRoleIds(long userId);
+
+        List<long> SelectUserPostIds(long userId);
+
+        List<long> SelectUserDeptIds(long userId);
     }
 }

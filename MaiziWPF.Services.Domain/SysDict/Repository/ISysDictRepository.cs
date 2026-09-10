@@ -9,19 +9,28 @@ namespace MaiziWPF.Services.Domain
 {
     public interface ISysDictRepository : IBaseRepository<SysDictType, int>, ITransientDependency
     {
-        /**
-         * 根据字典类型查询字典数据
-         * 
-         * @param dictType 字典类型
-         * @return 字典数据集合信息
-         */
-        public List<SysDictData> SelectDictDataByType(String dictType);
-        /**
-       * 根据条件分页查询字典类型
-       * 
-       * @param dictType 字典类型信息
-       * @return 字典类型集合信息
-       */
-        public List<SysDictType> SelectDictTypeList(QueryDictTypeInput input);
+        List<SysDictData> SelectDictDataByType(String dictType);
+
+        List<SysDictType> SelectDictTypeList(QueryDictTypeInput input);
+
+        SysDictType SelectDictTypeById(long dictId);
+
+        int InsertDictType(SysDictType dictType);
+
+        int UpdateDictType(SysDictType dictType);
+
+        int DeleteDictTypeById(long dictId);
+
+        bool CheckDictTypeUnique(SysDictType dictType);
+
+        List<SysDictData> SelectDictDataList(QueryDictDataInput input);
+
+        SysDictData SelectDictDataById(long dictCode);
+
+        int InsertDictData(SysDictData dictData);
+
+        int UpdateDictData(SysDictData dictData);
+
+        int DeleteDictDataById(long dictCode);
     }
 }

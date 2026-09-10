@@ -1,0 +1,190 @@
+<UserControl
+    x:Class="MaiziWPF.Modules.Sys.DictDataFormView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="clr-namespace:MaiziWPF.Core;assembly=MaiziWPF.Core"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+
+    <UserControl.Resources>
+        <core:BooleanConverter x:Key="BooleanConverter" />
+
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#606266" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+
+        <Style
+            x:Key="FormTextBox"
+            BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
+            TargetType="TextBox">
+            <Setter Property="materialDesign:HintAssist.IsFloating" Value="False" />
+            <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="8,0" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <Style x:Key="FormRadioGroup" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Height" Value="36" />
+        </Style>
+    </UserControl.Resources>
+
+    <materialDesign:DialogHost
+        CloseOnClickAway="False"
+        Identifier="DictDataDialog"
+        OverlayBackground="Transparent">
+        <Grid Width="480" Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="88" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,0,8,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,2,0"
+                    VerticalAlignment="Center"
+                    FontSize="13"
+                    Foreground="#ff4444"
+                    Text="*" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="13"
+                    Foreground="#606266"
+                    Text="字典标签：" />
+            </StackPanel>
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                materialDesign:HintAssist.Hint="请输入字典标签"
+                Style="{StaticResource FormTextBox}"
+                Text="{Binding DictLabel, UpdateSourceTrigger=PropertyChanged}" />
+
+            <StackPanel
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,0,8,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,2,0"
+                    VerticalAlignment="Center"
+                    FontSize="13"
+                    Foreground="#ff4444"
+                    Text="*" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="13"
+                    Foreground="#606266"
+                    Text="字典键值：" />
+            </StackPanel>
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="1"
+                materialDesign:HintAssist.Hint="请输入字典键值"
+                Style="{StaticResource FormTextBox}"
+                Text="{Binding DictValue, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{StaticResource FormLabel}"
+                Text="显示排序：" />
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="1"
+                materialDesign:HintAssist.Hint="请输入显示排序"
+                Style="{StaticResource FormTextBox}"
+                Text="{Binding DictSort, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                Style="{StaticResource FormLabel}"
+                Text="回显样式：" />
+            <TextBox
+                Grid.Row="3"
+                Grid.Column="1"
+                materialDesign:HintAssist.Hint="请输入回显样式"
+                Style="{StaticResource FormTextBox}"
+                Text="{Binding CssClass, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock
+                Grid.Row="4"
+                Grid.Column="0"
+                Style="{StaticResource FormLabel}"
+                Text="状态：" />
+            <StackPanel
+                Grid.Row="4"
+                Grid.Column="1"
+                Style="{StaticResource FormRadioGroup}">
+                <RadioButton
+                    Margin="0,0,16,0"
+                    Content="启用"
+                    IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='1'}" />
+                <RadioButton
+                    Content="禁用"
+                    IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='0'}" />
+            </StackPanel>
+
+            <TextBlock
+                Grid.Row="5"
+                Grid.Column="0"
+                Style="{StaticResource FormLabel}"
+                Text="备注：" />
+            <TextBox
+                Grid.Row="5"
+                Grid.Column="1"
+                Height="60"
+                materialDesign:HintAssist.Hint="请输入备注"
+                AcceptsReturn="True"
+                Style="{StaticResource FormTextBox}"
+                Text="{Binding Remark, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap" />
+
+            <StackPanel
+                Grid.Row="6"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="0,0,8,0"
+                    Command="{Binding CancelCommand}"
+                    Content="取消"
+                    Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+                <Button
+                    Background="#2196F3"
+                    BorderThickness="0"
+                    Command="{Binding AcceptCommand}"
+                    Content="确定"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+            </StackPanel>
+        </Grid>
+    </materialDesign:DialogHost>
+</UserControl>

@@ -7,14 +7,22 @@ using Volo.Abp.DependencyInjection;
 
 namespace MaiziWPF.Services.Application.Contracts
 {
-    public interface ISysPostService: ITransientDependency
+    public interface ISysPostService : ITransientDependency
     {
-        /**
-         * 查询岗位信息集合
-         * 
-         * @param post 岗位信息
-         * @return 岗位列表
-         */
-        public List<SysPost> SelectPostList(QueryPostInput post);
+        List<SysPost> SelectPostList(QueryPostInput post);
+
+        SysPost SelectPostById(long postId);
+
+        int InsertPost(SysPost post);
+
+        int UpdatePost(SysPost post);
+
+        int DeletePostById(long postId);
+
+        bool CheckPostNameUnique(SysPost post);
+
+        bool CheckPostCodeUnique(SysPost post);
+
+        bool CheckPostExistUser(long postId);
     }
 }

@@ -4,14 +4,22 @@ using Volo.Abp.DependencyInjection;
 
 namespace MaiziWPF.Services.Domain
 {
-    public interface ISysRoleRepository: IBaseRepository<SysRole,int>, ITransientDependency
+    public interface ISysRoleRepository : IBaseRepository<SysRole, int>, ITransientDependency
     {
-        /**
-         * 根据条件分页查询角色列表
-         * 
-         * @param sysRole 角色信息
-         * @return 角色信息集合信息
-         */
-        public List<SysRole> SelectRoleList(QueryRoleInput input);
+        List<SysRole> SelectRoleList(QueryRoleInput input);
+
+        SysRole SelectRoleById(long roleId);
+
+        int InsertRole(SysRole role);
+
+        int UpdateRole(SysRole role);
+
+        int DeleteRoleById(long roleId);
+
+        bool CheckRoleNameUnique(SysRole role);
+
+        bool CheckRoleKeyUnique(SysRole role);
+
+        bool CheckRoleExistUser(long roleId);
     }
 }
