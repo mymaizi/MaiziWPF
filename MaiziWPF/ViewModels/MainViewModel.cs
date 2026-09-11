@@ -93,7 +93,8 @@ namespace MaiziWPF.ViewModels
 
         private  FrameworkElement GetView(SysMenu m)
         {
-            string fullName = $"{m.Namespace}.{m.Component}, {m.Namespace}";
+            string ns = string.IsNullOrEmpty(m.Path) ? "MaiziWPF.Modules.Sys" : m.Path;
+            string fullName = $"{ns}.{m.Component}, {ns}";
             Type viewType = Type.GetType(fullName);
             var view = ContainerLocator.Container.Resolve(viewType) as FrameworkElement;
             (view.DataContext as ITabItemInfo)?.Header = m.MenuName;

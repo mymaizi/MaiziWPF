@@ -2,122 +2,137 @@
     x:Class="MaiziWPF.Views.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:domain="clr-namespace:MaiziWPF.Services.Domain;assembly=MaiziWPF.Services.Domain"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:maiziWPF="clr-namespace:MaiziWPF.Core;assembly=MaiziWPF.Core"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
-    xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
-    d:DesignHeight="500"
+    d:DesignHeight="700"
     d:DesignWidth="1200"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <UserControl.Resources>
         <maiziWPF:VisibilityConverter x:Key="VisibilityConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Margin="20">
+        <Grid.Effect>
+            <DropShadowEffect
+                BlurRadius="30"
+                Opacity="0.4"
+                ShadowDepth="1" />
+        </Grid.Effect>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+
         <!--  左侧导航区域  -->
-        <Border CornerRadius="10 0 0 10">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="1" Color="#05b790" />
-                    <GradientStop Offset="0" Color="#2c386c" />
-                </LinearGradientBrush>
-            </Border.Background>
-            <StackPanel>
-                <!--  LOGO区域  -->
-                <StackPanel
-                    Margin="0,5,0,4"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal">
-                    <Image Height="30">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup>
-                                        <GeometryDrawing Brush="#10A4E1" Geometry="M22.8,25.2H0V48h22.8V25.2z" />
-                                        <GeometryDrawing Brush="#2FB902" Geometry="M48,25.2H25.2V48H48V25.2z" />
-                                        <GeometryDrawing Brush="#9FBA09" Geometry="M48,0H25.2v22.8H48V0z" />
-                                        <GeometryDrawing Brush="#825024" Geometry="M22.8,0H0v22.8h22.8V0z" />
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
-                    <Image Height="20" Margin="10,0,0,0">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup>
-                                        <GeometryDrawing Brush="#737373" Geometry="M17 2103 c-4 -3 -7 -476 -7 -1050 l0 -1043 165 0 166 0 -5 810 c-3 446 -1 810 3 810 8 0 66 -131 125 -285 19 -49 56 -139 81 -200 26 -60 60 -141 75 -180 46 -116 76 -186 110 -260 18 -38 51 -117 75 -175 40 -97 126 -300 160 -377 l15 -33 130 0 c151 0 137 -10 193 135 20 50 62 149 95 221 33 72 65 149 72 170 7 22 26 66 43 99 32 64 79 176 258 618 62 152 115 277 118 277 3 0 5 -367 3 -815 l-2 -815 165 0 165 0 -2 1048 -3 1047 -209 0 -210 0 -27 -65 c-15 -36 -80 -191 -145 -345 -64 -154 -120 -284 -123 -290 -4 -5 -18 -37 -31 -70 -13 -33 -60 -145 -106 -250 -45 -104 -98 -230 -117 -280 -60 -152 -123 -290 -132 -288 -5 1 -27 48 -50 105 -23 57 -58 141 -79 188 -20 47 -45 105 -56 130 -10 25 -46 107 -79 183 -34 75 -61 140 -61 142 0 3 -24 60 -54 128 -29 67 -88 205 -131 307 -43 102 -81 190 -85 195 -4 6 -17 36 -29 69 -12 32 -31 78 -42 102 l-19 44 -204 0 c-111 0 -206 -3 -209 -7z" />
-                                        <GeometryDrawing Brush="#737373" Geometry="M3321 2088 c-5 -13 -28 -66 -51 -118 -23 -52 -46 -108 -52 -125 -21 -60 -58 -153 -108 -270 -29 -66 -77 -183 -107 -260 -30 -77 -63 -156 -73 -175 -10 -19 -35 -80 -55 -135 -21 -55 -50 -125 -65 -155 -15 -30 -53 -120 -84 -199 -32 -79 -65 -160 -75 -180 -10 -20 -47 -108 -81 -196 -34 -88 -73 -182 -86 -209 -14 -27 -22 -51 -20 -54 6 -5 348 -3 354 3 2 1 32 76 67 166 34 90 80 207 102 259 l38 95 478 3 477 2 10 -22 c5 -13 46 -115 91 -228 45 -113 88 -221 97 -241 l14 -37 162 -4 c168 -4 196 -2 196 14 0 5 -14 40 -31 76 -17 37 -40 90 -51 117 -11 28 -26 64 -33 80 -41 92 -105 245 -105 252 -1 4 -9 26 -20 48 -11 22 -19 44 -20 48 0 5 -6 23 -14 40 -8 18 -32 73 -54 122 -22 50 -63 146 -90 215 -27 69 -75 186 -107 260 -31 74 -67 164 -81 200 -13 36 -38 94 -54 130 -16 36 -66 155 -110 265 -44 110 -84 207 -89 215 -7 12 -40 15 -185 18 -175 2 -176 2 -185 -20z m215 -400 c77 -205 294 -754 325 -825 11 -23 19 -47 19 -52 0 -8 -120 -11 -380 -11 -209 0 -380 3 -380 8 0 4 7 21 16 37 15 30 73 173 100 249 8 21 34 86 58 145 25 58 65 160 90 226 39 105 76 199 106 273 5 12 12 22 14 22 2 0 17 -33 32 -72z" />
-                                        <GeometryDrawing Brush="#737373" Geometry="M4798 2073 c-3 -21 -4 -495 -3 -1053 1 -766 5 -1015 13 -1014 7 1 84 2 172 2 l160 2 -2 1048 -3 1047 -166 3 -166 2 -5 -37z" />
-                                        <GeometryDrawing Brush="#737373" Geometry="M5520 1980 l0 -130 576 0 c346 0 574 -4 572 -9 -1 -5 -29 -42 -60 -83 -52 -67 -101 -131 -228 -298 -25 -33 -67 -90 -95 -127 -27 -37 -83 -111 -125 -163 -42 -52 -91 -116 -110 -142 -19 -26 -55 -74 -80 -107 -25 -33 -123 -165 -218 -293 -95 -128 -198 -266 -229 -306 l-56 -74 0 -116 0 -117 826 -3 827 -2 0 130 0 130 -625 0 c-382 0 -625 4 -625 9 0 16 89 144 119 171 15 14 49 57 76 95 45 64 71 99 170 225 19 25 45 59 58 77 30 43 113 153 162 214 41 53 50 64 323 421 89 117 194 253 232 302 l71 89 -3 116 -3 116 -777 3 -778 2 0 -130z" />
-                                        <GeometryDrawing Brush="#737373" Geometry="M7439 1178 c-1 -1014 -1 -1160 4 -1164 1 -2 77 -4 167 -4 l165 -2 3 1043 c2 828 0 1044 -10 1051 -7 4 -84 8 -170 8 l-158 0 -1 -932z" />
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                        <Image.RenderTransform>
-                            <ScaleTransform CenterY="10" ScaleX="1" ScaleY="-1" />
-                        </Image.RenderTransform>
-                    </Image>
+        <Border
+            Background="#07bf96"
+            ClipToBounds="True"
+            CornerRadius="10 0 0 10">
+            <Grid>
+                <!--  装饰圆  -->
+                <Ellipse
+                    Width="300"
+                    Height="300"
+                    Margin="80,0,0,-120"
+                    VerticalAlignment="Bottom"
+                    Fill="#5eccb4"
+                    Opacity="0.6" />
+                <Ellipse
+                    Width="180"
+                    Height="180"
+                    Margin="-100,0,0,60"
+                    VerticalAlignment="Bottom"
+                    Fill="#5bcbb3"
+                    Opacity="0.3" />
+                <Ellipse
+                    Width="140"
+                    Height="140"
+                    Margin="180,0,0,-50"
+                    VerticalAlignment="Bottom"
+                    Fill="#5bc9b2"
+                    Opacity="0.4" />
+
+                <StackPanel>
+                    <!--  LOGO区域  -->
+                    <StackPanel
+                        Margin="0,25,0,15"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Image Height="30">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup>
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M22.8,25.2H0V48h22.8V25.2z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M48,25.2H25.2V48H48V25.2z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M48,0H25.2v22.8H48V0z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M22.8,0H0v22.8h22.8V0z" />
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                        <Image Height="20" Margin="10,0,0,0">
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup>
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M17 2103 c-4 -3 -7 -476 -7 -1050 l0 -1043 165 0 166 0 -5 810 c-3 446 -1 810 3 810 8 0 66 -131 125 -285 19 -49 56 -139 81 -200 26 -60 60 -141 75 -180 46 -116 76 -186 110 -260 18 -38 51 -117 75 -175 40 -97 126 -300 160 -377 l15 -33 130 0 c151 0 137 -10 193 135 20 50 62 149 95 221 33 72 65 149 72 170 7 22 26 66 43 99 32 64 79 176 258 618 62 152 115 277 118 277 3 0 5 -367 3 -815 l-2 -815 165 0 165 0 -2 1048 -3 1047 -209 0 -210 0 -27 -65 c-15 -36 -80 -191 -145 -345 -64 -154 -120 -284 -123 -290 -4 -5 -18 -37 -31 -70 -13 -33 -60 -145 -106 -250 -45 -104 -98 -230 -117 -280 -60 -152 -123 -290 -132 -288 -5 1 -27 48 -50 105 -23 57 -58 141 -79 188 -20 47 -45 105 -56 130 -10 25 -46 107 -79 183 -34 75 -61 140 -61 142 0 3 -24 60 -54 128 -29 67 -88 205 -131 307 -43 102 -81 190 -85 195 -4 6 -17 36 -29 69 -12 32 -31 78 -42 102 l-19 44 -204 0 c-111 0 -206 -3 -209 -7z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M3321 2088 c-5 -13 -28 -66 -51 -118 -23 -52 -46 -108 -52 -125 -21 -60 -58 -153 -108 -270 -29 -66 -77 -183 -107 -260 -30 -77 -63 -156 -73 -175 -10 -19 -35 -80 -55 -135 -21 -55 -50 -125 -65 -155 -15 -30 -53 -120 -84 -199 -32 -79 -65 -160 -75 -180 -10 -20 -47 -108 -81 -196 -34 -88 -73 -182 -86 -209 -14 -27 -22 -51 -20 -54 6 -5 348 -3 354 3 2 1 32 76 67 166 34 90 80 207 102 259 l38 95 478 3 477 2 10 -22 c5 -13 46 -115 91 -228 45 -113 88 -221 97 -241 l14 -37 162 -4 c168 -4 196 -2 196 14 0 5 -14 40 -31 76 -17 37 -40 90 -51 117 -11 28 -26 64 -33 80 -41 92 -105 245 -105 252 -1 4 -9 26 -20 48 -11 22 -19 44 -20 48 0 5 -6 23 -14 40 -8 18 -32 73 -54 122 -22 50 -63 146 -90 215 -27 69 -75 186 -107 260 -31 74 -67 164 -81 200 -13 36 -38 94 -54 130 -16 36 -66 155 -110 265 -44 110 -84 207 -89 215 -7 12 -40 15 -185 18 -175 2 -176 2 -185 -20z m215 -400 c77 -205 294 -754 325 -825 11 -23 19 -47 19 -52 0 -8 -120 -11 -380 -11 -209 0 -380 3 -380 8 0 4 7 21 16 37 15 30 73 173 100 249 8 21 34 86 58 145 25 58 65 160 90 226 39 105 76 199 106 273 5 12 12 22 14 22 2 0 17 -33 32 -72z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M4798 2073 c-3 -21 -4 -495 -3 -1053 1 -766 5 -1015 13 -1014 7 1 84 2 172 2 l160 2 -2 1048 -3 1047 -166 3 -166 2 -5 -37z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M5520 1980 l0 -130 576 0 c346 0 574 -4 572 -9 -1 -5 -29 -42 -60 -83 -52 -67 -101 -131 -228 -298 -25 -33 -67 -90 -95 -127 -27 -37 -83 -111 -125 -163 -42 -52 -91 -116 -110 -142 -19 -26 -55 -74 -80 -107 -25 -33 -123 -165 -218 -293 -95 -128 -198 -266 -229 -306 l-56 -74 0 -116 0 -117 826 -3 827 -2 0 130 0 130 -625 0 c-382 0 -625 4 -625 9 0 16 89 144 119 171 15 14 49 57 76 95 45 64 71 99 170 225 19 25 45 59 58 77 30 43 113 153 162 214 41 53 50 64 323 421 89 117 194 253 232 302 l71 89 -3 116 -3 116 -777 3 -778 2 0 -130z" />
+                                            <GeometryDrawing Brush="#ffffff" Geometry="M7439 1178 c-1 -1014 -1 -1160 4 -1164 1 -2 77 -4 167 -4 l165 -2 3 1043 c2 828 0 1044 -10 1051 -7 4 -84 8 -170 8 l-158 0 -1 -932z" />
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                            <Image.RenderTransform>
+                                <ScaleTransform CenterY="10" ScaleX="1" ScaleY="-1" />
+                            </Image.RenderTransform>
+                        </Image>
+                    </StackPanel>
+                    <!--  分割线  -->
+                    <Separator
+                        Height="0.8"
+                        Margin="20,0"
+                        Background="#4db6a0" />
+                    <!--  导航区域  -->
+                    <ItemsControl Margin="0,10,0,0" ItemsSource="{Binding MenuItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <maiziWPF:ExpanderMenuControl />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
-                <!--  分割线  -->
-                <Separator Height="0.8" Background="#757575" />
-                <!--  导航区域  -->
-                <ItemsControl ItemsSource="{Binding MenuItems}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <maiziWPF:ExpanderMenuControl />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+            </Grid>
         </Border>
-        <!--  主内容区域  -->
-        <Border Grid.Column="1" CornerRadius="0 10 10 0">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Offset="1" Color="#05b790" />
-                    <GradientStop Offset="0" Color="#2c386c" />
-                </LinearGradientBrush>
-            </Border.Background>
+
+        <!--  右侧主内容区域  -->
+        <Border
+            Grid.Column="1"
+            Background="#ffffff"
+            CornerRadius="0 10 10 0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="42" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+
                 <!--  TOP按钮区域  -->
                 <Border
                     Grid.Row="0"
-                    BorderBrush="#757575"
+                    BorderBrush="#e0e0e0"
                     BorderThickness="0,0,0,1">
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Border
-                            Width="30"
-                            Height="30"
-                            Margin="0,0,8,0"
-                            CornerRadius="6">
-                            <Border.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Offset="0" Color="#7f7cf1" />
-                                    <GradientStop Offset="1" Color="#d3b7ff" />
-                                </LinearGradientBrush>
-                            </Border.Background>
-                        </Border>
                         <Button Width="40" Command="{Binding MinimizeWindowCommand}">
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Foreground" Value="#05b790" />
                                     <Setter Property="Cursor" Value="Hand" />
                                     <Setter Property="Template">
                                         <Setter.Value>
@@ -128,6 +143,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="Background" Value="#07bf96" />
+                                                        <Setter Property="Foreground" Value="#ffffff" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -141,7 +157,7 @@
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Foreground" Value="#05b790" />
                                     <Setter Property="Cursor" Value="Hand" />
                                     <Setter Property="Template">
                                         <Setter.Value>
@@ -152,6 +168,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="Background" Value="#07bf96" />
+                                                        <Setter Property="Foreground" Value="#ffffff" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -165,7 +182,7 @@
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
                                     <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="Foreground" Value="#05b790" />
                                     <Setter Property="Cursor" Value="Hand" />
                                     <Setter Property="Template">
                                         <Setter.Value>
@@ -176,6 +193,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="Background" Value="#ff4b5c" />
+                                                        <Setter Property="Foreground" Value="#ffffff" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -187,6 +205,7 @@
                         </Button>
                     </StackPanel>
                 </Border>
+
                 <!--  TAB区域  -->
                 <TabControl
                     Grid.Row="1"
@@ -196,15 +215,15 @@
                     <TabControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel
-                                Height="18"
+                                Height="20"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
                                 <TextBlock
-                                    FontSize="15"
-                                    Foreground="#ffffff"
+                                    FontSize="13"
+                                    Foreground="#333333"
                                     Text="{Binding DataContext.DataContext.Header, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabItem}}" />
                                 <Button
-                                    Margin="8,2,0,0"
+                                    Margin="8,0,0,0"
                                     Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl}}"
                                     CommandParameter="{Binding DataContext.DataContext.Component, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabItem}}"
                                     Visibility="{Binding DataContext.DataContext.Component, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabItem}, Converter={StaticResource VisibilityConverter}, ConverterParameter='DashboardView'}">
@@ -213,10 +232,12 @@
                                             <materialDesign:PackIcon
                                                 x:Name="ClosePackIcon"
                                                 Kind="Close"
-                                                Opacity="0.3" />
+                                                Foreground="#999999"
+                                                Width="12"
+                                                Height="12" />
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="ClosePackIcon" Property="Background" Value="#9c2f4f" />
+                                                    <Setter TargetName="ClosePackIcon" Property="Foreground" Value="#ff4b5c" />
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>

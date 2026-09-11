@@ -25,7 +25,21 @@ namespace MaiziWPF.Services.Application
             {
                 menuList = _repository.SelectMenuListByUserId(menu, userId);
             }
+            SetMenuLevel(menuList, 1);
             return menuList;
+        }
+
+        private void SetMenuLevel(List<SysMenu> menus, int level)
+        {
+            if (menus == null) return;
+            foreach (var menu in menus)
+            {
+                menu.Level = level;
+                if (menu.Childs != null && menu.Childs.Count > 0)
+                {
+                    SetMenuLevel(menu.Childs, level + 1);
+                }
+            }
         }
 
         public SysMenu SelectMenuById(long menuId)
