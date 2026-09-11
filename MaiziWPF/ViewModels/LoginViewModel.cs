@@ -6,6 +6,7 @@ using MaiziWPF.Views;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
+using Prism.Navigation;
 using Serilog;
 using System;
 using System.Windows;
@@ -58,7 +59,9 @@ namespace MaiziWPF.ViewModels
             }
             if (BCrypt.Net.BCrypt.Verify(_password, user.Password))
             {
-                _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(MainView));
+                var parameters = new NavigationParameters();
+                parameters.Add("CurrentUser", user);
+                _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(MainView), parameters);
             }
             else
             {

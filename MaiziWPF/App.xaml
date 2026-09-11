@@ -28,12 +28,12 @@
                 <MenuItem
                     Command="{Binding ShowWindowCommand}"
                     FontSize="14"
-                    Header="Show Window" />
+                    Header="显示窗口" />
                 <Separator />
                 <MenuItem
                     Command="{Binding CloseWindowCommand}"
                     FontSize="14"
-                    Header="Exit" />
+                    Header="退出系统" />
             </ContextMenu>
             <Style x:Key="FormCardStyle" TargetType="materialDesign:Card">
                 <Setter Property="Margin" Value="0,0,10,6" />

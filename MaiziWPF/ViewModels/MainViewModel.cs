@@ -23,11 +23,14 @@ namespace MaiziWPF.ViewModels
         private readonly Window _mainWindow;
         private readonly IRegionManager _regionManager;
         private String _maxsizeIcon = "Maximize";
+        private SysUser _currentUser;
+        private Boolean _isMoreMenuOpen;
         public ICommand CloseWindowCommand { get; }
         public ICommand MinimizeWindowCommand { get; }
         public ICommand MaximizeWindowCommand { get; }
         public ICommand CloseTabCommand { get; }
         public ICommand MenuSelectionCommand { get; }
+        public ICommand ToggleMoreMenuCommand { get; }
         public List<SysMenu> MenuItems { get; }
         public object _selectedItem;
         public object SelectedItem
@@ -39,6 +42,16 @@ namespace MaiziWPF.ViewModels
         {
             get { return _maxsizeIcon; }
             set { SetProperty(ref _maxsizeIcon, value); }
+        }
+        public SysUser CurrentUser
+        {
+            get { return _currentUser; }
+            set { SetProperty(ref _currentUser, value); }
+        }
+        public Boolean IsMoreMenuOpen
+        {
+            get { return _isMoreMenuOpen; }
+            set { SetProperty(ref _isMoreMenuOpen, value); }
         }
 
         public MainViewModel(IRegionManager regionManager, IContainerProvider containerProvider, ISysMenuService menuService)
@@ -67,6 +80,10 @@ namespace MaiziWPF.ViewModels
                 {
                     tabRegion.Remove(currentView);
                 }
+            });
+            ToggleMoreMenuCommand = new DelegateCommand(() =>
+            {
+                IsMoreMenuOpen = !IsMoreMenuOpen;
             });
             MenuItems = _menuService.SelectMenuList(new SysMenu()
             {
@@ -104,6 +121,12 @@ namespace MaiziWPF.ViewModels
      
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            var parameters = navigationContext.Parameters;
+            if (parameters.ContainsKey("CurrentUser"))
+            {
+                CurrentUser = parameters.GetValue<SysUser>("CurrentUser");
+            }
+
             var m = MenuItems.First();
             if (m != null)
             {

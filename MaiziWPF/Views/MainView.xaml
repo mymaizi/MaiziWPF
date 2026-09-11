@@ -13,6 +13,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <maiziWPF:VisibilityConverter x:Key="VisibilityConverter" />
+        <maiziWPF:FirstCharConverter x:Key="FirstCharConverter" />
     </UserControl.Resources>
     <Grid Margin="20">
         <Grid.Effect>
@@ -127,83 +128,281 @@
                     Grid.Row="0"
                     BorderBrush="#e0e0e0"
                     BorderThickness="0,0,0,1">
-                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Width="40" Command="{Binding MinimizeWindowCommand}">
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="#05b790" />
-                                    <Setter Property="Cursor" Value="Hand" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#07bf96" />
-                                                        <Setter Property="Foreground" Value="#ffffff" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                            <materialDesign:PackIcon Kind="Minimize" />
-                        </Button>
-                        <Button Width="40" Command="{Binding MaximizeWindowCommand}">
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="#05b790" />
-                                    <Setter Property="Cursor" Value="Hand" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#07bf96" />
-                                                        <Setter Property="Foreground" Value="#ffffff" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                            <materialDesign:PackIcon Kind="{Binding MaxsizeIcon}" />
-                        </Button>
-                        <Button Width="40" Command="{Binding CloseWindowCommand}">
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="#05b790" />
-                                    <Setter Property="Cursor" Value="Hand" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="0 8 0 0">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#ff4b5c" />
-                                                        <Setter Property="Foreground" Value="#ffffff" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                            <materialDesign:PackIcon Kind="Close" />
-                        </Button>
-                    </StackPanel>
+                    <Grid>
+                        <!--  窗口控制按钮 + 用户信息  -->
+                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                            <!--  用户头像（悬停显示下拉菜单）  -->
+                            <Border x:Name="UserAvatarBorder"
+                                Width="32"
+                                Height="32"
+                                Margin="0,0,24,0"
+                                CornerRadius="16"
+                                Background="#07bf96"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"
+                                MouseEnter="UserAvatarBorder_MouseEnter"
+                                MouseLeave="UserAvatarBorder_MouseLeave">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Foreground="#ffffff"
+                                    Text="{Binding CurrentUser.NickName, Converter={StaticResource FirstCharConverter}, FallbackValue='A'}" />
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Opacity" Value="1" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="0.85" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                            <!--  分割线  -->
+                            <Border
+                                Width="1"
+                                Height="16"
+                                Margin="0,0,12,0"
+                                Background="#e0e0e0"
+                                VerticalAlignment="Center" />
+                            <!--  下拉菜单  -->
+                            <Popup
+                                x:Name="UserMenuPopup"
+                                IsOpen="{Binding IsMoreMenuOpen, Mode=TwoWay}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=UserAvatarBorder}"
+                                HorizontalOffset="-60"
+                                VerticalOffset="6"
+                                AllowsTransparency="True"
+                                StaysOpen="True"
+                                MouseDown="UserMenuPopup_MouseDown">
+                                <Border Background="Transparent" Margin="6">
+                                    <Border
+                                        Width="240"
+                                        Background="#ffffff"
+                                        CornerRadius="8"
+                                        BorderBrush="#e0e0e0"
+                                        BorderThickness="1">
+                                        <Border.Effect>
+                                            <DropShadowEffect
+                                                BlurRadius="15"
+                                                Opacity="0.2"
+                                                ShadowDepth="2"
+                                                Direction="270" />
+                                        </Border.Effect>
+                                        <Border
+                                            CornerRadius="8"
+                                            ClipToBounds="True"
+                                            Background="#ffffff"
+                                            MouseEnter="UserMenuPopup_MouseEnter"
+                                            MouseLeave="UserMenuPopup_MouseLeave">
+                                            <StackPanel Margin="0,8">
+                                                <!--  顶部：头像 + 昵称 + 操作链接  -->
+                                                <Grid Margin="16,14,16,10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border
+                                                        Width="44"
+                                                        Height="44"
+                                                        CornerRadius="22"
+                                                        Background="#07bf96"
+                                                        VerticalAlignment="Center">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            FontSize="18"
+                                                            FontWeight="Bold"
+                                                            Foreground="#ffffff"
+                                                            Text="{Binding CurrentUser.NickName, Converter={StaticResource FirstCharConverter}, FallbackValue='A'}" />
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                        <TextBlock
+                                                            FontSize="14"
+                                                            FontWeight="Medium"
+                                                            Foreground="#333333"
+                                                            Text="{Binding CurrentUser.NickName, FallbackValue='管理员'}" />
+                                                        <TextBlock
+                                                            FontSize="11"
+                                                            Foreground="#999999"
+                                                            Text="{Binding CurrentUser.UserName, FallbackValue='admin'}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Border Height="1" Margin="12,0,12,6" Background="#f5f5f5" />
+                                                <!--  菜单项  -->
+                                                <Button
+                                                    Margin="4,2"
+                                                    HorizontalContentAlignment="Left"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}" Padding="16,10" CornerRadius="4">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <materialDesign:PackIcon Kind="Account" Width="18" Height="18" Foreground="#666666" Margin="0,0,12,0" />
+                                                                                <TextBlock FontSize="13" Foreground="#333333" Text="个人信息" />
+                                                                            </StackPanel>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#f5f5f5" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                                <Button
+                                                    Margin="4,2"
+                                                    HorizontalContentAlignment="Left"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}" Padding="16,10" CornerRadius="4">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <materialDesign:PackIcon Kind="Cog" Width="18" Height="18" Foreground="#666666" Margin="0,0,12,0" />
+                                                                                <TextBlock FontSize="13" Foreground="#333333" Text="系统设置" />
+                                                                            </StackPanel>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#f5f5f5" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                              <Border Height="1" Margin="12,0,12,6" Background="#f5f5f5" />
+                                                <Button
+                                                    Margin="4,2"
+                                                    HorizontalContentAlignment="Left"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}" Padding="16,10" CornerRadius="4">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <materialDesign:PackIcon Kind="Logout" Width="18" Height="18" Foreground="#ff4b5c" Margin="0,0,12,0" />
+                                                                                <TextBlock FontSize="13" Foreground="#ff4b5c" Text="退出登录" />
+                                                                            </StackPanel>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#fff0f0" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </StackPanel>
+                                        </Border>
+                                    </Border>
+                                </Border>
+                            </Popup>
+                            <!--  最小化  -->
+                            <Button Width="40" Command="{Binding MinimizeWindowCommand}">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#05b790" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#07bf96" />
+                                                            <Setter Property="Foreground" Value="#ffffff" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <materialDesign:PackIcon Kind="Minimize" />
+                            </Button>
+                            <!--  最大化  -->
+                            <Button Width="40" Command="{Binding MaximizeWindowCommand}">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#05b790" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#07bf96" />
+                                                            <Setter Property="Foreground" Value="#ffffff" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <materialDesign:PackIcon Kind="{Binding MaxsizeIcon}" />
+                            </Button>
+                            <!--  关闭  -->
+                            <Button Width="40" Command="{Binding CloseWindowCommand}">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#05b790" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="0 8 0 0">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#ff4b5c" />
+                                                            <Setter Property="Foreground" Value="#ffffff" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                                <materialDesign:PackIcon Kind="Close" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
                 <!--  TAB区域  -->
