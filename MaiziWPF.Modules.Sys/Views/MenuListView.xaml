@@ -86,18 +86,19 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" Text="菜单名称" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
-                            <TextBox Grid.Column="1" Padding="8,6" Text="{Binding MenuName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox Grid.Column="1" Padding="8,6" FontSize="13" Text="{Binding MenuName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <TextBlock Grid.Column="2" Text="状态" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="16,0,8,0" />
                             <ComboBox
                                 Grid.Column="3"
                                 Padding="8,6"
+                                FontSize="13"
                                 maiziWPF:DataDictAssist.Type="sys_normal_disable"
                                 SelectedValuePath="DictValue"
                                 SelectedValue="{Binding Status, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate DataType="{x:Type domain:SysDictData}">
-                                        <TextBlock Text="{Binding DictLabel}" />
+                                        <TextBlock Text="{Binding DictLabel}" FontSize="13" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>

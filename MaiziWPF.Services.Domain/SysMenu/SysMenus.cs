@@ -105,12 +105,6 @@ namespace MaiziWPF.Services.Domain
         public String Ext { get; set; }
 
         /// <summary>
-        /// 备注
-        /// </summary>
-        [Column(Name = "remark", DbType = "varchar(500)")]
-        public String Remark { get; set; }
-
-        /// <summary>
         /// 子菜单
         /// </summary>
         [Navigate(nameof(ParentId))]

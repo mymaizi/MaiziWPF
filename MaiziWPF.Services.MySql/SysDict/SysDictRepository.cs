@@ -16,7 +16,7 @@ namespace MaiziWPF.Services.MySql
 
         public List<SysDictData> SelectDictDataByType(string dictType)
         {
-            return _fsql.Select<SysDictData>().Where(w => w.Status == "0" && w.DictType == dictType).OrderBy(o => o.DictSort).ToList();
+            return _fsql.Select<SysDictData>().Where(w => w.Status == "N" && w.DictType == dictType).OrderBy(o => o.DictSort).ToList();
         }
 
         public List<SysDictType> SelectDictTypeList(QueryDictTypeInput input)
@@ -37,7 +37,7 @@ namespace MaiziWPF.Services.MySql
         public SysDictType SelectDictTypeById(long dictId)
         {
             return _fsql.Select<SysDictType>()
-                .Where(d => d.DictId == dictId && d.DelFlag == "0")
+                .Where(d => d.DictId == dictId && d.DelFlag == "0"&& d.Status == "N")
                 .First();
         }
 
@@ -56,7 +56,7 @@ namespace MaiziWPF.Services.MySql
         public int DeleteDictTypeById(long dictId)
         {
             return _fsql.Update<SysDictType>()
-                .Set(d => d.DelFlag, "2")
+                .Set(d => d.DelFlag, "1")
                 .Where(d => d.DictId == dictId)
                 .ExecuteAffrows();
         }
@@ -109,7 +109,7 @@ namespace MaiziWPF.Services.MySql
         public int DeleteDictDataById(long dictCode)
         {
             return _fsql.Update<SysDictData>()
-                .Set(d => d.DelFlag, "2")
+                .Set(d => d.DelFlag, "1")
                 .Where(d => d.DictCode == dictCode)
                 .ExecuteAffrows();
         }

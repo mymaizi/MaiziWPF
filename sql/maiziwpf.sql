@@ -122,6 +122,7 @@ create table sys_menu (
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
     remark            varchar(500)    default ''                 comment '备注',
+    del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (menu_id)
 ) engine=innodb comment = '菜单权限表';
 -- ==================== 目录（M）====================
@@ -267,6 +268,8 @@ create table sys_dict_type
     update_by        bigint(20)      default null               comment '更新者',
     update_time      datetime                                   comment '更新时间',
     remark           varchar(500)    default null               comment '备注',
+    status           char(1)         default 'N'                comment '是否停用（Y是 N否）',
+    del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (dict_id),
     unique (dict_type)
 ) engine=innodb comment = '字典类型表';
@@ -280,8 +283,6 @@ create table sys_dict_data
     dict_label       varchar(100)    default ''                 comment '字典标签',
     dict_value       varchar(100)    default ''                 comment '字典键值',
     dict_type        varchar(100)    default ''                 comment '字典类型',
-    css_class        varchar(100)    default null               comment '样式属性（其他样式扩展）',
-    list_class       varchar(100)    default null               comment '表格回显样式',
     is_default       char(1)         default 'N'                comment '是否默认（Y是 N否）',
     create_dept      bigint(20)      default null               comment '创建部门',
     create_by        bigint(20)      default null               comment '创建者',
@@ -289,6 +290,8 @@ create table sys_dict_data
     update_by        bigint(20)      default null               comment '更新者',
     update_time      datetime                                   comment '更新时间',
     remark           varchar(500)    default null               comment '备注',
+    status           char(1)         default 'N'                comment '是否停用（Y是 N否）',
+    del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (dict_code),
     key idx_sys_dict_data_type (dict_type)
 ) engine=innodb comment = '字典数据表';

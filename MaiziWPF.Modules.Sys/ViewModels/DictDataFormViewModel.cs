@@ -120,8 +120,6 @@ namespace MaiziWPF.Modules.Sys
                 DictLabel = DictLabel,
                 DictValue = DictValue,
                 DictSort = DictSort,
-                CssClass = CssClass,
-                ListClass = ListClass,
                 IsDefault = IsDefault,
                 Status = Status,
                 Remark = Remark

@@ -36,7 +36,13 @@ namespace MaiziWPF.Services.Domain
         public DateTime UpdateTime { get; set; }
 
         /// <summary>
-        /// 删除标志（0代表存在 2代表删除）
+        /// 备注
+        /// </summary>
+        [Column(Name = "remark", DbType = "varchar(500)")]
+        public String Remark { get; set; }
+
+        /// <summary>
+        /// 删除标志（0代表存在 1代表删除）
         /// </summary>
         [Column(Name = "del_flag", DbType = "char(1) default '0'")]
         public String DelFlag { get; set; } = "0";
