@@ -77,7 +77,7 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _perms, value); }
         }
 
-        private string _status = "0";
+        private string _status = "N";
         public string Status
         {
             get { return _status; }
@@ -91,6 +91,48 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
+        private bool _isExternalLink;
+        public bool IsExternalLink
+        {
+            get { return _isExternalLink; }
+            set { SetProperty(ref _isExternalLink, value); }
+        }
+
+        private string _path;
+        public string Path
+        {
+            get { return _path; }
+            set { SetProperty(ref _path, value); }
+        }
+
+        private string _query;
+        public string Query
+        {
+            get { return _query; }
+            set { SetProperty(ref _query, value); }
+        }
+
+        private bool _isCache = true;
+        public bool IsCache
+        {
+            get { return _isCache; }
+            set { SetProperty(ref _isCache, value); }
+        }
+
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set { SetProperty(ref _isVisible, value); }
+        }
+
+        private bool _isFrame = true;
+        public bool IsFrame
+        {
+            get { return _isFrame; }
+            set { SetProperty(ref _isFrame, value); }
+        }
+
         public MenuFormViewModel(ISysMenuService menuService, IDialogHostService dialogHostService)
             : base(dialogHostService)
         {
@@ -101,7 +143,23 @@ namespace MaiziWPF.Modules.Sys
             {
                 SaveMenu();
             });
+
+            OpenIconPickerCommand = new DelegateCommand(async () =>
+            {
+                var view = new IconPickerView();
+                if (view.DataContext is IconPickerViewModel vm)
+                {
+                    vm.SelectedIcon = Icon;
+                    await _dialogHostService.ShowDialogAsync(view, autoClose: false);
+                    if (!string.IsNullOrEmpty(vm.SelectedIcon))
+                    {
+                        Icon = vm.SelectedIcon;
+                    }
+                }
+            });
         }
+
+        public DelegateCommand OpenIconPickerCommand { get; }
 
         public void LoadMenuTree()
         {
@@ -129,7 +187,12 @@ namespace MaiziWPF.Modules.Sys
                 Component = Component,
                 Perms = Perms,
                 Status = Status,
-                Remark = Remark
+                Remark = Remark,
+                Path = Path,
+                QueryParam = Query,
+                IsFrame = IsFrame ? "1" : "0",
+                IsCache = IsCache ? "0" : "1",
+                Visible = IsVisible ? "0" : "1",
             };
 
             if (!_menuService.CheckMenuNameUnique(menu))

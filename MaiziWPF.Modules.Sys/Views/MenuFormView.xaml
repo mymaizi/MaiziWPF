@@ -7,189 +7,463 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    Width="550" Height="520">
-    <prism:Dialog.WindowStyle>
-        <Style TargetType="Window">
-            <Setter Property="SizeToContent" Value="WidthAndHeight" />
-            <Setter Property="ResizeMode" Value="CanResizeWithGrip" />
-            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
-        </Style>
-    </prism:Dialog.WindowStyle>
+    Width="620" Height="580">
     <UserControl.Resources>
-        <maiziWPF:DateTimeConverter x:Key="DateTimeConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <maiziWPF:BooleanConverter x:Key="EqualToBooleanConverter" />
+        <maiziWPF:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#606266" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Right" />
+        </Style>
+        <Style x:Key="RadioStyle" TargetType="RadioButton">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#606266" />
+            <Setter Property="Margin" Value="0,0,24,0" />
+        </Style>
     </UserControl.Resources>
-    <Grid Margin="20">
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="1" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="上级菜单"
-            FontSize="14" />
-        <ComboBox
-            Grid.Row="0"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            ItemsSource="{Binding MenuTreeItems}"
-            SelectedValue="{Binding ParentId}"
-            SelectedValuePath="Id"
-            DisplayMemberPath="MenuName"
-            FontSize="14"
-            materialDesign:HintAssist.Hint="顶级菜单" />
+        <!--  标题栏  -->
+        <Grid Grid.Row="0" Margin="20,16,16,12">
+            <TextBlock
+                FontSize="16"
+                FontWeight="SemiBold"
+                Foreground="#333333"
+                Text="添加菜单" />
+            <Button
+                HorizontalAlignment="Right"
+                Width="28"
+                Height="28"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                Command="{Binding CancelCommand}"
+                Style="{StaticResource MaterialDesignFlatButton}">
+                <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#999999" />
+            </Button>
+        </Grid>
 
-        <TextBlock
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="菜单类型"
-            FontSize="14" />
-        <ComboBox
-            Grid.Row="1"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            SelectedItem="{Binding MenuType}"
-            FontSize="14">
-            <ComboBoxItem Content="目录" Tag="M" />
-            <ComboBoxItem Content="菜单" Tag="C" />
-            <ComboBoxItem Content="按钮" Tag="F" />
-        </ComboBox>
+        <Border Grid.Row="1" Background="#f0f0f0" />
 
-        <TextBlock
-            Grid.Row="2"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="菜单名称"
-            FontSize="14" />
-        <TextBox
-            Grid.Row="2"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            Text="{Binding MenuName}"
-            FontSize="14"
-            materialDesign:HintAssist.Hint="请输入菜单名称" />
+        <!--  表单内容  -->
+        <ScrollViewer Grid.Row="2" Margin="20,12,20,12" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!--  上级菜单  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="上级菜单" />
+                    <ComboBox
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        ItemsSource="{Binding MenuTreeItems}"
+                        SelectedValue="{Binding ParentId}"
+                        SelectedValuePath="Id"
+                        DisplayMemberPath="MenuName"
+                        materialDesign:HintAssist.Hint="顶级菜单" />
+                </Grid>
 
-        <TextBlock
-            Grid.Row="3"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="显示排序"
-            FontSize="14" />
-        <TextBox
-            Grid.Row="3"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            Text="{Binding OrderNum}"
-            FontSize="14"
-            materialDesign:HintAssist.Hint="请输入排序号" />
+                <!--  菜单类型  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="菜单类型" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="目录"
+                            GroupName="MenuType"
+                            IsChecked="{Binding MenuType, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=M}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="菜单"
+                            GroupName="MenuType"
+                            IsChecked="{Binding MenuType, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=C}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="按钮"
+                            GroupName="MenuType"
+                            IsChecked="{Binding MenuType, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=F}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
+                </Grid>
 
-        <TextBlock
-            Grid.Row="4"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="图标"
-            FontSize="14" />
-        <TextBox
-            Grid.Row="4"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            Text="{Binding Icon}"
-            FontSize="14"
-            materialDesign:HintAssist.Hint="如: Home, Settings" />
+                <!--  菜单图标（目录/菜单显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="M">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="菜单图标" />
+                    <Grid Grid.Column="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Width="36"
+                            Height="36"
+                            Margin="0,0,8,0"
+                            Background="#f5f5f5"
+                            BorderBrush="#dcdfe6"
+                            BorderThickness="1"
+                            Command="{Binding OpenIconPickerCommand}"
+                            ToolTip="选择图标">
+                            <materialDesign:PackIcon
+                                Width="20"
+                                Height="20"
+                                Foreground="#606266"
+                                Kind="{Binding Icon, TargetNullValue=Image}" />
+                        </Button>
+                        <TextBox
+                            Grid.Column="1"
+                            Height="36"
+                            FontSize="13"
+                            IsReadOnly="True"
+                            Text="{Binding Icon}"
+                            materialDesign:HintAssist.Hint="点击左侧按钮选择图标" />
+                    </Grid>
+                </Grid>
 
-        <TextBlock
-            Grid.Row="5"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="视图路径"
-            FontSize="14" />
-        <TextBox
-            Grid.Row="5"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            Text="{Binding Component}"
-            FontSize="14"
-            materialDesign:HintAssist.Hint="如: Views/UserListView" />
+                <!--  菜单名称 + 显示排序  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Foreground="#ff4d4f" Text="* 菜单名称" />
+                    <TextBox
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding MenuName}"
+                        materialDesign:HintAssist.Hint="请输入菜单名称" />
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Foreground="#ff4d4f" Text="* 显示排序" />
+                    <TextBox
+                        Grid.Column="5"
+                        Height="36"
+                        Width="120"
+                        HorizontalAlignment="Left"
+                        FontSize="13"
+                        Text="{Binding OrderNum}"
+                        materialDesign:HintAssist.Hint="请输入排序号" />
+                </Grid>
 
-        <TextBlock
-            Grid.Row="6"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="权限标识"
-            FontSize="14" />
-        <TextBox
-            Grid.Row="6"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            Text="{Binding Perms}"
-            FontSize="14"
-            materialDesign:HintAssist.Hint="如: system:user:list" />
+                <!--  是否外链 + 路由地址（目录/菜单显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="M">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="是否外链" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="是"
+                            GroupName="IsFrame"
+                            IsChecked="{Binding IsFrame}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="否"
+                            GroupName="IsFrame"
+                            IsChecked="{Binding IsFrame, Converter={StaticResource InverseBooleanConverter}}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="路由地址" />
+                    <TextBox
+                        Grid.Column="5"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding Path}"
+                        materialDesign:HintAssist.Hint="请输入路由地址" />
+                </Grid>
 
-        <TextBlock
-            Grid.Row="7"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            VerticalAlignment="Center"
-            Text="菜单状态"
-            FontSize="14" />
-        <ComboBox
-            Grid.Row="7"
-            Grid.Column="1"
-            Height="40"
-            Margin="0,4"
-            SelectedItem="{Binding Status}"
-            FontSize="14">
-            <ComboBoxItem Content="正常" Tag="0" />
-            <ComboBoxItem Content="停用" Tag="1" />
-        </ComboBox>
+                <!--  组件路径 + 权限字符（仅菜单显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="组件路径" />
+                    <TextBox
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding Component}"
+                        materialDesign:HintAssist.Hint="请输入组件路径" />
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="权限字符" />
+                    <TextBox
+                        Grid.Column="5"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding Perms}"
+                        materialDesign:HintAssist.Hint="请输入权限标识" />
+                </Grid>
 
+                <!--  权限字符（仅按钮显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="F">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="权限字符" />
+                    <TextBox
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding Perms}"
+                        materialDesign:HintAssist.Hint="请输入权限标识" />
+                </Grid>
+
+                <!--  路由参数 + 是否缓存（仅菜单显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="路由参数" />
+                    <TextBox
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding Query}"
+                        materialDesign:HintAssist.Hint="请输入路由参数" />
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="是否缓存" />
+                    <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="缓存"
+                            GroupName="IsCache"
+                            IsChecked="{Binding IsCache}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="不缓存"
+                            GroupName="IsCache"
+                            IsChecked="{Binding IsCache, Converter={StaticResource InverseBooleanConverter}}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
+                </Grid>
+
+                <!--  显示状态 + 菜单状态（目录/菜单显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="M">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="显示状态" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="显示"
+                            GroupName="IsVisible"
+                            IsChecked="{Binding IsVisible}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="隐藏"
+                            GroupName="IsVisible"
+                            IsChecked="{Binding IsVisible, Converter={StaticResource InverseBooleanConverter}}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="菜单状态" />
+                    <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="正常"
+                            GroupName="Status"
+                            IsChecked="{Binding Status, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=N}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="停用"
+                            GroupName="Status"
+                            IsChecked="{Binding Status, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=Y}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
+                </Grid>
+
+                <!--  菜单状态（仅按钮显示）  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="F">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="菜单状态" />
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="正常"
+                            GroupName="Status"
+                            IsChecked="{Binding Status, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=0}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="停用"
+                            GroupName="Status"
+                            IsChecked="{Binding Status, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=1}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
+                </Grid>
+
+                <!--  备注  -->
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="备注" />
+                    <TextBox
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        Text="{Binding Remark}"
+                        materialDesign:HintAssist.Hint="请输入备注" />
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="3" Background="#f0f0f0" />
+
+        <!--  底部按钮  -->
         <StackPanel
-            Grid.Row="8"
-            Grid.Column="1"
-            Margin="0,16,0,0"
+            Grid.Row="4"
+            Margin="20,12,20,16"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
                 Margin="0,0,12,0"
-                Padding="16,6"
+                Padding="24,8"
+                Background="#1890ff"
+                BorderBrush="#1890ff"
                 Command="{Binding AcceptCommand}"
                 Content="确定"
                 Foreground="#fff"
-                Background="#1890ff"
-                BorderBrush="#1890ff"
                 Style="{StaticResource MaterialDesignRaisedLightButton}" />
             <Button
-                Padding="16,6"
+                Padding="24,8"
+                BorderBrush="#dcdfe6"
                 Command="{Binding CancelCommand}"
                 Content="取消"
+                Foreground="#606266"
                 Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
         </StackPanel>
     </Grid>

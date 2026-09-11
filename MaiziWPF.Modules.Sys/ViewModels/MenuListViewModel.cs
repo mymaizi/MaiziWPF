@@ -82,7 +82,10 @@ namespace MaiziWPF.Modules.Sys
         private async void OpenMenuForm(SysMenu menu)
         {
             var isEdit = menu != null;
-            var viewModel = new MenuFormViewModel(_menuService, _dialogHostService);
+            var view = new MenuFormView();
+            var viewModel = view.DataContext as MenuFormViewModel;
+            if (viewModel == null) return;
+
             viewModel.LoadMenuTree();
             viewModel.IsEditMode = isEdit;
 
@@ -98,6 +101,11 @@ namespace MaiziWPF.Modules.Sys
                 viewModel.Perms = menu.Perms;
                 viewModel.Status = menu.Status;
                 viewModel.Remark = menu.Remark;
+                viewModel.Path = menu.Path;
+                viewModel.Query = menu.QueryParam;
+                viewModel.IsFrame = menu.IsFrame == "1";
+                viewModel.IsCache = menu.IsCache == "0";
+                viewModel.IsVisible = menu.Visible == "0";
             }
 
             viewModel.OnSaveSuccessCallback = () =>
@@ -105,7 +113,7 @@ namespace MaiziWPF.Modules.Sys
                 SearchMenu();
             };
 
-            await _dialogHostService.ShowDialogAsync(viewModel, autoClose: false);
+            await _dialogHostService.ShowDialogAsync(view, autoClose: false);
         }
 
         private async System.Threading.Tasks.Task DeleteMenu(SysMenu menu)

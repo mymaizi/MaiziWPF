@@ -38,6 +38,9 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterDialog<UserFormView>();
             containerRegistry.RegisterDialog<DeptFormView>();
             containerRegistry.RegisterDialog<MenuFormView>();
+            ViewModelLocationProvider.Register<MenuFormView, MenuFormViewModel>();
+            containerRegistry.RegisterDialog<IconPickerView>();
+            ViewModelLocationProvider.Register<IconPickerView, IconPickerViewModel>();
             containerRegistry.RegisterDialog<RoleFormView>();
             containerRegistry.RegisterDialog<PostFormView>();
             containerRegistry.RegisterDialog<DictTypeFormView>();
