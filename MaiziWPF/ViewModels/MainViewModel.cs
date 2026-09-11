@@ -127,10 +127,14 @@ namespace MaiziWPF.ViewModels
                 CurrentUser = parameters.GetValue<SysUser>("CurrentUser");
             }
 
-            var m = MenuItems.First();
+            var m = MenuItems.FirstOrDefault(x => !string.IsNullOrEmpty(x.Component));
             if (m != null)
             {
-                _regionManager.Regions[RegionNames.TabRegion].Add(GetView(m));
+                var view = GetView(m);
+                if (view != null)
+                {
+                    _regionManager.Regions[RegionNames.TabRegion].Add(view);
+                }
             }
         }
 
