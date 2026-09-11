@@ -7,181 +7,366 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True">
-    <UserControl.Resources>
-        <maiziWPF:DateTimeConverter x:Key="DateTimeConverter" />
-    </UserControl.Resources>
+
     <Border Background="WhiteSmoke" CornerRadius="0 0 10 0">
-        <Grid Margin="10,6,0,0">
+        <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <WrapPanel>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <TextBox
-                        materialDesign:HintAssist.Hint="请输入菜单名称"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        Text="{Binding MenuName}" />
-                </materialDesign:Card>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <ComboBox
-                        maiziWPF:DataDictAssist.Type="sys_normal_disable"
-                        materialDesign:HintAssist.Hint="菜单状态"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        SelectedItem="{Binding Status}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type domain:SysDictData}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding DictLabel}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </materialDesign:Card>
-                <StackPanel Margin="6,0,0,6" Orientation="Horizontal">
-                    <Button
-                        Margin="0,0,8,0"
-                        Background="#1890ff"
-                        BorderBrush="#1890ff"
-                        Command="{Binding SearchButtonCommand}"
-                        Content="搜索"
-                        Foreground="#fff"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                    <Button
-                        BorderBrush="#dcdfe6"
-                        Content="重置"
-                        Foreground="#606266"
-                        Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
-                </StackPanel>
-            </WrapPanel>
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <StackPanel Margin="0,6,10,6" Orientation="Horizontal">
-                    <Button
-                        Padding="8,4"
-                        Background="#1890ff"
-                        BorderBrush="#1890ff"
-                        Command="{Binding AddMenuCommand}"
-                        Content="新增"
-                        Foreground="#fff"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                </StackPanel>
-                <materialDesign:TreeListView
-                    Grid.Row="1"
-                    FontSize="13"
-                    ItemsSource="{Binding MenuItems}">
-                    <materialDesign:TreeListView.Resources>
-                        <HierarchicalDataTemplate DataType="{x:Type domain:SysMenu}" ItemsSource="{Binding Childs}" />
-                    </materialDesign:TreeListView.Resources>
-                    <materialDesign:TreeListView.View>
-                        <GridView>
-                            <GridView.ColumnHeaderContainerStyle>
-                                <Style TargetType="GridViewColumnHeader">
-                                    <Setter Property="FontSize" Value="14" />
+
+            <!--  筛选条件  -->
+            <Border Grid.Row="0" Margin="12,12,12,6" Background="#ffffff" CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--  筛选条件标题栏  -->
+                    <Grid Margin="16,12,16,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="筛选条件" Foreground="#333333" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <ToggleButton x:Name="FilterToggle" Grid.Column="1" Width="24" Height="24" IsChecked="True">
+                            <materialDesign:PackIcon Kind="ChevronUp" Foreground="#595959" Width="16" Height="16" />
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
                                     <Setter Property="Template">
                                         <Setter.Value>
-                                            <ControlTemplate TargetType="GridViewColumnHeader">
-                                                <Border Height="35">
-                                                    <ContentPresenter Margin="20,0,0,0" VerticalAlignment="Center" />
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="0">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <materialDesign:PackIcon Kind="ChevronDown" Foreground="#595959" Width="16" Height="16" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </Grid>
+
+                    <!--  筛选字段  -->
+                    <Border x:Name="FilterPanel" Grid.Row="1" Padding="16,0,16,16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=FilterToggle}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="菜单名称" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBox Grid.Column="1" Padding="8,6" Text="{Binding MenuName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <TextBlock Grid.Column="2" Text="状态" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="16,0,8,0" />
+                            <ComboBox
+                                Grid.Column="3"
+                                Padding="8,6"
+                                maiziWPF:DataDictAssist.Type="sys_normal_disable"
+                                SelectedItem="{Binding Status, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type domain:SysDictData}">
+                                        <TextBlock Text="{Binding DictLabel}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    Padding="16,6"
+                                    Background="#1890ff"
+                                    BorderBrush="#1890ff"
+                                    Command="{Binding SearchButtonCommand}"
+                                    Content="搜索"
+                                    Foreground="#fff"
+                                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                                <Button
+                                    Padding="16,6"
+                                    BorderBrush="#dcdfe6"
+                                    Content="重置"
+                                    Foreground="#606266"
+                                    Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!--  菜单列表标题栏  -->
+            <Border Grid.Row="1" Margin="12,6,12,6" Background="#ffffff" CornerRadius="8">
+                <Grid Margin="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="菜单列表" Foreground="#333333" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Text="支持树形加载、图标选择、级联删除和目录/菜单/按钮三级维护。" Foreground="#999999" FontSize="12" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Background="#1890ff"
+                            BorderBrush="#1890ff"
+                            Command="{Binding AddMenuCommand}"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Plus" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="新增" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Background="#ff4d4f"
+                            BorderBrush="#ff4d4f"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="级联删除" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Padding="12,6"
+                            BorderBrush="#dcdfe6"
+                            Foreground="#606266"
+                            Style="{StaticResource MaterialDesignOutlinedDarkButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Refresh" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="刷新" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!--  树形表格  -->
+            <Border Grid.Row="2" Margin="12,0,12,12" Background="#ffffff" CornerRadius="8">
+                <materialDesign:TreeListView
+                    Background="Transparent"
+                    ItemsSource="{Binding MenuItems}">
+
+                    <materialDesign:TreeListView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type domain:SysMenu}" ItemsSource="{Binding Childs}" />
+
+                        <!--  类型徽章样式  -->
+                        <Style x:Key="TypeBadgeStyle" TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="Padding" Value="10,2" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Background" Value="#e6f7ff" />
+                            <Setter Property="BorderBrush" Value="#91d5ff" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                    <Setter Property="Background" Value="#f6ffed" />
+                                    <Setter Property="BorderBrush" Value="#b7eb8f" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MenuType}" Value="F">
+                                    <Setter Property="Background" Value="#fff7e6" />
+                                    <Setter Property="BorderBrush" Value="#ffd591" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+
+                        <!--  状态徽章样式  -->
+                        <Style x:Key="StatusBadgeStyle" TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="Padding" Value="10,2" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Background" Value="#f6ffed" />
+                            <Setter Property="BorderBrush" Value="#b7eb8f" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="1">
+                                    <Setter Property="Background" Value="#fff1f0" />
+                                    <Setter Property="BorderBrush" Value="#ffa39e" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </materialDesign:TreeListView.Resources>
+
+                    <materialDesign:TreeListView.View>
+                        <GridView>
+                            <GridView.ColumnHeaderContainerStyle>
+                                <Style TargetType="GridViewColumnHeader">
+                                    <Setter Property="Background" Value="#fafafa" />
+                                    <Setter Property="Foreground" Value="#333333" />
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="Height" Value="40" />
+                                    <Setter Property="BorderBrush" Value="#e8e8e8" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                    <Setter Property="Padding" Value="16,0" />
                                 </Style>
                             </GridView.ColumnHeaderContainerStyle>
+
                             <GridView.Columns>
-                                <GridViewColumn Width="200" Header="菜单名称">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding MenuName}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="100" Header="图标">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <materialDesign:PackIcon Margin="10,0,0,0" Kind="{Binding Icon}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="100" Header="排序">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Margin="10,0,0,0" Text="{Binding OrderNum}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="150" Header="权限标识">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Margin="10,0,0,0" Text="{Binding Perms}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="150" Header="视图">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Margin="10,0,0,0" Text="{Binding Component}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="100" Header="状态">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate DataType="{x:Type domain:SysMenu}">
-                                            <Label x:Name="statusLabel" Margin="4,0,0,0" />
-                                            <DataTemplate.Triggers>
-                                                <DataTrigger Binding="{Binding Status}" Value="1">
-                                                    <Setter TargetName="statusLabel" Property="Content" Value="停用" />
-                                                    <Setter TargetName="statusLabel" Property="Foreground" Value="#999999" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Status}" Value="0">
-                                                    <Setter TargetName="statusLabel" Property="Content" Value="正常" />
-                                                    <Setter TargetName="statusLabel" Property="Foreground" Value="#1890ff" />
-                                                </DataTrigger>
-                                            </DataTemplate.Triggers>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Width="150" Header="创建时间">
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Margin="8,0,0,0" Text="{Binding CreateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='yyyy-MM-dd HH:mm:ss'}" />
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="操作">
+                                <!--  菜单名称  -->
+                                <GridViewColumn Width="220" Header="菜单名称">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon Kind="{Binding Icon}" Foreground="#595959" Width="16" Height="16" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding MenuName}" Foreground="#333333" FontSize="13" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!--  类型  -->
+                                <GridViewColumn Width="100" Header="类型">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource TypeBadgeStyle}" HorizontalAlignment="Center">
+                                                <TextBlock FontSize="11" HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding MenuType}" Value="M">
+                                                                    <Setter Property="Text" Value="目录" />
+                                                                    <Setter Property="Foreground" Value="#1890ff" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding MenuType}" Value="C">
+                                                                    <Setter Property="Text" Value="菜单" />
+                                                                    <Setter Property="Foreground" Value="#52c41a" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding MenuType}" Value="F">
+                                                                    <Setter Property="Text" Value="按钮" />
+                                                                    <Setter Property="Foreground" Value="#fa8c16" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!--  排序  -->
+                                <GridViewColumn Width="60" Header="排序">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding OrderNum}" Foreground="#666666" FontSize="13" Margin="16,0,0,0" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!--  权限标识  -->
+                                <GridViewColumn Width="160" Header="权限标识">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Perms}" Foreground="#666666" FontSize="13" Margin="16,0,0,0" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!--  组件路径  -->
+                                <GridViewColumn Width="200" Header="组件路径">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Component}" Foreground="#666666" FontSize="13" Margin="16,0,0,0" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!--  状态  -->
+                                <GridViewColumn Width="80" Header="状态">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource StatusBadgeStyle}" HorizontalAlignment="Center">
+                                                <TextBlock FontSize="11" HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#52c41a" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Status}" Value="0">
+                                                                    <Setter Property="Text" Value="正常" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="1">
+                                                                    <Setter Property="Text" Value="停用" />
+                                                                    <Setter Property="Foreground" Value="#ff4d4f" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <!--  操作  -->
+                                <GridViewColumn Header="操作" Width="100">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                                 <Button
-                                                    Padding="5"
-                                                    Content="修改"
-                                                    Foreground="#1890ff"
-                                                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Margin="0,0,4,0"
+                                                    Padding="6,2"
+                                                    Background="#e6f7ff"
+                                                    BorderBrush="#91d5ff"
                                                     Command="{Binding DataContext.NewOrEditButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                                    CommandParameter="{Binding}" />
+                                                    CommandParameter="{Binding}"
+                                                    Foreground="#1890ff"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    ToolTip="编辑">
+                                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14" />
+                                                </Button>
                                                 <Button
-                                                    Padding="5"
-                                                    Content="新增"
-                                                    Foreground="#1a7f29"
-                                                    Style="{StaticResource MaterialDesignFlatLightButton}"
-                                                    Command="{Binding DataContext.AddMenuCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                                                    Margin="0,0,4,0"
+                                                    Padding="6,2"
+                                                    Background="#f6ffed"
+                                                    BorderBrush="#b7eb8f"
+                                                    Command="{Binding DataContext.AddMenuCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Foreground="#52c41a"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    ToolTip="新增子菜单">
+                                                    <materialDesign:PackIcon Kind="PlusCircleOutline" Width="14" Height="14" />
+                                                </Button>
                                                 <Button
-                                                    Padding="5"
-                                                    Content="删除"
-                                                    Foreground="#cf3539"
-                                                    Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Padding="6,2"
+                                                    Background="#fff1f0"
+                                                    BorderBrush="#ffa39e"
                                                     Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                                    CommandParameter="{Binding}" />
+                                                    CommandParameter="{Binding}"
+                                                    Foreground="#ff4d4f"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    ToolTip="删除">
+                                                    <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" />
+                                                </Button>
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -190,7 +375,7 @@
                         </GridView>
                     </materialDesign:TreeListView.View>
                 </materialDesign:TreeListView>
-            </Grid>
+            </Border>
         </Grid>
     </Border>
 </UserControl>
