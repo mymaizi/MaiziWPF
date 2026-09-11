@@ -32,11 +32,15 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="筛选条件" Foreground="#333333" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
                         <ToggleButton x:Name="FilterToggle" Grid.Column="1" Width="24" Height="24" IsChecked="True">
-                            <materialDesign:PackIcon Kind="ChevronUp" Foreground="#595959" Width="16" Height="16" />
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Background" Value="Transparent" />
                                     <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <materialDesign:PackIcon Kind="ChevronUp" Foreground="#595959" Width="16" Height="16" />
+                                        </Setter.Value>
+                                    </Setter>
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
@@ -89,7 +93,8 @@
                                 Grid.Column="3"
                                 Padding="8,6"
                                 maiziWPF:DataDictAssist.Type="sys_normal_disable"
-                                SelectedItem="{Binding Status, Mode=TwoWay}">
+                                SelectedValuePath="DictValue"
+                                SelectedValue="{Binding Status, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate DataType="{x:Type domain:SysDictData}">
                                         <TextBlock Text="{Binding DictLabel}" />
@@ -110,6 +115,7 @@
                                 <Button
                                     Padding="16,6"
                                     BorderBrush="#dcdfe6"
+                                    Command="{Binding ResetCommand}"
                                     Content="重置"
                                     Foreground="#606266"
                                     Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
@@ -151,6 +157,7 @@
                             Padding="12,6"
                             Background="#ff4d4f"
                             BorderBrush="#ff4d4f"
+                            Command="{Binding CascadeDeleteCommand}"
                             Foreground="#fff"
                             Style="{StaticResource MaterialDesignRaisedLightButton}">
                             <StackPanel Orientation="Horizontal">
@@ -175,11 +182,22 @@
             <!--  树形表格  -->
             <Border Grid.Row="2" Margin="12,0,12,12" Background="#ffffff" CornerRadius="8">
                 <materialDesign:TreeListView
+                    maiziWPF:GridViewAssist.ColumnRatios="0.24,0.08,0.07,0.17,0.22,0.08,0.14"
                     Background="Transparent"
                     ItemsSource="{Binding MenuItems}">
 
                     <materialDesign:TreeListView.Resources>
                         <HierarchicalDataTemplate DataType="{x:Type domain:SysMenu}" ItemsSource="{Binding Childs}" />
+
+                        <!--  操作列图标按钮模板  -->
+                        <ControlTemplate x:Key="IconButtonTemplate" TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="3">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
 
                         <!--  类型徽章样式  -->
                         <Style x:Key="TypeBadgeStyle" TargetType="Border">
@@ -228,6 +246,20 @@
                                     <Setter Property="BorderBrush" Value="#e8e8e8" />
                                     <Setter Property="BorderThickness" Value="0,0,0,1" />
                                     <Setter Property="Padding" Value="16,0" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewColumnHeader">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalAlignment="Center"
+                                                                      RecognizesAccessKey="True" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
                                 </Style>
                             </GridView.ColumnHeaderContainerStyle>
 
@@ -333,39 +365,42 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                                 <Button
+                                                    Width="26"
+                                                    Height="24"
                                                     Margin="0,0,4,0"
-                                                    Padding="6,2"
                                                     Background="#e6f7ff"
                                                     BorderBrush="#91d5ff"
+                                                    BorderThickness="1"
                                                     Command="{Binding DataContext.NewOrEditButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                                     CommandParameter="{Binding}"
-                                                    Foreground="#1890ff"
-                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Template="{StaticResource IconButtonTemplate}"
                                                     ToolTip="编辑">
-                                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14" />
+                                                    <materialDesign:PackIcon Kind="Pencil" Foreground="#91d5ff" Width="14" Height="14" />
                                                 </Button>
                                                 <Button
+                                                    Width="26"
+                                                    Height="24"
                                                     Margin="0,0,4,0"
-                                                    Padding="6,2"
                                                     Background="#f6ffed"
                                                     BorderBrush="#b7eb8f"
+                                                    BorderThickness="1"
                                                     Command="{Binding DataContext.AddMenuCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                                     CommandParameter="{Binding}"
-                                                    Foreground="#52c41a"
-                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Template="{StaticResource IconButtonTemplate}"
                                                     ToolTip="新增子菜单">
-                                                    <materialDesign:PackIcon Kind="PlusCircleOutline" Width="14" Height="14" />
+                                                    <materialDesign:PackIcon Kind="PlusCircleOutline" Foreground="#b7eb8f" Width="14" Height="14" />
                                                 </Button>
                                                 <Button
-                                                    Padding="6,2"
+                                                    Width="26"
+                                                    Height="24"
                                                     Background="#fff1f0"
                                                     BorderBrush="#ffa39e"
+                                                    BorderThickness="1"
                                                     Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                                     CommandParameter="{Binding}"
-                                                    Foreground="#ff4d4f"
-                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Template="{StaticResource IconButtonTemplate}"
                                                     ToolTip="删除">
-                                                    <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" />
+                                                    <materialDesign:PackIcon Kind="Delete" Foreground="#ffa39e" Width="14" Height="14" />
                                                 </Button>
                                             </StackPanel>
                                         </DataTemplate>

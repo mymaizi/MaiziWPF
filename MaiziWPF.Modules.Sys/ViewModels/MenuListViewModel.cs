@@ -25,6 +25,8 @@ namespace MaiziWPF.Modules.Sys
         private readonly IDialogHostService _dialogHostService;
 
         public ICommand AddMenuCommand { get; }
+        public ICommand ResetCommand { get; }
+        public ICommand CascadeDeleteCommand { get; }
 
         public MenuListViewModel(ISysMenuService menuService, IDialogHostService dialogHostService)
         {
@@ -39,6 +41,18 @@ namespace MaiziWPF.Modules.Sys
             AddMenuCommand = new DelegateCommand(() =>
             {
                 OpenMenuForm(null);
+            });
+
+            ResetCommand = new DelegateCommand(() =>
+            {
+                MenuName = string.Empty;
+                Status = string.Empty;
+                SearchMenu();
+            });
+
+            CascadeDeleteCommand = new DelegateCommand(async () =>
+            {
+                await CascadeDeleteAsync();
             });
 
             NewOrEditButtonCommand = new DelegateCommand<SysMenu>((menu) =>
@@ -116,6 +130,29 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _menuService.DeleteMenuById(menu.Id);
+                SearchMenu();
+            }
+            catch (Exception ex)
+            {
+                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+            }
+        }
+
+        private async System.Threading.Tasks.Task CascadeDeleteAsync()
+        {
+            var topMenus = _menuService.SelectMenuList(new SysMenu(), 1);
+            if (!topMenus.Any())
+            {
+                await _dialogHostService.AlertAsync("没有可删除的菜单", AlertType.Info);
+                return;
+            }
+
+            var confirmResult = await _dialogHostService.ConfirmAsync("级联删除将删除所有菜单及子菜单，确定继续吗？", "级联删除确认");
+            if (!confirmResult) return;
+
+            try
+            {
+                _menuService.DeleteMenuById(topMenus.First().Id);
                 SearchMenu();
             }
             catch (Exception ex)
