@@ -71,6 +71,7 @@ namespace MaiziWPF.Modules.Sys
             await _dialogHostService.ShowDialogAsync<MenuFormView>(view =>
             {
                 var vm = view.DataContext as MenuFormViewModel;
+                vm.DialogTitle = "新增菜单";
                 vm.IsEditMode = false;
                 vm.ParentId = 0;
                 vm.MenuId = 0;
@@ -89,6 +90,7 @@ namespace MaiziWPF.Modules.Sys
             await _dialogHostService.ShowDialogAsync<MenuFormView>(view =>
             {
                 var vm = view.DataContext as MenuFormViewModel;
+                vm.DialogTitle = "编辑菜单";
                 vm.IsEditMode = true;
                 vm.MenuId = menu.Id;
                 vm.ParentId = menu.ParentId;

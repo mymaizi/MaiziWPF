@@ -9,6 +9,11 @@
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Width="620" Height="580">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="Title" Value="{Binding DialogTitle}" />
+        </Style>
+    </prism:Dialog.WindowStyle>
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <maiziWPF:BooleanConverter x:Key="EqualToBooleanConverter" />
@@ -29,35 +34,12 @@
 
     <Grid Margin="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="1" />
             <RowDefinition Height="*" />
             <RowDefinition Height="1" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="20,16,16,12">
-            <TextBlock
-                FontSize="16"
-                FontWeight="SemiBold"
-                Foreground="#333333"
-                Text="添加菜单" />
-            <Button
-                HorizontalAlignment="Right"
-                Width="28"
-                Height="28"
-                Padding="0"
-                Background="Transparent"
-                BorderThickness="0"
-                Command="{Binding CancelCommand}"
-                Style="{StaticResource MaterialDesignFlatButton}">
-                <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#999999" />
-            </Button>
-        </Grid>
-
-        <Border Grid.Row="1" Background="#f0f0f0" />
-
-        <ScrollViewer Grid.Row="2" Margin="20,12,20,12" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="0" Margin="20,12,20,12" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>

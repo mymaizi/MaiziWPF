@@ -20,6 +20,13 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _isEditMode, value); }
         }
 
+        private string _dialogTitle = "菜单管理";
+        public string DialogTitle
+        {
+            get { return _dialogTitle; }
+            set { SetProperty(ref _dialogTitle, value); }
+        }
+
         private long _menuId;
         public long MenuId
         {
