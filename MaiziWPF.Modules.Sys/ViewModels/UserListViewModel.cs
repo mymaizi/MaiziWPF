@@ -4,112 +4,162 @@ using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
 using Prism.Ioc;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace MaiziWPF.Modules.Sys
 {
-    public class UserListViewModel : PageBindableBase<SysUser,QueryUserInput>
+    public class UserListViewModel : PageBindableBase<SysUser, QueryUserInput>
     {
-        public ObservableCollection<SysDept> DeptItems { get; set; } = new();
-        private readonly ISysDeptService _deptService;
         private readonly ISysUserService _userService;
-        public ICommand DeptSelectionCommand { get; }
-        public ICommand DeptQueryCommand { get; }
-
-        private readonly IContainerProvider _containerProvider;
+        private readonly ISysDeptService _deptService;
+        private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly IContainerProvider _containerProvider;
 
-        public UserListViewModel(ISysDeptService deptService, ISysUserService userService,IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public UserListViewModel(ISysUserService userService, ISysDeptService deptService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
         {
-            _deptService = deptService;
             _userService = userService;
-            _containerProvider = containerProvider;
+            _deptService = deptService;
+            _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
-            this.NewOrEditButtonCommand = new DelegateCommand<SysUser>(user =>
+            _containerProvider = containerProvider;
+
+            SearchButtonCommand = new DelegateCommand<UserListViewModel>((vm) =>
             {
-                var view = _containerProvider.Resolve<UserFormView>();
-                var model = view.DataContext as UserFormViewModel;
-                if (user != null)
-                {
-                    model.UserId = user.UserId;
-                    model.UserName = user.UserName;
-                    model.NickName = user.NickName;
-                    model.PhoneNumber = user.PhoneNumber;
-                    model.Email = user.Email;
-                    model.Status = user.Status;
-                    model.Remark = user.Remark;
-                    model.Sex = user.Sex;
-                    model.IsEditMode = true;
-                    model.InitialRoleIds = _userService.SelectUserRoleIds(user.UserId);
-                    model.InitialPostIds = _userService.SelectUserPostIds(user.UserId);
-                    model.InitialDeptIds = _userService.SelectUserDeptIds(user.UserId);
-                }
-                else
-                {
-                    model.IsEditMode = false;
-                    model.InitialRoleIds = null;
-                    model.InitialPostIds = null;
-                    model.InitialDeptIds = null;
-                }
-                model.OnSaveSuccessCallback = () =>
-                {
-                    SearchButtonCommand?.Execute(null);
-                };
-                view.DataContext = model;
-                _dialogHostService.ShowDialogAsync(view, autoClose: false);
+                LoadDataList();
             });
-            this.DeleteButtonCommand = new DelegateCommand<SysUser>(async user =>
+
+            ResetButtonCommand = new DelegateCommand<UserListViewModel>((vm) =>
             {
-                if (user == null) return;
-                var result = await _dialogHostService.ConfirmAsync($"确定要删除用户 '{user.UserName}' 吗？", "确认删除");
-                if (result)
-                {
-                    try
-                    {
-                        var success = _userService.DeleteUser(user.UserId);
-                        if (success)
-                        {
-                            await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
-                            SearchButtonCommand.Execute(this);
-                        }
-                        else
-                        {
-                            await _dialogHostService.AlertAsync("删除失败", AlertType.Error);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        await _dialogHostService.AlertAsync($"删除失败：{ex.Message}", AlertType.Error);
-                    }
-                }
+                QueryPageInfo = new QueryUserInput();
+                LoadDataList();
             });
-            RegisterQueryFunc(input =>
+
+            AddButtonCommand = new DelegateCommand<UserListViewModel>(async (vm) =>
             {
-                return _userService.SelectUserList(input);
-            },new QueryUserInput() { PageNumber=1,PageSize=10 });
-            DeptSelectionCommand = new DelegateCommand(() =>
-            {
-              
+                await AddUser();
             });
-            DeptQueryCommand = new DelegateCommand(() =>
+
+            EditButtonCommand = new DelegateCommand<SysUser>(async (user) =>
             {
-                SearchDept();
+                await EditUser(user);
             });
-            DeptQueryCommand.Execute(this);
-            SearchButtonCommand.Execute(this);
+
+            DeleteButtonCommand = new DelegateCommand<SysUser>(async (user) =>
+            {
+                await DeleteUser(user);
+            });
+
+            ResetPwdButtonCommand = new DelegateCommand<SysUser>(async (user) =>
+            {
+                await ResetPwd(user);
+            });
         }
-        private void SearchDept()
+
+        public DelegateCommand<UserListViewModel> SearchButtonCommand { get; }
+        public DelegateCommand<UserListViewModel> ResetButtonCommand { get; }
+        public DelegateCommand<UserListViewModel> AddButtonCommand { get; }
+        public DelegateCommand<SysUser> EditButtonCommand { get; }
+        public DelegateCommand<SysUser> DeleteButtonCommand { get; }
+        public DelegateCommand<SysUser> ResetPwdButtonCommand { get; }
+
+        public override void LoadDataList()
         {
-            DeptItems.Clear();
-            var data = _deptService.SelectDeptList(new SysDept()
+            var users = _userService.SelectUserList(QueryPageInfo);
+            DataList = new ObservableCollection<SysUser>(users);
+        }
+
+        private async Task AddUser()
+        {
+            await _dialogHostService.ShowDialogAsync<UserFormView>(view =>
             {
-                DeptName = QueryPageInfo.DeptName
+                var vm = view.DataContext as UserFormViewModel;
+                vm.IsEditMode = false;
+                vm.UserId = 0;
+                vm.Depts = _deptService.SelectDeptList(new SysDept(), false).Select(d => new Checked() { Id = d.Id, Name = d.DeptName }).ToList();
+                vm.Roles = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
+                vm.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
             });
-            DeptItems.AddRange(data);
+        }
+
+        private async Task EditUser(SysUser user)
+        {
+            if (user == null) return;
+
+            await _dialogHostService.ShowDialogAsync<UserFormView>(view =>
+            {
+                var vm = view.DataContext as UserFormViewModel;
+                vm.IsEditMode = true;
+                vm.UserId = user.UserId;
+                vm.UserName = user.UserName;
+                vm.NickName = user.NickName;
+                vm.PhoneNumber = user.PhoneNumber;
+                vm.Email = user.Email;
+                vm.Status = user.Status;
+                vm.Sex = user.Sex;
+                vm.Remark = user.Remark;
+                vm.Depts = _deptService.SelectDeptList(new SysDept(), false).Select(d => new Checked() { Id = d.Id, Name = d.DeptName }).ToList();
+                vm.Roles = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
+                vm.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
+                vm.InitialRoleIds = _userService.SelectUserRoleIds(user.UserId);
+                vm.InitialPostIds = _userService.SelectUserPostIds(user.UserId);
+                vm.InitialDeptIds = _userService.SelectUserDeptIds(user.UserId);
+
+                vm.Roles?.ForEach(r => r.IsChecked = vm.InitialRoleIds.Contains(r.Id));
+                vm.Posts?.ForEach(p => p.IsChecked = vm.InitialPostIds.Contains(p.Id));
+                vm.Depts?.ForEach(d => d.IsChecked = vm.InitialDeptIds.Contains(d.Id));
+
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
+            });
+        }
+
+        private async Task DeleteUser(SysUser user)
+        {
+            if (user == null) return;
+
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除用户 '{user.UserName}' 吗？", "确认删除");
+            if (result)
+            {
+                try
+                {
+                    _userService.DeleteUser(user.UserId);
+                    _snackbarService.EnqueueSuccess("删除成功");
+                    LoadDataList();
+                }
+                catch (System.Exception ex)
+                {
+                    _snackbarService.EnqueueError($"删除失败：{ex.Message}");
+                }
+            }
+        }
+
+        private async Task ResetPwd(SysUser user)
+        {
+            if (user == null) return;
+
+            var result = await _dialogHostService.ConfirmAsync($"确定要重置用户 '{user.UserName}' 的密码吗？", "确认重置");
+            if (result)
+            {
+                try
+                {
+                    _userService.ResetPwd(user.UserId);
+                    _snackbarService.EnqueueSuccess("密码重置成功");
+                }
+                catch (System.Exception ex)
+                {
+                    _snackbarService.EnqueueError($"密码重置失败：{ex.Message}");
+                }
+            }
         }
     }
 }

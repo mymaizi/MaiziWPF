@@ -14,14 +14,16 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysDictService _dictService;
         private readonly IContainerProvider _containerProvider;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand AddDictTypeCommand { get; }
 
-        public DictListViewModel(ISysDictService dictService, IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public DictListViewModel(ISysDictService dictService, IContainerProvider containerProvider, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _dictService = dictService;
             _containerProvider = containerProvider;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -47,32 +49,31 @@ namespace MaiziWPF.Modules.Sys
             SearchButtonCommand.Execute(this);
         }
 
-        private void OpenDictTypeForm(SysDictType dictType)
+        private async System.Threading.Tasks.Task OpenDictTypeForm(SysDictType dictType)
         {
-            var view = _containerProvider.Resolve<DictTypeFormView>();
-            var model = view.DataContext as DictTypeFormViewModel;
-
-            if (dictType != null)
+            await _dialogHostService.ShowDialogAsync<DictTypeFormView>(view =>
             {
-                model.IsEditMode = true;
-                model.DictId = dictType.DictId;
-                model.DictName = dictType.DictName;
-                model.DictType = dictType.DictType;
-                model.Status = dictType.Status;
-                model.Remark = dictType.Remark;
-            }
-            else
-            {
-                model.IsEditMode = false;
-            }
+                var model = view.DataContext as DictTypeFormViewModel;
 
-            model.OnSaveSuccessCallback = () =>
-            {
-                SearchButtonCommand.Execute(this);
-            };
+                if (dictType != null)
+                {
+                    model.IsEditMode = true;
+                    model.DictId = dictType.DictId;
+                    model.DictName = dictType.DictName;
+                    model.DictType = dictType.DictType;
+                    model.Status = dictType.Status;
+                    model.Remark = dictType.Remark;
+                }
+                else
+                {
+                    model.IsEditMode = false;
+                }
 
-            view.DataContext = model;
-            _dialogHostService.ShowDialogAsync(view, autoClose: false);
+                model.OnSaveSuccessCallback = () =>
+                {
+                    SearchButtonCommand.Execute(this);
+                };
+            });
         }
 
         private async System.Threading.Tasks.Task DeleteDictType(SysDictType dictType)
@@ -85,12 +86,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _dictService.DeleteDictTypeById(dictType.DictId);
-                await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

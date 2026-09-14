@@ -4,99 +4,115 @@ using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
 using Prism.Ioc;
-using System;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace MaiziWPF.Modules.Sys
 {
     public class PostListViewModel : PageBindableBase<SysPost, QueryPostInput>
     {
         private readonly ISysPostService _postService;
-        private readonly IContainerProvider _containerProvider;
+        private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly IContainerProvider _containerProvider;
 
-        public ICommand AddPostCommand { get; }
-
-        public PostListViewModel(ISysPostService postService, IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public PostListViewModel(ISysPostService postService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
         {
             _postService = postService;
-            _containerProvider = containerProvider;
+            _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
+            _containerProvider = containerProvider;
 
-            RegisterQueryFunc(input =>
+            SearchButtonCommand = new DelegateCommand<PostListViewModel>((vm) =>
             {
-                return _postService.SelectPostList(input);
-            }, new QueryPostInput() { PageNumber = 1, PageSize = 10 });
-
-            AddPostCommand = new DelegateCommand(() =>
-            {
-                OpenPostForm(null);
+                LoadDataList();
             });
 
-            NewOrEditButtonCommand = new DelegateCommand<SysPost>((post) =>
+            ResetButtonCommand = new DelegateCommand<PostListViewModel>((vm) =>
             {
-                OpenPostForm(post);
+                QueryPageInfo = new QueryPostInput();
+                LoadDataList();
+            });
+
+            AddButtonCommand = new DelegateCommand<PostListViewModel>(async (vm) =>
+            {
+                await AddPost();
+            });
+
+            EditButtonCommand = new DelegateCommand<SysPost>(async (post) =>
+            {
+                await EditPost(post);
             });
 
             DeleteButtonCommand = new DelegateCommand<SysPost>(async (post) =>
             {
                 await DeletePost(post);
             });
-
-            SearchButtonCommand.Execute(this);
         }
 
-        private void OpenPostForm(SysPost post)
+        public DelegateCommand<PostListViewModel> SearchButtonCommand { get; }
+        public DelegateCommand<PostListViewModel> ResetButtonCommand { get; }
+        public DelegateCommand<PostListViewModel> AddButtonCommand { get; }
+        public DelegateCommand<SysPost> EditButtonCommand { get; }
+        public DelegateCommand<SysPost> DeleteButtonCommand { get; }
+
+        public override void LoadDataList()
         {
-            var view = _containerProvider.Resolve<PostFormView>();
-            var model = view.DataContext as PostFormViewModel;
-
-            if (post != null)
-            {
-                model.IsEditMode = true;
-                model.PostId = post.PostId;
-                model.PostCode = post.PostCode;
-                model.PostName = post.PostName;
-                model.PostSort = post.PostSort;
-                model.Status = post.Status;
-                model.Remark = post.Remark;
-            }
-            else
-            {
-                model.IsEditMode = false;
-            }
-
-            model.OnSaveSuccessCallback = () =>
-            {
-                SearchButtonCommand.Execute(this);
-            };
-
-            view.DataContext = model;
-            _dialogHostService.ShowDialogAsync(view, autoClose: false);
+            DataList = new ObservableCollection<SysPost>(_postService.SelectPostList(QueryPageInfo));
         }
 
-        private async System.Threading.Tasks.Task DeletePost(SysPost post)
+        private async Task AddPost()
+        {
+            await _dialogHostService.ShowDialogAsync<PostFormView>(view =>
+            {
+                var vm = view.DataContext as PostFormViewModel;
+                vm.IsEditMode = false;
+                vm.PostId = 0;
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
+            });
+        }
+
+        private async Task EditPost(SysPost post)
         {
             if (post == null) return;
 
-            if (_postService.CheckPostExistUser(post.PostId))
+            await _dialogHostService.ShowDialogAsync<PostFormView>(view =>
             {
-                await _dialogHostService.AlertAsync("岗位已分配用户,不允许删除", AlertType.Info);
-                return;
-            }
+                var vm = view.DataContext as PostFormViewModel;
+                vm.IsEditMode = true;
+                vm.PostId = post.PostId;
+                vm.PostCode = post.PostCode;
+                vm.PostName = post.PostName;
+                vm.PostSort = post.PostSort;
+                vm.Status = post.Status;
+                vm.Remark = post.Remark;
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
+            });
+        }
 
-            var result = await _dialogHostService.ConfirmAsync($"确定要删除岗位【{post.PostName}】吗？", "删除确认");
-            if (!result) return;
+        private async Task DeletePost(SysPost post)
+        {
+            if (post == null) return;
 
-            try
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除岗位 '{post.PostName}' 吗？", "确认删除");
+            if (result)
             {
-                _postService.DeletePostById(post.PostId);
-                await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
-                SearchButtonCommand.Execute(this);
-            }
-            catch (Exception ex)
-            {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                try
+                {
+                    _postService.DeletePostById(post.PostId);
+                    _snackbarService.EnqueueSuccess("删除成功");
+                    LoadDataList();
+                }
+                catch (System.Exception ex)
+                {
+                    _snackbarService.EnqueueError($"删除失败：{ex.Message}");
+                }
             }
         }
     }

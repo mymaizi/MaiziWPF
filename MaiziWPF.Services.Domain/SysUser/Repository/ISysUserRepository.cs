@@ -84,5 +84,7 @@ namespace MaiziWPF.Services.Domain
         List<long> SelectUserPostIds(long userId);
 
         List<long> SelectUserDeptIds(long userId);
+
+        void ResetPwd(long userId);
     }
 }

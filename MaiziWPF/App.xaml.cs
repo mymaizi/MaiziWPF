@@ -1,4 +1,5 @@
 ﻿using MaiziWPF.Core;
+using MaiziWPF.Core.Views;
 using MaiziWPF.Modules.Sys;
 using MaiziWPF.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,19 +28,22 @@ namespace MaiziWPF
         {
             containerRegistry.RegisterForNavigation<LoginView>();
             containerRegistry.RegisterForNavigation<MainView>();
+            containerRegistry.RegisterDialogWindow<BorderlessDialogWindow>();
             containerRegistry.RegisterSingleton<IDialogHostService, DialogHostService>();
+            containerRegistry.RegisterSingleton<ISnackbarService>(provider => 
+                new SnackbarService(MaiziWPF.Views.MainWindow.SnackbarMessageQueue));
         }
         protected override void InitializeShell(Window shell)
         {
             base.InitializeShell(shell);
             var regionManager = Container.Resolve<IRegionManager>();
-            var dialog = Container.Resolve<IDialogHostService>();
+            var snackbarService = Container.Resolve<ISnackbarService>();
             regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(LoginView));
             Application.Current.DispatcherUnhandledException += async (sender, e) =>
             {
                 if (e.Exception is UserFriendlyException d)
                 {
-                    _ = dialog.AlertAsync(d.Message);
+                    snackbarService.EnqueueError(d.Message);
                 }
                 e.Handled = true;
             };

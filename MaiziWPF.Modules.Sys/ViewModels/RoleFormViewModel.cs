@@ -9,7 +9,6 @@ namespace MaiziWPF.Modules.Sys
     public class RoleFormViewModel : FormBindableBase
     {
         private readonly ISysRoleService _roleService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -67,11 +66,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public RoleFormViewModel(ISysRoleService roleService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public RoleFormViewModel(ISysRoleService roleService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _roleService = roleService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -83,12 +81,12 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(RoleName))
             {
-                await _dialogHostService.AlertAsync("请输入角色名称", AlertType.Info);
+                ShowWarning("请输入角色名称");
                 return;
             }
             if (string.IsNullOrWhiteSpace(RoleKey))
             {
-                await _dialogHostService.AlertAsync("请输入权限字符", AlertType.Info);
+                ShowWarning("请输入权限字符");
                 return;
             }
 
@@ -105,12 +103,12 @@ namespace MaiziWPF.Modules.Sys
 
             if (!_roleService.CheckRoleNameUnique(role))
             {
-                await _dialogHostService.AlertAsync("角色名称已存在", AlertType.Info);
+                ShowWarning("角色名称已存在");
                 return;
             }
             if (!_roleService.CheckRoleKeyUnique(role))
             {
-                await _dialogHostService.AlertAsync("角色权限字符已存在", AlertType.Info);
+                ShowWarning("角色权限字符已存在");
                 return;
             }
 
@@ -125,11 +123,12 @@ namespace MaiziWPF.Modules.Sys
                     _roleService.InsertRole(role);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

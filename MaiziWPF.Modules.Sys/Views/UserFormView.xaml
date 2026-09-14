@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="MaiziWPF.Modules.Sys.UserFormView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -617,10 +617,5 @@
             NewModeTemplate="{StaticResource NewModeTemplate}" />
     </UserControl.Resources>
 
-    <materialDesign:DialogHost
-        CloseOnClickAway="False"
-        Identifier="UserDialog"
-        OverlayBackground="Transparent">
-        <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource FormTemplateSelector}" />
-    </materialDesign:DialogHost>
+    <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource FormTemplateSelector}" />
 </UserControl>

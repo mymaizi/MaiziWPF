@@ -141,12 +141,10 @@ namespace MaiziWPF.Modules.Sys
         #endregion
 
         private readonly ISysUserService _userService;
-        private readonly IDialogHostService _dialogHostService;
 
-        public UserFormViewModel(ISysUserService userService, IDialogHostService dialogHostService) : base(dialogHostService)
+        public UserFormViewModel(ISysUserService userService, ISnackbarService snackbarService) : base(snackbarService)
         {
             _userService = userService;
-            _dialogHostService = dialogHostService;
             this.AcceptCommand = new DelegateCommand(async () =>
             {
                 if (!ValidateForm())
@@ -174,15 +172,13 @@ namespace MaiziWPF.Modules.Sys
 
                     if (success)
                     {
-                        await _dialogHostService.AlertAsync("修改成功！", () =>
-                        {
-                            _dialogHostService.CloseDialogAsync();
-                            OnSaveSuccessCallback?.Invoke();
-                        }, "UserDialog");
+                        ShowSuccess("修改成功！");
+                        OnSaveSuccessCallback?.Invoke();
+                        CloseDialog();
                     }
                     else
                     {
-                        await _dialogHostService.AlertAsync("修改失败！", AlertType.Error);
+                        ShowError("修改失败！");
                     }
                 }
                 else
@@ -204,11 +200,9 @@ namespace MaiziWPF.Modules.Sys
 
                     _userService.InsertUser(user);
 
-                    await _dialogHostService.AlertAsync("添加成功！", () =>
-                    {
-                        _dialogHostService.CloseDialogAsync();
-                        OnSaveSuccessCallback?.Invoke();
-                    }, "UserDialog");
+                    ShowSuccess("添加成功！");
+                    OnSaveSuccessCallback?.Invoke();
+                    CloseDialog();
                 }
             });
         }

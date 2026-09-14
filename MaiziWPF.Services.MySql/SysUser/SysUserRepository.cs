@@ -1,6 +1,8 @@
 using FreeSql;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace MaiziWPF.Services.MySql
 {
@@ -176,6 +178,16 @@ namespace MaiziWPF.Services.MySql
             return _fsql.Select<SysUserDept>()
                 .Where(d => d.UserId == userId)
                 .ToList(d => d.DeptId);
+        }
+
+        public void ResetPwd(long userId)
+        {
+            var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("123456")));
+            _fsql.Update<SysUser>()
+                .Set(u => u.Password, hash)
+                .Set(u => u.PwdUpdateDate, DateTime.Now)
+                .Where(u => u.UserId == userId)
+                .ExecuteAffrows();
         }
     }
 }

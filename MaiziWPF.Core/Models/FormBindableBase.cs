@@ -1,23 +1,61 @@
 ﻿using Prism.Commands;
+using Prism.Dialogs;
 using Prism.Mvvm;
 using System;
 using System.Windows.Input;
 
 namespace MaiziWPF.Core
 {
-    public class FormBindableBase: BindableBase
+    public class FormBindableBase : BindableBase, IDialogAware
     {
         public ICommand AcceptCommand { get; set; }
         public ICommand CancelCommand { get; }
-        private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
         public Action OnSaveSuccessCallback { get; set; }
-        public FormBindableBase(IDialogHostService dialogHostService)
+
+        public string Title { get; set; }
+        public DialogCloseListener RequestClose { get; set; }
+
+        public FormBindableBase(ISnackbarService snackbarService)
         {
-            _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
             CancelCommand = new DelegateCommand(() =>
             {
-                _dialogHostService.CloseDialogAsync();
+                RequestClose.Invoke(new DialogResult(ButtonResult.Cancel));
             });
+        }
+
+        protected void ShowWarning(string message)
+        {
+            _snackbarService.EnqueueWarning(message);
+        }
+
+        protected void ShowError(string message)
+        {
+            _snackbarService.EnqueueError(message);
+        }
+
+        protected void ShowSuccess(string message)
+        {
+            _snackbarService.EnqueueSuccess(message);
+        }
+
+        protected void CloseDialog()
+        {
+            RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
         }
     }
 }

@@ -14,14 +14,16 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysConfigService _configService;
         private readonly IContainerProvider _containerProvider;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand AddConfigCommand { get; }
 
-        public ConfigListViewModel(ISysConfigService configService, IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public ConfigListViewModel(ISysConfigService configService, IContainerProvider containerProvider, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _configService = configService;
             _containerProvider = containerProvider;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -46,33 +48,32 @@ namespace MaiziWPF.Modules.Sys
             SearchButtonCommand.Execute(this);
         }
 
-        private void OpenConfigForm(SysConfig config)
+        private async System.Threading.Tasks.Task OpenConfigForm(SysConfig config)
         {
-            var view = _containerProvider.Resolve<ConfigFormView>();
-            var model = view.DataContext as ConfigFormViewModel;
-
-            if (config != null)
+            await _dialogHostService.ShowDialogAsync<ConfigFormView>(view =>
             {
-                model.IsEditMode = true;
-                model.ConfigId = config.ConfigId;
-                model.ConfigName = config.ConfigName;
-                model.ConfigKey = config.ConfigKey;
-                model.ConfigValue = config.ConfigValue;
-                model.ConfigType = config.ConfigType;
-                model.Remark = config.Remark;
-            }
-            else
-            {
-                model.IsEditMode = false;
-            }
+                var model = view.DataContext as ConfigFormViewModel;
 
-            model.OnSaveSuccessCallback = () =>
-            {
-                SearchButtonCommand.Execute(this);
-            };
+                if (config != null)
+                {
+                    model.IsEditMode = true;
+                    model.ConfigId = config.ConfigId;
+                    model.ConfigName = config.ConfigName;
+                    model.ConfigKey = config.ConfigKey;
+                    model.ConfigValue = config.ConfigValue;
+                    model.ConfigType = config.ConfigType;
+                    model.Remark = config.Remark;
+                }
+                else
+                {
+                    model.IsEditMode = false;
+                }
 
-            view.DataContext = model;
-            _dialogHostService.ShowDialogAsync(view, autoClose: false);
+                model.OnSaveSuccessCallback = () =>
+                {
+                    SearchButtonCommand.Execute(this);
+                };
+            });
         }
 
         private async System.Threading.Tasks.Task DeleteConfig(SysConfig config)
@@ -85,12 +86,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _configService.DeleteConfigById(config.ConfigId);
-                await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

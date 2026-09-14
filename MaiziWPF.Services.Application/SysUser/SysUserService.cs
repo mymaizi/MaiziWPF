@@ -135,5 +135,20 @@ namespace MaiziWPF.Services.Application
         {
             return _repository.SelectUserDeptIds(userId);
         }
+
+        public List<SysRole> SelectAllRoles()
+        {
+            return _repository.Orm.Select<SysRole>().ToList();
+        }
+
+        public List<SysPost> SelectAllPosts()
+        {
+            return _repository.Orm.Select<SysPost>().ToList();
+        }
+
+        public void ResetPwd(long userId)
+        {
+            _repository.ResetPwd(userId);
+        }
     }
 }

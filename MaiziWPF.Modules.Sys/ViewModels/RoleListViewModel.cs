@@ -3,93 +3,117 @@ using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
-using System;
+using Prism.Ioc;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace MaiziWPF.Modules.Sys
 {
     public class RoleListViewModel : PageBindableBase<SysRole, QueryRoleInput>
     {
         private readonly ISysRoleService _roleService;
+        private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly IContainerProvider _containerProvider;
 
-        public ICommand AddRoleCommand { get; }
-
-        public RoleListViewModel(ISysRoleService roleService, IDialogHostService dialogHostService)
+        public RoleListViewModel(ISysRoleService roleService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
         {
             _roleService = roleService;
+            _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
+            _containerProvider = containerProvider;
 
-            RegisterQueryFunc(input =>
+            SearchButtonCommand = new DelegateCommand<RoleListViewModel>((vm) =>
             {
-                return _roleService.SelectRoleList(input);
-            }, new QueryRoleInput() { PageNumber = 1, PageSize = 10 });
-
-            AddRoleCommand = new DelegateCommand(() =>
-            {
-                OpenRoleForm(null);
+                LoadDataList();
             });
 
-            NewOrEditButtonCommand = new DelegateCommand<SysRole>((role) =>
+            ResetButtonCommand = new DelegateCommand<RoleListViewModel>((vm) =>
             {
-                OpenRoleForm(role);
+                QueryPageInfo = new QueryRoleInput();
+                LoadDataList();
+            });
+
+            AddButtonCommand = new DelegateCommand<RoleListViewModel>(async (vm) =>
+            {
+                await AddRole();
+            });
+
+            EditButtonCommand = new DelegateCommand<SysRole>(async (role) =>
+            {
+                await EditRole(role);
             });
 
             DeleteButtonCommand = new DelegateCommand<SysRole>(async (role) =>
             {
                 await DeleteRole(role);
             });
-
-            SearchButtonCommand.Execute(this);
         }
 
-        private async void OpenRoleForm(SysRole role)
+        public DelegateCommand<RoleListViewModel> SearchButtonCommand { get; }
+        public DelegateCommand<RoleListViewModel> ResetButtonCommand { get; }
+        public DelegateCommand<RoleListViewModel> AddButtonCommand { get; }
+        public DelegateCommand<SysRole> EditButtonCommand { get; }
+        public DelegateCommand<SysRole> DeleteButtonCommand { get; }
+
+        public override void LoadDataList()
         {
-            var isEdit = role != null;
-            var viewModel = new RoleFormViewModel(_roleService, _dialogHostService);
-            viewModel.IsEditMode = isEdit;
-
-            if (isEdit)
-            {
-                viewModel.RoleId = role.RoleId;
-                viewModel.RoleName = role.RoleName;
-                viewModel.RoleKey = role.RoleKey;
-                viewModel.RoleSort = role.RoleSort;
-                viewModel.DataScope = role.DataScope;
-                viewModel.Status = role.Status;
-                viewModel.Remark = role.Remark;
-            }
-
-            viewModel.OnSaveSuccessCallback = () =>
-            {
-                SearchButtonCommand.Execute(this);
-            };
-
-            await _dialogHostService.ShowDialogAsync(viewModel, autoClose: false);
+            DataList = new ObservableCollection<SysRole>(_roleService.SelectRoleList(QueryPageInfo));
         }
 
-        private async System.Threading.Tasks.Task DeleteRole(SysRole role)
+        private async Task AddRole()
+        {
+            await _dialogHostService.ShowDialogAsync<RoleFormView>(view =>
+            {
+                var vm = view.DataContext as RoleFormViewModel;
+                vm.IsEditMode = false;
+                vm.RoleId = 0;
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
+            });
+        }
+
+        private async Task EditRole(SysRole role)
         {
             if (role == null) return;
 
-            var confirmResult = await _dialogHostService.ConfirmAsync($"确定要删除角色【{role.RoleName}】吗？", "删除确认");
-            if (!confirmResult) return;
+            await _dialogHostService.ShowDialogAsync<RoleFormView>(view =>
+            {
+                var vm = view.DataContext as RoleFormViewModel;
+                vm.IsEditMode = true;
+                vm.RoleId = role.RoleId;
+                vm.RoleName = role.RoleName;
+                vm.RoleKey = role.RoleKey;
+                vm.RoleSort = role.RoleSort;
+                vm.DataScope = role.DataScope;
+                vm.Status = role.Status;
+                vm.Remark = role.Remark;
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
+            });
+        }
 
-            if (_roleService.CheckRoleExistUser(role.RoleId))
-            {
-                await _dialogHostService.AlertAsync("角色已分配用户,不允许删除", AlertType.Info);
-                return;
-            }
+        private async Task DeleteRole(SysRole role)
+        {
+            if (role == null) return;
 
-            try
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除角色 '{role.RoleName}' 吗？", "确认删除");
+            if (result)
             {
-                _roleService.DeleteRoleById(role.RoleId);
-                SearchButtonCommand.Execute(this);
-            }
-            catch (Exception ex)
-            {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                try
+                {
+                    _roleService.DeleteRoleById(role.RoleId);
+                    _snackbarService.EnqueueSuccess("删除成功");
+                    LoadDataList();
+                }
+                catch (System.Exception ex)
+                {
+                    _snackbarService.EnqueueError($"删除失败：{ex.Message}");
+                }
             }
         }
     }

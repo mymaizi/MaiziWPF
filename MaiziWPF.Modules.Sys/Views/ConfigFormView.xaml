@@ -37,11 +37,7 @@
         </Style>
     </UserControl.Resources>
 
-    <materialDesign:DialogHost
-        CloseOnClickAway="False"
-        Identifier="ConfigDialog"
-        OverlayBackground="Transparent">
-        <Grid Width="480" Margin="24">
+    <Grid Width="480" Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60" />
                 <RowDefinition Height="60" />
@@ -187,5 +183,4 @@
                     Style="{StaticResource MaterialDesignRaisedLightButton}" />
             </StackPanel>
         </Grid>
-    </materialDesign:DialogHost>
 </UserControl>

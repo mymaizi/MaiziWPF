@@ -14,13 +14,15 @@ namespace MaiziWPF.Modules.Sys
     {
         private readonly ISysUserOnlineService _onlineService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand ForceLogoutCommand { get; }
 
-        public OnlineUserListViewModel(ISysUserOnlineService onlineService, IDialogHostService dialogHostService)
+        public OnlineUserListViewModel(ISysUserOnlineService onlineService, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _onlineService = onlineService;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -50,12 +52,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _onlineService.DeleteOnlineById(user.SessionId);
-                await _dialogHostService.AlertAsync("强退成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("强退成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

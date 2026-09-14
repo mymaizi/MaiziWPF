@@ -1,4 +1,5 @@
-**/bin/
-**/obj/
-**/.vs/
-**/logs/
+**/bin
+**/obj
+**/.vs
+**/logs
+.vscode

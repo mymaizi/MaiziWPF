@@ -14,14 +14,16 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysJobService _jobService;
         private readonly IContainerProvider _containerProvider;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand AddJobCommand { get; }
 
-        public JobListViewModel(ISysJobService jobService, IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public JobListViewModel(ISysJobService jobService, IContainerProvider containerProvider, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _jobService = jobService;
             _containerProvider = containerProvider;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -46,36 +48,35 @@ namespace MaiziWPF.Modules.Sys
             SearchButtonCommand.Execute(this);
         }
 
-        private void OpenJobForm(SysJob job)
+        private async System.Threading.Tasks.Task OpenJobForm(SysJob job)
         {
-            var view = _containerProvider.Resolve<JobFormView>();
-            var model = view.DataContext as JobFormViewModel;
-
-            if (job != null)
+            await _dialogHostService.ShowDialogAsync<JobFormView>(view =>
             {
-                model.IsEditMode = true;
-                model.JobId = job.JobId;
-                model.JobName = job.JobName;
-                model.JobGroup = job.JobGroup;
-                model.InvokeTarget = job.InvokeTarget;
-                model.CronExpression = job.CronExpression;
-                model.MisfirePolicy = job.MisfirePolicy;
-                model.Concurrent = job.Concurrent;
-                model.Status = job.Status;
-                model.Remark = job.Remark;
-            }
-            else
-            {
-                model.IsEditMode = false;
-            }
+                var model = view.DataContext as JobFormViewModel;
 
-            model.OnSaveSuccessCallback = () =>
-            {
-                SearchButtonCommand.Execute(this);
-            };
+                if (job != null)
+                {
+                    model.IsEditMode = true;
+                    model.JobId = job.JobId;
+                    model.JobName = job.JobName;
+                    model.JobGroup = job.JobGroup;
+                    model.InvokeTarget = job.InvokeTarget;
+                    model.CronExpression = job.CronExpression;
+                    model.MisfirePolicy = job.MisfirePolicy;
+                    model.Concurrent = job.Concurrent;
+                    model.Status = job.Status;
+                    model.Remark = job.Remark;
+                }
+                else
+                {
+                    model.IsEditMode = false;
+                }
 
-            view.DataContext = model;
-            _dialogHostService.ShowDialogAsync(view, autoClose: false);
+                model.OnSaveSuccessCallback = () =>
+                {
+                    SearchButtonCommand.Execute(this);
+                };
+            });
         }
 
         private async System.Threading.Tasks.Task DeleteJob(SysJob job)
@@ -88,12 +89,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _jobService.DeleteJobById(job.JobId);
-                await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

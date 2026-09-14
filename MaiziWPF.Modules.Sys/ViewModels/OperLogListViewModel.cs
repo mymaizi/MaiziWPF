@@ -12,13 +12,15 @@ namespace MaiziWPF.Modules.Sys
     {
         private readonly ISysOperLogService _operLogService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand CleanLogCommand { get; }
 
-        public OperLogListViewModel(ISysOperLogService operLogService, IDialogHostService dialogHostService)
+        public OperLogListViewModel(ISysOperLogService operLogService, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _operLogService = operLogService;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -48,11 +50,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _operLogService.DeleteOperLogById(log.OperId);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
 
@@ -64,12 +67,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _operLogService.CleanOperLog();
-                await _dialogHostService.AlertAsync("清空成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("清空成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

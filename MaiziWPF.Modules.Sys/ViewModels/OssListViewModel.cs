@@ -13,13 +13,15 @@ namespace MaiziWPF.Modules.Sys
     {
         private readonly ISysOssService _ossService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand BatchDeleteCommand { get; }
 
-        public OssListViewModel(ISysOssService ossService, IDialogHostService dialogHostService)
+        public OssListViewModel(ISysOssService ossService, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _ossService = ossService;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -44,11 +46,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _ossService.DeleteOssById(oss.OssId);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

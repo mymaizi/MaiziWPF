@@ -1,0 +1,33 @@
+<UserControl
+    x:Class="MaiziWPF.Core.Views.MessageDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="350"
+    Height="180"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            FontSize="14"
+            Text="{Binding Message}"
+            TextWrapping="Wrap"
+            VerticalAlignment="Center" />
+
+        <Button
+            Grid.Row="1"
+            Width="80"
+            Height="36"
+            HorizontalAlignment="Center"
+            Margin="0,16,0,0"
+            Command="{Binding CloseCommand}"
+            Content="确定"
+            Style="{StaticResource MaterialDesignRaisedButton}" />
+    </Grid>
+</UserControl>

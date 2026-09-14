@@ -64,6 +64,13 @@ namespace MaiziWPF.Core
         }
         #region 私有方法
         /// <summary>
+        /// 加载数据列表
+        /// </summary>
+        public virtual void LoadDataList()
+        {
+        }
+
+        /// <summary>
         /// 加载分页数据
         /// </summary>
         /// <param name="loadDataFunc">业务查询逻辑</param>

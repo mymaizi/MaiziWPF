@@ -9,7 +9,6 @@ namespace MaiziWPF.Modules.Sys
     public class PostFormViewModel : FormBindableBase
     {
         private readonly ISysPostService _postService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -60,11 +59,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public PostFormViewModel(ISysPostService postService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public PostFormViewModel(ISysPostService postService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _postService = postService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -76,12 +74,12 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(PostName))
             {
-                await _dialogHostService.AlertAsync("请输入岗位名称", AlertType.Info);
+                ShowWarning("请输入岗位名称");
                 return;
             }
             if (string.IsNullOrWhiteSpace(PostCode))
             {
-                await _dialogHostService.AlertAsync("请输入岗位编码", AlertType.Info);
+                ShowWarning("请输入岗位编码");
                 return;
             }
 
@@ -97,12 +95,12 @@ namespace MaiziWPF.Modules.Sys
 
             if (!_postService.CheckPostNameUnique(post))
             {
-                await _dialogHostService.AlertAsync("岗位名称已存在", AlertType.Info);
+                ShowWarning("岗位名称已存在");
                 return;
             }
             if (!_postService.CheckPostCodeUnique(post))
             {
-                await _dialogHostService.AlertAsync("岗位编码已存在", AlertType.Info);
+                ShowWarning("岗位编码已存在");
                 return;
             }
 
@@ -117,11 +115,12 @@ namespace MaiziWPF.Modules.Sys
                     _postService.InsertPost(post);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

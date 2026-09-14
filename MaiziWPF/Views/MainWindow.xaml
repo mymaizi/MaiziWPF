@@ -12,12 +12,13 @@
     FontSize="18"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
-    <materialDesign:DialogHost
-        CloseOnClickAway="False"
-        Identifier="RootDialog"
-        OverlayBackground="Transparent">
-        <Grid>
+    <Grid>
             <ContentControl prism:RegionManager.RegionName="ContentRegion" />
+            <materialDesign:Snackbar 
+                x:Name="MainSnackbar"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,20" />
             <tb:TaskbarIcon
                 x:Name="TrayIcon"
                 ContextMenu="{StaticResource TrayMenu}"
@@ -25,5 +26,4 @@
                 IconSource="/Assets/maizi.ico"
                 ToolTipText="MaiziWPF" />
         </Grid>
-    </materialDesign:DialogHost>
 </Window>

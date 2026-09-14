@@ -38,5 +38,11 @@ namespace MaiziWPF.Services.Application.Contracts
         List<long> SelectUserPostIds(long userId);
 
         List<long> SelectUserDeptIds(long userId);
+
+        List<SysRole> SelectAllRoles();
+
+        List<SysPost> SelectAllPosts();
+
+        void ResetPwd(long userId);
     }
 }

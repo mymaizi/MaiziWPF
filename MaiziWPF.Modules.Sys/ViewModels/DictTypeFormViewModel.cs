@@ -9,7 +9,6 @@ namespace MaiziWPF.Modules.Sys
     public class DictTypeFormViewModel : FormBindableBase
     {
         private readonly ISysDictService _dictService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -53,11 +52,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public DictTypeFormViewModel(ISysDictService dictService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public DictTypeFormViewModel(ISysDictService dictService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _dictService = dictService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -69,12 +67,12 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(DictName))
             {
-                await _dialogHostService.AlertAsync("请输入字典名称", AlertType.Info);
+                ShowWarning("请输入字典名称");
                 return;
             }
             if (string.IsNullOrWhiteSpace(DictType))
             {
-                await _dialogHostService.AlertAsync("请输入字典类型", AlertType.Info);
+                ShowWarning("请输入字典类型");
                 return;
             }
 
@@ -89,7 +87,7 @@ namespace MaiziWPF.Modules.Sys
 
             if (!_dictService.CheckDictTypeUnique(dictType))
             {
-                await _dialogHostService.AlertAsync("字典类型已存在", AlertType.Info);
+                ShowWarning("字典类型已存在");
                 return;
             }
 
@@ -104,11 +102,12 @@ namespace MaiziWPF.Modules.Sys
                     _dictService.InsertDictType(dictType);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

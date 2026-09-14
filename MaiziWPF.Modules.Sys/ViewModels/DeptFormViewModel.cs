@@ -10,7 +10,6 @@ namespace MaiziWPF.Modules.Sys
     public class DeptFormViewModel : FormBindableBase
     {
         private readonly ISysDeptService _deptService;
-        private readonly IDialogHostService _dialogHostService;
 
         public ObservableCollection<SysDept> DeptTreeItems { get; set; } = new();
 
@@ -84,11 +83,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _status, value); }
         }
 
-        public DeptFormViewModel(ISysDeptService deptService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public DeptFormViewModel(ISysDeptService deptService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _deptService = deptService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -107,7 +105,7 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(DeptName))
             {
-                await _dialogHostService.AlertAsync("请输入部门名称", AlertType.Info);
+                ShowWarning("请输入部门名称");
                 return;
             }
 
@@ -125,7 +123,7 @@ namespace MaiziWPF.Modules.Sys
 
             if (!_deptService.CheckDeptNameUnique(dept))
             {
-                await _dialogHostService.AlertAsync("部门名称已存在", AlertType.Info);
+                ShowWarning("部门名称已存在");
                 return;
             }
 
@@ -140,11 +138,12 @@ namespace MaiziWPF.Modules.Sys
                     _deptService.InsertDept(dept);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

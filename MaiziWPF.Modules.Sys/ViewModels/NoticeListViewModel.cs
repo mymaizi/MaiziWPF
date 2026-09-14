@@ -14,14 +14,16 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysNoticeService _noticeService;
         private readonly IContainerProvider _containerProvider;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand AddNoticeCommand { get; }
 
-        public NoticeListViewModel(ISysNoticeService noticeService, IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public NoticeListViewModel(ISysNoticeService noticeService, IContainerProvider containerProvider, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _noticeService = noticeService;
             _containerProvider = containerProvider;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -46,32 +48,31 @@ namespace MaiziWPF.Modules.Sys
             SearchButtonCommand.Execute(this);
         }
 
-        private void OpenNoticeForm(SysNotice notice)
+        private async System.Threading.Tasks.Task OpenNoticeForm(SysNotice notice)
         {
-            var view = _containerProvider.Resolve<NoticeFormView>();
-            var model = view.DataContext as NoticeFormViewModel;
-
-            if (notice != null)
+            await _dialogHostService.ShowDialogAsync<NoticeFormView>(view =>
             {
-                model.IsEditMode = true;
-                model.NoticeId = notice.NoticeId;
-                model.NoticeTitle = notice.NoticeTitle;
-                model.NoticeType = notice.NoticeType;
-                model.NoticeContent = notice.NoticeContent;
-                model.Status = notice.Status;
-            }
-            else
-            {
-                model.IsEditMode = false;
-            }
+                var model = view.DataContext as NoticeFormViewModel;
 
-            model.OnSaveSuccessCallback = () =>
-            {
-                SearchButtonCommand.Execute(this);
-            };
+                if (notice != null)
+                {
+                    model.IsEditMode = true;
+                    model.NoticeId = notice.NoticeId;
+                    model.NoticeTitle = notice.NoticeTitle;
+                    model.NoticeType = notice.NoticeType;
+                    model.NoticeContent = notice.NoticeContent;
+                    model.Status = notice.Status;
+                }
+                else
+                {
+                    model.IsEditMode = false;
+                }
 
-            view.DataContext = model;
-            _dialogHostService.ShowDialogAsync(view, autoClose: false);
+                model.OnSaveSuccessCallback = () =>
+                {
+                    SearchButtonCommand.Execute(this);
+                };
+            });
         }
 
         private async System.Threading.Tasks.Task DeleteNotice(SysNotice notice)
@@ -84,12 +85,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _noticeService.DeleteNoticeById(notice.NoticeId);
-                await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

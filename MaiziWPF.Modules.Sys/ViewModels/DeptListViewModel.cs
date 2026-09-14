@@ -4,117 +4,107 @@ using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
 using Prism.Ioc;
-using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace MaiziWPF.Modules.Sys
 {
     public class DeptListViewModel : PageBindableBase<SysDept, QueryDeptInput>
     {
-        public ObservableCollection<SysDept> DeptItems { get; set; } = new();
-
-        private string _deptName;
-        public string DeptName { get => _deptName; set => SetProperty(ref _deptName, value); }
-
-        private string _status;
-        public string Status { get => _status; set => SetProperty(ref _status, value); }
-
         private readonly ISysDeptService _deptService;
-        private readonly IContainerProvider _containerProvider;
+        private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly IContainerProvider _containerProvider;
 
-        public ICommand AddDeptCommand { get; }
-
-        public DeptListViewModel(ISysDeptService deptService, IContainerProvider containerProvider, IDialogHostService dialogHostService)
+        public DeptListViewModel(ISysDeptService deptService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
         {
             _deptService = deptService;
-            _containerProvider = containerProvider;
+            _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
+            _containerProvider = containerProvider;
 
-            SearchButtonCommand = new DelegateCommand(() =>
+            SearchButtonCommand = new DelegateCommand<DeptListViewModel>((vm) =>
             {
-                SearchDept();
+                LoadDataList();
             });
 
-            NewOrEditButtonCommand = new DelegateCommand<SysDept>(dept =>
+            ResetButtonCommand = new DelegateCommand<DeptListViewModel>((vm) =>
             {
-                OpenDeptForm(dept);
+                QueryPageInfo = new QueryDeptInput();
+                LoadDataList();
             });
 
-            DeleteButtonCommand = new DelegateCommand<SysDept>(async dept =>
+            AddButtonCommand = new DelegateCommand<DeptListViewModel>(async (vm) =>
             {
-                if (dept == null) return;
+                await AddDept();
+            });
+
+            EditButtonCommand = new DelegateCommand<SysDept>(async (dept) =>
+            {
+                await EditDept(dept);
+            });
+
+            DeleteButtonCommand = new DelegateCommand<SysDept>(async (dept) =>
+            {
                 await DeleteDept(dept);
             });
+        }
 
-            AddDeptCommand = new DelegateCommand(() =>
+        public DelegateCommand<DeptListViewModel> SearchButtonCommand { get; }
+        public DelegateCommand<DeptListViewModel> ResetButtonCommand { get; }
+        public DelegateCommand<DeptListViewModel> AddButtonCommand { get; }
+        public DelegateCommand<SysDept> EditButtonCommand { get; }
+        public DelegateCommand<SysDept> DeleteButtonCommand { get; }
+
+        public override void LoadDataList()
+        {
+            DataList = new ObservableCollection<SysDept>(_deptService.SelectDeptList(new SysDept(), false));
+        }
+
+        private async Task AddDept()
+        {
+            await _dialogHostService.ShowDialogAsync<DeptFormView>(view =>
             {
-                OpenDeptForm(null);
+                var vm = view.DataContext as DeptFormViewModel;
+                vm.IsEditMode = false;
+                vm.DeptId = 0;
+                vm.ParentId = 0;
+                vm.ParentName = "顶级部门";
+                vm.LoadDeptTree();
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
             });
-
-            SearchButtonCommand.Execute(this);
         }
 
-        private void SearchDept()
+        private async Task EditDept(SysDept dept)
         {
-            DeptItems.Clear();
-            var list = _deptService.SelectDeptList(new SysDept()
+            if (dept == null) return;
+
+            await _dialogHostService.ShowDialogAsync<DeptFormView>(view =>
             {
-                DeptName = DeptName,
-                Status = Status,
+                var vm = view.DataContext as DeptFormViewModel;
+                vm.IsEditMode = true;
+                vm.DeptId = dept.Id;
+                vm.ParentId = dept.ParentId;
+                vm.DeptName = dept.DeptName;
+                vm.OrderNum = dept.OrderNum;
+                vm.Leader = dept.Leader;
+                vm.Phone = dept.Phone;
+                vm.Email = dept.Email;
+                vm.Status = dept.Status;
+                vm.LoadDeptTree();
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadDataList();
+                };
             });
-            DeptItems.AddRange(list);
         }
 
-        private void OpenDeptForm(SysDept dept)
+        private async Task DeleteDept(SysDept dept)
         {
-            var view = _containerProvider.Resolve<DeptFormView>();
-            var model = view.DataContext as DeptFormViewModel;
-            model.LoadDeptTree();
-
-            if (dept != null)
-            {
-                model.IsEditMode = true;
-                model.DeptId = dept.Id;
-                model.ParentId = dept.ParentId;
-                model.DeptName = dept.DeptName;
-                model.OrderNum = dept.OrderNum;
-                model.Leader = dept.Leader;
-                model.Phone = dept.Phone;
-                model.Email = dept.Email;
-                model.Status = dept.Status;
-            }
-            else
-            {
-                model.IsEditMode = false;
-            }
-
-            model.OnSaveSuccessCallback = () =>
-            {
-                SearchDept();
-            };
-
-            view.DataContext = model;
-            _dialogHostService.ShowDialogAsync(view, autoClose: false);
-        }
-
-        private async System.Threading.Tasks.Task DeleteDept(SysDept dept)
-        {
-            if (_deptService.HasChildByDeptId(dept.Id))
-            {
-                await _dialogHostService.AlertAsync("存在下级部门,不允许删除", AlertType.Info);
-                return;
-            }
-
-            if (_deptService.CheckDeptExistUser(dept.Id))
-            {
-                await _dialogHostService.AlertAsync("部门存在用户,不允许删除", AlertType.Info);
-                return;
-            }
+            if (dept == null) return;
 
             var result = await _dialogHostService.ConfirmAsync($"确定要删除部门 '{dept.DeptName}' 吗？", "确认删除");
             if (result)
@@ -122,12 +112,12 @@ namespace MaiziWPF.Modules.Sys
                 try
                 {
                     _deptService.DeleteDeptById(dept.Id);
-                    await _dialogHostService.AlertAsync("删除成功", AlertType.Info);
-                    SearchDept();
+                    _snackbarService.EnqueueSuccess("删除成功");
+                    LoadDataList();
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
-                    await _dialogHostService.AlertAsync($"删除失败：{ex.Message}", AlertType.Error);
+                    _snackbarService.EnqueueError($"删除失败：{ex.Message}");
                 }
             }
         }

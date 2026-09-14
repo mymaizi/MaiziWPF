@@ -36,8 +36,8 @@ namespace MaiziWPF.Modules.Sys
         public ObservableCollection<string> AllIcons { get; } = new();
         public ObservableCollection<string> FilteredIcons { get; } = new();
 
-        public IconPickerViewModel(IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public IconPickerViewModel(ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             LoadIcons();
             FilterIcons();

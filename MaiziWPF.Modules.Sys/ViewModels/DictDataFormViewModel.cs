@@ -9,7 +9,6 @@ namespace MaiziWPF.Modules.Sys
     public class DictDataFormViewModel : FormBindableBase
     {
         private readonly ISysDictService _dictService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -88,11 +87,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public DictDataFormViewModel(ISysDictService dictService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public DictDataFormViewModel(ISysDictService dictService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _dictService = dictService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -104,12 +102,12 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(DictLabel))
             {
-                await _dialogHostService.AlertAsync("请输入字典标签", AlertType.Info);
+                ShowWarning("请输入字典标签");
                 return;
             }
             if (string.IsNullOrWhiteSpace(DictValue))
             {
-                await _dialogHostService.AlertAsync("请输入字典键值", AlertType.Info);
+                ShowWarning("请输入字典键值");
                 return;
             }
 
@@ -136,11 +134,12 @@ namespace MaiziWPF.Modules.Sys
                     _dictService.InsertDictData(dictData);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

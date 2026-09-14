@@ -10,7 +10,6 @@ namespace MaiziWPF.Modules.Sys
     public class MenuFormViewModel : FormBindableBase
     {
         private readonly ISysMenuService _menuService;
-        private readonly IDialogHostService _dialogHostService;
 
         public ObservableCollection<SysMenu> MenuTreeItems { get; set; } = new();
 
@@ -126,6 +125,13 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _isVisible, value); }
         }
 
+        private bool _isIconPickerOpen;
+        public bool IsIconPickerOpen
+        {
+            get { return _isIconPickerOpen; }
+            set { SetProperty(ref _isIconPickerOpen, value); }
+        }
+
         private bool _isFrame = true;
         public bool IsFrame
         {
@@ -133,33 +139,29 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _isFrame, value); }
         }
 
-        public MenuFormViewModel(ISysMenuService menuService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public MenuFormViewModel(ISysMenuService menuService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _menuService = menuService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
                 SaveMenu();
             });
 
-            OpenIconPickerCommand = new DelegateCommand(async () =>
+            OpenIconPickerCommand = new DelegateCommand(() =>
             {
-                var view = new IconPickerView();
-                if (view.DataContext is IconPickerViewModel vm)
-                {
-                    vm.SelectedIcon = Icon;
-                    await _dialogHostService.ShowDialogAsync(view, autoClose: false);
-                    if (!string.IsNullOrEmpty(vm.SelectedIcon))
-                    {
-                        Icon = vm.SelectedIcon;
-                    }
-                }
+                IsIconPickerOpen = !IsIconPickerOpen;
+            });
+
+            CloseIconPickerCommand = new DelegateCommand(() =>
+            {
+                IsIconPickerOpen = false;
             });
         }
 
         public DelegateCommand OpenIconPickerCommand { get; }
+        public DelegateCommand CloseIconPickerCommand { get; }
 
         public void LoadMenuTree()
         {
@@ -172,7 +174,7 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(MenuName))
             {
-                await _dialogHostService.AlertAsync("请输入菜单名称", AlertType.Info);
+                ShowWarning("请输入菜单名称");
                 return;
             }
 
@@ -197,7 +199,7 @@ namespace MaiziWPF.Modules.Sys
 
             if (!_menuService.CheckMenuNameUnique(menu))
             {
-                await _dialogHostService.AlertAsync("菜单名称已存在", AlertType.Info);
+                ShowWarning("菜单名称已存在");
                 return;
             }
 
@@ -212,11 +214,12 @@ namespace MaiziWPF.Modules.Sys
                     _menuService.InsertMenu(menu);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError($"保存失败：{ex.Message}");
             }
         }
     }

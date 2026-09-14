@@ -9,7 +9,6 @@ namespace MaiziWPF.Modules.Sys
     public class JobFormViewModel : FormBindableBase
     {
         private readonly ISysJobService _jobService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -53,7 +52,7 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _cronExpression, value); }
         }
 
-        private string _misfirePolicy = "3";
+        private string _misfirePolicy = "1";
         public string MisfirePolicy
         {
             get { return _misfirePolicy; }
@@ -81,11 +80,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public JobFormViewModel(ISysJobService jobService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public JobFormViewModel(ISysJobService jobService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _jobService = jobService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -97,23 +95,17 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(JobName))
             {
-                await _dialogHostService.AlertAsync("请输入任务名称", AlertType.Info);
+                ShowWarning("请输入任务名称");
                 return;
             }
             if (string.IsNullOrWhiteSpace(InvokeTarget))
             {
-                await _dialogHostService.AlertAsync("请输入调用目标", AlertType.Info);
+                ShowWarning("请输入调用目标");
                 return;
             }
             if (string.IsNullOrWhiteSpace(CronExpression))
             {
-                await _dialogHostService.AlertAsync("请输入Cron表达式", AlertType.Info);
-                return;
-            }
-
-            if (!IsEditMode && !_jobService.CheckJobNameUnique(JobName))
-            {
-                await _dialogHostService.AlertAsync("任务名称已存在", AlertType.Info);
+                ShowWarning("请输入 cron 表达式");
                 return;
             }
 
@@ -141,11 +133,12 @@ namespace MaiziWPF.Modules.Sys
                     _jobService.InsertJob(job);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

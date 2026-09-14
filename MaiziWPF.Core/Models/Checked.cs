@@ -22,6 +22,11 @@ namespace MaiziWPF.Core
             get { return _isSelected; }
             set { SetProperty(ref _isSelected, value); }
         }
+        public bool IsChecked
+        {
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value); }
+        }
         private long _id;
         public long Id
         {

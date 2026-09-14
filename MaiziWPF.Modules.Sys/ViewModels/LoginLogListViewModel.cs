@@ -12,13 +12,15 @@ namespace MaiziWPF.Modules.Sys
     {
         private readonly ISysLogininforService _logininforService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ISnackbarService _snackbarService;
 
         public ICommand CleanLogCommand { get; }
 
-        public LoginLogListViewModel(ISysLogininforService logininforService, IDialogHostService dialogHostService)
+        public LoginLogListViewModel(ISysLogininforService logininforService, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
             _logininforService = logininforService;
             _dialogHostService = dialogHostService;
+            _snackbarService = snackbarService;
 
             RegisterQueryFunc(input =>
             {
@@ -48,11 +50,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _logininforService.DeleteLogininforById(log.InfoId);
+                _snackbarService.EnqueueSuccess("删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
 
@@ -64,12 +67,12 @@ namespace MaiziWPF.Modules.Sys
             try
             {
                 _logininforService.CleanLogininfor();
-                await _dialogHostService.AlertAsync("清空成功", AlertType.Info);
+                _snackbarService.EnqueueSuccess("清空成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                _snackbarService.EnqueueError(ex.Message);
             }
         }
     }

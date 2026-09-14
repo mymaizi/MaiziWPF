@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:domain="clr-namespace:MaiziWPF.Services.Domain;assembly=MaiziWPF.Services.Domain"
+    xmlns:local="clr-namespace:MaiziWPF.Modules.Sys"
     xmlns:maiziWPF="clr-namespace:MaiziWPF.Core;assembly=MaiziWPF.Core"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
@@ -12,6 +13,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <maiziWPF:BooleanConverter x:Key="EqualToBooleanConverter" />
         <maiziWPF:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <maiziWPF:StringToPackIconKindConverter x:Key="StringToPackIconKindConverter" />
         <Style x:Key="FormLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Foreground" Value="#606266" />
@@ -25,7 +27,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1" />
@@ -34,7 +36,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  标题栏  -->
         <Grid Grid.Row="0" Margin="20,16,16,12">
             <TextBlock
                 FontSize="16"
@@ -56,10 +57,8 @@
 
         <Border Grid.Row="1" Background="#f0f0f0" />
 
-        <!--  表单内容  -->
         <ScrollViewer Grid.Row="2" Margin="20,12,20,12" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <!--  上级菜单  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -78,7 +77,6 @@
                         materialDesign:HintAssist.Hint="顶级菜单" />
                 </Grid>
 
-                <!--  菜单类型  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -105,7 +103,6 @@
                     </StackPanel>
                 </Grid>
 
-                <!--  菜单图标（目录/菜单显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -140,12 +137,36 @@
                             BorderBrush="#dcdfe6"
                             BorderThickness="1"
                             Command="{Binding OpenIconPickerCommand}"
+                            Cursor="Hand"
                             ToolTip="选择图标">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#e6f7ff" />
+                                            <Setter Property="BorderBrush" Value="#91d5ff" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
                             <materialDesign:PackIcon
                                 Width="20"
                                 Height="20"
                                 Foreground="#606266"
-                                Kind="{Binding Icon, TargetNullValue=Image}" />
+                                Kind="{Binding Icon, Converter={StaticResource StringToPackIconKindConverter}}" />
                         </Button>
                         <TextBox
                             Grid.Column="1"
@@ -157,7 +178,6 @@
                     </Grid>
                 </Grid>
 
-                <!--  菜单名称 + 显示排序  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -174,7 +194,7 @@
                         FontSize="13"
                         Text="{Binding MenuName}"
                         materialDesign:HintAssist.Hint="请输入菜单名称" />
-                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Foreground="#ff4d4f" Text="* 显示排序" />
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="显示排序" />
                     <TextBox
                         Grid.Column="5"
                         Height="36"
@@ -185,7 +205,6 @@
                         materialDesign:HintAssist.Hint="请输入排序号" />
                 </Grid>
 
-                <!--  是否外链 + 路由地址（目录/菜单显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -230,7 +249,6 @@
                         materialDesign:HintAssist.Hint="请输入路由地址" />
                 </Grid>
 
-                <!--  组件路径 + 权限字符（仅菜单显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -266,7 +284,6 @@
                         materialDesign:HintAssist.Hint="请输入权限标识" />
                 </Grid>
 
-                <!--  权限字符（仅按钮显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -295,7 +312,6 @@
                         materialDesign:HintAssist.Hint="请输入权限标识" />
                 </Grid>
 
-                <!--  路由参数 + 是否缓存（仅菜单显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -337,7 +353,6 @@
                     </StackPanel>
                 </Grid>
 
-                <!--  显示状态 + 菜单状态（目录/菜单显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -388,7 +403,6 @@
                     </StackPanel>
                 </Grid>
 
-                <!--  菜单状态（仅按钮显示）  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -423,7 +437,6 @@
                     </StackPanel>
                 </Grid>
 
-                <!--  备注  -->
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -443,7 +456,6 @@
 
         <Border Grid.Row="3" Background="#f0f0f0" />
 
-        <!--  底部按钮  -->
         <StackPanel
             Grid.Row="4"
             Margin="20,12,20,16"
@@ -466,5 +478,40 @@
                 Foreground="#606266"
                 Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
         </StackPanel>
+
+        <Popup
+            AllowsTransparency="True"
+            IsOpen="{Binding IsIconPickerOpen}"
+            Placement="Center"
+            PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}"
+            StaysOpen="True">
+            <Grid>
+                <Border
+                    Width="620"
+                    Height="460"
+                    Background="White"
+                    BorderBrush="#e0e0e0"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.2" ShadowDepth="3" />
+                    </Border.Effect>
+                    <local:IconPickerView Width="620" Height="460" SelectedIcon="{Binding Icon, Mode=TwoWay}" />
+                </Border>
+                <Button
+                    Padding="8,4"
+                    Background="#1890ff"
+                    BorderBrush="#1890ff"
+                    Command="{Binding CloseIconPickerCommand}"
+                    Content="关闭"
+                    Foreground="#fff"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,20"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+            </Grid>
+        </Popup>
     </Grid>
 </UserControl>

@@ -9,7 +9,6 @@ namespace MaiziWPF.Modules.Sys
     public class NoticeFormViewModel : FormBindableBase
     {
         private readonly ISysNoticeService _noticeService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -53,11 +52,17 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _status, value); }
         }
 
-        public NoticeFormViewModel(ISysNoticeService noticeService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        private string _remark;
+        public string Remark
+        {
+            get { return _remark; }
+            set { SetProperty(ref _remark, value); }
+        }
+
+        public NoticeFormViewModel(ISysNoticeService noticeService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _noticeService = noticeService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -69,12 +74,7 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(NoticeTitle))
             {
-                await _dialogHostService.AlertAsync("请输入公告标题", AlertType.Info);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(NoticeContent))
-            {
-                await _dialogHostService.AlertAsync("请输入公告内容", AlertType.Info);
+                ShowWarning("请输入公告标题");
                 return;
             }
 
@@ -84,7 +84,8 @@ namespace MaiziWPF.Modules.Sys
                 NoticeTitle = NoticeTitle,
                 NoticeType = NoticeType,
                 NoticeContent = NoticeContent,
-                Status = Status
+                Status = Status,
+                Remark = Remark
             };
 
             try
@@ -98,11 +99,12 @@ namespace MaiziWPF.Modules.Sys
                     _noticeService.InsertNotice(notice);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

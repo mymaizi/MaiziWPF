@@ -1,5 +1,6 @@
 using MaiziWPF.Core;
 using MaiziWPF.Services.Application;
+using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
 using System;
@@ -9,7 +10,6 @@ namespace MaiziWPF.Modules.Sys
     public class ConfigFormViewModel : FormBindableBase
     {
         private readonly ISysConfigService _configService;
-        private readonly IDialogHostService _dialogHostService;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -60,11 +60,10 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public ConfigFormViewModel(ISysConfigService configService, IDialogHostService dialogHostService)
-            : base(dialogHostService)
+        public ConfigFormViewModel(ISysConfigService configService, ISnackbarService snackbarService)
+            : base(snackbarService)
         {
             _configService = configService;
-            _dialogHostService = dialogHostService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -76,17 +75,12 @@ namespace MaiziWPF.Modules.Sys
         {
             if (string.IsNullOrWhiteSpace(ConfigName))
             {
-                await _dialogHostService.AlertAsync("请输入参数名称", AlertType.Info);
+                ShowWarning("请输入参数名称");
                 return;
             }
             if (string.IsNullOrWhiteSpace(ConfigKey))
             {
-                await _dialogHostService.AlertAsync("请输入参数键名", AlertType.Info);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(ConfigValue))
-            {
-                await _dialogHostService.AlertAsync("请输入参数键值", AlertType.Info);
+                ShowWarning("请输入参数键名");
                 return;
             }
 
@@ -102,7 +96,7 @@ namespace MaiziWPF.Modules.Sys
 
             if (!_configService.CheckConfigKeyUnique(config))
             {
-                await _dialogHostService.AlertAsync("参数键名已存在", AlertType.Info);
+                ShowWarning("参数键名已存在");
                 return;
             }
 
@@ -117,11 +111,12 @@ namespace MaiziWPF.Modules.Sys
                     _configService.InsertConfig(config);
                 }
                 OnSaveSuccessCallback?.Invoke();
-                await _dialogHostService.CloseDialogAsync();
+                ShowSuccess("保存成功");
+                CloseDialog();
             }
             catch (Exception ex)
             {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                ShowError(ex.Message);
             }
         }
     }

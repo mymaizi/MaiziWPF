@@ -3,169 +3,133 @@ using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
-using Prism.Mvvm;
-using System;
+using Prism.Ioc;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace MaiziWPF.Modules.Sys
 {
     public class MenuListViewModel : PageBindableBase<SysMenu, QueryMenuInput>
     {
-        public ObservableCollection<SysMenu> MenuItems { get; set; } = new();
-
-        private string _menuName;
-        public string MenuName { get => _menuName; set => SetProperty(ref _menuName, value); }
-
-        private string _status;
-        public string Status { get => _status; set => SetProperty(ref _status, value); }
-
         private readonly ISysMenuService _menuService;
+        private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly IContainerProvider _containerProvider;
 
-        public ICommand AddMenuCommand { get; }
-        public ICommand ResetCommand { get; }
-        public ICommand CascadeDeleteCommand { get; }
-
-        public MenuListViewModel(ISysMenuService menuService, IDialogHostService dialogHostService)
+        public MenuListViewModel(ISysMenuService menuService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
         {
             _menuService = menuService;
+            _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
+            _containerProvider = containerProvider;
 
-            SearchButtonCommand = new DelegateCommand(() =>
+            SearchButtonCommand = new DelegateCommand<MenuListViewModel>((vm) =>
             {
-                SearchMenu();
+                LoadMenuList();
             });
 
-            AddMenuCommand = new DelegateCommand(() =>
+            ResetButtonCommand = new DelegateCommand<MenuListViewModel>((vm) =>
             {
-                OpenMenuForm(null);
+                QueryPageInfo = new QueryMenuInput();
+                LoadMenuList();
             });
 
-            ResetCommand = new DelegateCommand(() =>
+            AddButtonCommand = new DelegateCommand<MenuListViewModel>(async (vm) =>
             {
-                MenuName = string.Empty;
-                Status = string.Empty;
-                SearchMenu();
+                await AddMenu();
             });
 
-            CascadeDeleteCommand = new DelegateCommand(async () =>
+            EditButtonCommand = new DelegateCommand<SysMenu>(async (menu) =>
             {
-                await CascadeDeleteAsync();
-            });
-
-            NewOrEditButtonCommand = new DelegateCommand<SysMenu>((menu) =>
-            {
-                OpenMenuForm(menu);
+                await EditMenu(menu);
             });
 
             DeleteButtonCommand = new DelegateCommand<SysMenu>(async (menu) =>
             {
                 await DeleteMenu(menu);
             });
-
-            SearchButtonCommand.Execute(this);
         }
 
-        private void SearchMenu()
+        public DelegateCommand<MenuListViewModel> SearchButtonCommand { get; }
+        public DelegateCommand<MenuListViewModel> ResetButtonCommand { get; }
+        public DelegateCommand<MenuListViewModel> AddButtonCommand { get; }
+        public DelegateCommand<SysMenu> EditButtonCommand { get; }
+        public DelegateCommand<SysMenu> DeleteButtonCommand { get; }
+
+        public override void LoadDataList()
         {
-            MenuItems.Clear();
-            var list = _menuService.SelectMenuList(new SysMenu()
-            {
-                MenuName = MenuName,
-                Status = Status,
-            }, 1);
-            MenuItems.AddRange(list);
+            LoadMenuList();
         }
 
-        private async void OpenMenuForm(SysMenu menu)
+        private void LoadMenuList()
         {
-            var isEdit = menu != null;
-            var view = new MenuFormView();
-            var viewModel = view.DataContext as MenuFormViewModel;
-            if (viewModel == null) return;
-
-            viewModel.LoadMenuTree();
-            viewModel.IsEditMode = isEdit;
-
-            if (isEdit)
-            {
-                viewModel.MenuId = menu.Id;
-                viewModel.ParentId = menu.ParentId;
-                viewModel.MenuName = menu.MenuName;
-                viewModel.MenuType = menu.MenuType;
-                viewModel.OrderNum = menu.OrderNum;
-                viewModel.Icon = menu.Icon;
-                viewModel.Component = menu.Component;
-                viewModel.Perms = menu.Perms;
-                viewModel.Status = menu.Status;
-                viewModel.Remark = menu.Remark;
-                viewModel.Path = menu.Path;
-                viewModel.Query = menu.QueryParam;
-                viewModel.IsFrame = menu.IsFrame == "1";
-                viewModel.IsCache = menu.IsCache == "0";
-                viewModel.IsVisible = menu.Visible == "0";
-            }
-
-            viewModel.OnSaveSuccessCallback = () =>
-            {
-                SearchMenu();
-            };
-
-            await _dialogHostService.ShowDialogAsync(view, autoClose: false);
+            DataList = new ObservableCollection<SysMenu>(_menuService.SelectMenuList(new SysMenu(), 1));
         }
 
-        private async System.Threading.Tasks.Task DeleteMenu(SysMenu menu)
+        private async Task AddMenu()
+        {
+            await _dialogHostService.ShowDialogAsync<MenuFormView>(view =>
+            {
+                var vm = view.DataContext as MenuFormViewModel;
+                vm.IsEditMode = false;
+                vm.ParentId = 0;
+                vm.MenuId = 0;
+                vm.LoadMenuTree();
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadMenuList();
+                };
+            });
+        }
+
+        private async Task EditMenu(SysMenu menu)
         {
             if (menu == null) return;
 
-            var confirmResult = await _dialogHostService.ConfirmAsync($"确定要删除菜单【{menu.MenuName}】吗？", "删除确认");
-            if (!confirmResult) return;
-
-            if (_menuService.HasChildByMenuId(menu.Id))
+            await _dialogHostService.ShowDialogAsync<MenuFormView>(view =>
             {
-                await _dialogHostService.AlertAsync("存在子菜单,不允许删除", AlertType.Info);
-                return;
-            }
-
-            if (_menuService.CheckMenuExistRole(menu.Id))
-            {
-                await _dialogHostService.AlertAsync("菜单已分配,不允许删除", AlertType.Info);
-                return;
-            }
-
-            try
-            {
-                _menuService.DeleteMenuById(menu.Id);
-                SearchMenu();
-            }
-            catch (Exception ex)
-            {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
-            }
+                var vm = view.DataContext as MenuFormViewModel;
+                vm.IsEditMode = true;
+                vm.MenuId = menu.Id;
+                vm.ParentId = menu.ParentId;
+                vm.MenuName = menu.MenuName;
+                vm.MenuType = menu.MenuType;
+                vm.OrderNum = menu.OrderNum;
+                vm.Icon = menu.Icon;
+                vm.Component = menu.Component;
+                vm.Perms = menu.Perms;
+                vm.Status = menu.Status;
+                vm.Remark = menu.Remark;
+                vm.Path = menu.Path;
+                vm.Query = menu.QueryParam;
+                vm.IsFrame = menu.IsFrame == "1";
+                vm.IsCache = menu.IsCache == "0";
+                vm.IsVisible = menu.Visible == "0";
+                vm.LoadMenuTree();
+                vm.OnSaveSuccessCallback = () =>
+                {
+                    LoadMenuList();
+                };
+            });
         }
 
-        private async System.Threading.Tasks.Task CascadeDeleteAsync()
+        private async Task DeleteMenu(SysMenu menu)
         {
-            var topMenus = _menuService.SelectMenuList(new SysMenu(), 1);
-            if (!topMenus.Any())
-            {
-                await _dialogHostService.AlertAsync("没有可删除的菜单", AlertType.Info);
-                return;
-            }
+            if (menu == null) return;
 
-            var confirmResult = await _dialogHostService.ConfirmAsync("级联删除将删除所有菜单及子菜单，确定继续吗？", "级联删除确认");
-            if (!confirmResult) return;
-
-            try
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除菜单 '{menu.MenuName}' 吗？", "确认删除");
+            if (result)
             {
-                _menuService.DeleteMenuById(topMenus.First().Id);
-                SearchMenu();
-            }
-            catch (Exception ex)
-            {
-                await _dialogHostService.AlertAsync(ex.Message, AlertType.Error);
+                try
+                {
+                    _menuService.DeleteMenuById(menu.Id);
+                    _snackbarService.EnqueueSuccess("删除成功");
+                    LoadMenuList();
+                }
+                catch (System.Exception ex)
+                {
+                    _snackbarService.EnqueueError($"删除失败：{ex.Message}");
+                }
             }
         }
     }

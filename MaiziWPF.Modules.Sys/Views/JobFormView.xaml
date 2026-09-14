@@ -37,11 +37,7 @@
         </Style>
     </UserControl.Resources>
 
-    <materialDesign:DialogHost
-        CloseOnClickAway="False"
-        Identifier="JobDialog"
-        OverlayBackground="Transparent">
-        <Grid Width="560" Margin="24">
+    <Grid Width="560" Margin="24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60" />
                 <RowDefinition Height="60" />
@@ -220,5 +216,4 @@
                     Style="{StaticResource MaterialDesignRaisedLightButton}" />
             </StackPanel>
         </Grid>
-    </materialDesign:DialogHost>
 </UserControl>
