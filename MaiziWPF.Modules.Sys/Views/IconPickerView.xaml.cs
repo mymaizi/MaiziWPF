@@ -1,6 +1,6 @@
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace MaiziWPF.Modules.Sys
 {
@@ -10,6 +10,31 @@ namespace MaiziWPF.Modules.Sys
         {
             InitializeComponent();
             DataContextChanged += OnDataContextChanged;
+        }
+
+        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue is IconPickerViewModel oldVm)
+            {
+                oldVm.PropertyChanged -= OnViewModelPropertyChanged;
+            }
+
+            if (e.NewValue is IconPickerViewModel newVm)
+            {
+                newVm.SelectedIcon = SelectedIcon;
+                newVm.PropertyChanged += OnViewModelPropertyChanged;
+            }
+        }
+
+        private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IconPickerViewModel.SelectedIcon))
+            {
+                if (sender is IconPickerViewModel vm)
+                {
+                    SelectedIcon = vm.SelectedIcon;
+                }
+            }
         }
 
         public string SelectedIcon
@@ -23,20 +48,15 @@ namespace MaiziWPF.Modules.Sys
                 nameof(SelectedIcon),
                 typeof(string),
                 typeof(IconPickerView),
-                new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                new FrameworkPropertyMetadata(string.Empty,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnSelectedIconChanged));
 
-        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue is IconPickerViewModel vm)
+            if (d is IconPickerView view && view.DataContext is IconPickerViewModel vm)
             {
-                BindingOperations.ClearBinding(this, SelectedIconProperty);
-                var binding = new Binding(nameof(vm.SelectedIcon))
-                {
-                    Source = vm,
-                    Mode = BindingMode.TwoWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-                };
-                BindingOperations.SetBinding(this, SelectedIconProperty, binding);
+                vm.SelectedIcon = (string)e.NewValue;
             }
         }
     }

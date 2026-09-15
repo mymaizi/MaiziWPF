@@ -1,13 +1,34 @@
 using MaiziWPF.Core;
 using Prism.Commands;
+using Prism.Events;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MaiziWPF.Modules.Sys
 {
     public class IconPickerViewModel : FormBindableBase
     {
+        private readonly IEventAggregator _eventAggregator;
+        
+        private bool _isOpen;
+        public bool IsOpen
+        {
+            get => _isOpen;
+            set => SetProperty(ref _isOpen, value);
+        }
+
+        private bool _isLoading = true;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set { SetProperty(ref _isLoading, value); }
+        }
+
         private string _searchText;
         public string SearchText
         {
@@ -15,6 +36,7 @@ namespace MaiziWPF.Modules.Sys
             set
             {
                 SetProperty(ref _searchText, value);
+                _loadedCount = PageSize;
                 FilterIcons();
             }
         }
@@ -33,18 +55,27 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _selectedIcon, value); }
         }
 
-        public ObservableCollection<string> AllIcons { get; } = new();
+        private readonly List<string> _allIconsList = new();
         public ObservableCollection<string> FilteredIcons { get; } = new();
 
-        public IconPickerViewModel(ISnackbarService snackbarService)
+        private int _loadedCount;
+        private const int PageSize = 35;
+
+        public DelegateCommand<string> SelectIconCommand { get; }
+        public DelegateCommand UseManualCommand { get; }
+        public DelegateCommand<ScrollChangedEventArgs> ScrollChangedCommand { get; }
+
+        public IconPickerViewModel(ISnackbarService snackbarService, IEventAggregator eventAggregator)
             : base(snackbarService)
         {
-            LoadIcons();
-            FilterIcons();
+            _eventAggregator = eventAggregator;
+            _loadedCount = PageSize;
+            LoadIconsAsync();
 
             SelectIconCommand = new DelegateCommand<string>(icon =>
             {
                 SelectedIcon = icon;
+                IsOpen = false;
             });
 
             UseManualCommand = new DelegateCommand(() =>
@@ -52,50 +83,80 @@ namespace MaiziWPF.Modules.Sys
                 if (!string.IsNullOrWhiteSpace(ManualInput))
                 {
                     SelectedIcon = ManualInput.Trim();
-                    AcceptCommand.Execute(null);
+                    IsOpen = false;
                 }
             });
 
-            ConfirmCommand = new DelegateCommand(() =>
+            ScrollChangedCommand = new DelegateCommand<ScrollChangedEventArgs>(e =>
             {
-                if (!string.IsNullOrEmpty(SelectedIcon))
+                if (e.VerticalOffset + e.ViewportHeight >= e.ExtentHeight - 50)
                 {
-                    AcceptCommand.Execute(null);
-                }
-            });
+                    int totalCount;
+                    lock (_allIconsList)
+                    {
+                        totalCount = _allIconsList.Count;
+                    }
 
-            CancelCommand = new DelegateCommand(() =>
-            {
-                AcceptCommand.Execute(null);
+                    if (_loadedCount < totalCount)
+                    {
+                        _loadedCount += PageSize;
+                        if (_loadedCount > totalCount)
+                            _loadedCount = totalCount;
+                        FilterIcons();
+                    }
+                }
             });
         }
 
-        private void LoadIcons()
+        private async void LoadIconsAsync()
         {
-            var kinds = Enum.GetValues(typeof(MaterialDesignThemes.Wpf.PackIconKind))
-                .Cast<MaterialDesignThemes.Wpf.PackIconKind>();
-            foreach (var kind in kinds)
+            IsLoading = true;
+
+            await Task.Run(() =>
             {
-                AllIcons.Add(kind.ToString());
-            }
+                var kinds = Enum.GetValues(typeof(MaterialDesignThemes.Wpf.PackIconKind))
+                    .Cast<MaterialDesignThemes.Wpf.PackIconKind>()
+                    .Select(k => k.ToString())
+                    .ToList();
+
+                lock (_allIconsList)
+                {
+                    _allIconsList.Clear();
+                    _allIconsList.AddRange(kinds);
+                }
+            });
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                IsLoading = false;
+                FilterIcons();
+            });
         }
 
         private void FilterIcons()
         {
             FilteredIcons.Clear();
             var query = SearchText?.Trim().ToLower();
-            var filtered = string.IsNullOrEmpty(query)
-                ? AllIcons
-                : AllIcons.Where(x => x.ToLower().Contains(query));
-            foreach (var icon in filtered)
+
+            List<string> source;
+            lock (_allIconsList)
+            {
+                if (string.IsNullOrEmpty(query))
+                {
+                    source = _allIconsList.Take(_loadedCount).ToList();
+                }
+                else
+                {
+                    source = _allIconsList
+                        .Where(x => x.ToLower().Contains(query))
+                        .ToList();
+                }
+            }
+
+            foreach (var icon in source)
             {
                 FilteredIcons.Add(icon);
             }
         }
-
-        public DelegateCommand<string> SelectIconCommand { get; }
-        public DelegateCommand UseManualCommand { get; }
-        public DelegateCommand ConfirmCommand { get; }
-        public DelegateCommand CancelCommand { get; }
     }
 }

@@ -2,6 +2,7 @@ using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
+
 using System;
 using System.Collections.ObjectModel;
 
@@ -131,14 +132,6 @@ namespace MaiziWPF.Modules.Sys
             get { return _isVisible; }
             set { SetProperty(ref _isVisible, value); }
         }
-
-        private bool _isIconPickerOpen;
-        public bool IsIconPickerOpen
-        {
-            get { return _isIconPickerOpen; }
-            set { SetProperty(ref _isIconPickerOpen, value); }
-        }
-
         private bool _isFrame = true;
         public bool IsFrame
         {
@@ -155,20 +148,7 @@ namespace MaiziWPF.Modules.Sys
             {
                 SaveMenu();
             });
-
-            OpenIconPickerCommand = new DelegateCommand(() =>
-            {
-                IsIconPickerOpen = !IsIconPickerOpen;
-            });
-
-            CloseIconPickerCommand = new DelegateCommand(() =>
-            {
-                IsIconPickerOpen = false;
-            });
         }
-
-        public DelegateCommand OpenIconPickerCommand { get; }
-        public DelegateCommand CloseIconPickerCommand { get; }
 
         public void LoadMenuTree()
         {
