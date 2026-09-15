@@ -84,7 +84,7 @@
                 Width="20"
                 Height="20"
                 Foreground="#606266"
-                Kind="{Binding SelectedIcon, RelativeSource={RelativeSource AncestorType={x:Type local:IconPickerView}}, Converter={StaticResource StringToPackIconKindConverter}}" />
+                Kind="{Binding SelectedIcon, Converter={StaticResource StringToPackIconKindConverter}}" />
         </ToggleButton>
 
         <Popup
@@ -202,13 +202,24 @@
                                     
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border CornerRadius="5" Margin="5"  Background="#f5f5f5"
-                                                Width="56" Height="56" Cursor="Hand" ToolTip="{Binding}"
-                                                >
-                                              
-                                                 <materialDesign:PackIcon Kind="{Binding}"
-                                         HorizontalAlignment="Center" 
-                                         VerticalAlignment="Center"/>
+                                            <Border
+                                                Width="56" Height="56"
+                                                Margin="5"
+                                                CornerRadius="5"
+                                                Background="#f5f5f5"
+                                                Cursor="Hand"
+                                                ToolTip="{Binding}">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                                        <prism:InvokeCommandAction
+                                                            Command="{Binding DataContext.SelectIconCommand, RelativeSource={RelativeSource AncestorType={x:Type local:IconPickerView}}}"
+                                                            CommandParameter="{Binding}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                                <materialDesign:PackIcon
+                                                    Kind="{Binding}"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center" />
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

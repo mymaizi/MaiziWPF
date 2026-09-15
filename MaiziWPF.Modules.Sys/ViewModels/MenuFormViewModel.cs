@@ -63,7 +63,7 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _orderNum, value); }
         }
 
-        private string _icon;
+        private string _icon= "";
         public string Icon
         {
             get { return _icon; }
