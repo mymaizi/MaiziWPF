@@ -143,7 +143,6 @@ namespace MaiziWPF.Modules.Sys
             : base(snackbarService)
         {
             _menuService = menuService;
-
             AcceptCommand = new DelegateCommand(() =>
             {
                 SaveMenu();

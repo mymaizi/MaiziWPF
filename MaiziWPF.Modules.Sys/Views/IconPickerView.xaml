@@ -130,7 +130,7 @@
                             Height="40"
                             FontSize="13"
                             Text="{Binding ManualInput}"
-                            materialDesign:HintAssist.Hint="例如：mdi:account-circle-outline" />
+                            materialDesign:HintAssist.Hint="例如：Account" />
                         <Button
                             Grid.Column="1"
                             Margin="8,0,0,0"

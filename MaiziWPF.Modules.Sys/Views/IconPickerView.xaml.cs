@@ -9,10 +9,21 @@ namespace MaiziWPF.Modules.Sys
     {
         public IconPickerView()
         {
+            this.DataContextChanged += (s,args) =>
+            {
+                if (DataContext is IconPickerViewModel vm)
+                {
+                    vm.PropertyChanged += (s, args) => 
+                    {
+                        if (args.PropertyName == nameof(IconPickerViewModel.SelectedIcon))
+                            SelectedIcon = vm.SelectedIcon;
+                    };
+                }
+            };
             InitializeComponent();
         }
-     
-        public string SelectedIcon1
+
+        public string SelectedIcon
         {
             get => (string)GetValue(SelectedIconProperty);
             set => SetValue(SelectedIconProperty, value);
@@ -20,7 +31,7 @@ namespace MaiziWPF.Modules.Sys
 
         public static readonly DependencyProperty SelectedIconProperty =
             DependencyProperty.Register(
-                nameof(SelectedIcon1),
+                nameof(SelectedIcon),
                 typeof(string),
                 typeof(IconPickerView),
                 new FrameworkPropertyMetadata(string.Empty,

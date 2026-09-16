@@ -113,7 +113,7 @@
                         <local:IconPickerView
                             Grid.Column="0"
                             Margin="0,0,8,0"
-                            SelectedIcon1="{Binding SelectedIconProperty, Mode=TwoWay}" />
+                            SelectedIcon="{Binding  DataContext.Icon, ElementName=RootUserControl, Mode=TwoWay}" />
                         <TextBox
                             Grid.Column="1"
                             Height="36"
