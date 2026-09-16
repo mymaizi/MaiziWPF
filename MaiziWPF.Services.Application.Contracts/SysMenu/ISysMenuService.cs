@@ -16,6 +16,8 @@ namespace MaiziWPF.Services.Application.Contracts
 
         int DeleteMenuById(long menuId);
 
+        int DeleteMenuCascade(long menuId);
+
         bool HasChildByMenuId(long menuId);
 
         bool CheckMenuExistRole(long menuId);

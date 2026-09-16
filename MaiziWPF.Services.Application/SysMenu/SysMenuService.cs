@@ -62,6 +62,11 @@ namespace MaiziWPF.Services.Application
             return _repository.DeleteMenuById(menuId);
         }
 
+        public int DeleteMenuCascade(long menuId)
+        {
+            return _repository.DeleteMenuCascade(menuId);
+        }
+
         public bool HasChildByMenuId(long menuId)
         {
             return _repository.HasChildByMenuId(menuId);

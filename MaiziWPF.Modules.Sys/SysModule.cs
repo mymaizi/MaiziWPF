@@ -1,6 +1,5 @@
-﻿using MaiziWPF.Core;
+﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
-using MaiziWPF.Services.Application.Contracts;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Mvvm;
@@ -47,8 +46,8 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterDialog<ConfigFormView>();
             containerRegistry.RegisterDialog<NoticeFormView>();
             containerRegistry.RegisterDialog<JobFormView>();
-            containerRegistry.RegisterDialog<ConfirmDialog>();
-            containerRegistry.RegisterDialog<MessageDialog>();
+            containerRegistry.RegisterDialog<ConfirmDialog, ConfirmDialogViewModel>();
+            containerRegistry.RegisterDialog<MessageDialog, MessageDialogViewModel>();
         }
     }
 }

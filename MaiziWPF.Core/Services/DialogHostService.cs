@@ -42,5 +42,13 @@ namespace MaiziWPF.Core
 
             return await tcs.Task;
         }
+
+        public async Task ShowMessageAsync(string message, string title = "提示")
+        {
+            var dialogParameters = new DialogParameters();
+            dialogParameters.Add("message", message);
+
+            _dialogService.ShowDialog("MessageDialog", dialogParameters, _ => { });
+        }
     }
 }

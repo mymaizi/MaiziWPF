@@ -154,19 +154,6 @@
                             </StackPanel>
                         </Button>
                         <Button
-                            Margin="0,0,8,0"
-                            Padding="12,6"
-                            Background="#ff4d4f"
-                            BorderBrush="#ff4d4f"
-                            Command="{Binding DeleteButtonCommand}"
-                            Foreground="#fff"
-                            Style="{StaticResource MaterialDesignRaisedLightButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" Margin="0,0,4,0" />
-                                <TextBlock Text="级联删除" FontSize="12" />
-                            </StackPanel>
-                        </Button>
-                        <Button
                             Padding="12,6"
                             BorderBrush="#dcdfe6"
                             Foreground="#606266"

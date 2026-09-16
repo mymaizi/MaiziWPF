@@ -1,6 +1,7 @@
 ﻿using FreeSql;
 using MaiziWPF.Services.Domain;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MaiziWPF.Services.MySql
@@ -69,6 +70,30 @@ namespace MaiziWPF.Services.MySql
                 .Set(m => m.DelFlag, "2")
                 .Where(m => m.Id == menuId)
                 .ExecuteAffrows();
+        }
+
+        public int DeleteMenuCascade(long menuId)
+        {
+            var allMenus = _fsql.Select<SysMenu>()
+                .Where(m => m.DelFlag == "0")
+                .ToList();
+
+            var ids = new List<long> { menuId };
+            CollectChildIds(allMenus, menuId, ids);
+
+            return _fsql.Update<SysMenu>()
+                .Set(m => m.DelFlag, "1")
+                .Where(m => ids.Contains(m.Id))
+                .ExecuteAffrows();
+        }
+
+        private void CollectChildIds(List<SysMenu> menus, long parentId, List<long> ids)
+        {
+            foreach (var menu in menus.Where(m => m.ParentId == parentId))
+            {
+                ids.Add(menu.Id);
+                CollectChildIds(menus, menu.Id, ids);
+            }
         }
 
         public bool HasChildByMenuId(long menuId)

@@ -32,9 +32,9 @@ namespace MaiziWPF.Modules.Sys
                 LoadDataList();
             });
 
-            AddButtonCommand = new DelegateCommand<MenuListViewModel>(async (vm) =>
+            AddButtonCommand = new DelegateCommand<SysMenu?>(async (menu) =>
             {
-                await AddMenu();
+                await AddMenu(menu);
             });
 
             EditButtonCommand = new DelegateCommand<SysMenu>(async (menu) =>
@@ -52,7 +52,7 @@ namespace MaiziWPF.Modules.Sys
 
         public DelegateCommand<MenuListViewModel> SearchButtonCommand { get; }
         public DelegateCommand<MenuListViewModel> ResetButtonCommand { get; }
-        public DelegateCommand<MenuListViewModel> AddButtonCommand { get; }
+        public DelegateCommand<SysMenu?> AddButtonCommand { get; }
         public DelegateCommand<SysMenu> EditButtonCommand { get; }
         public DelegateCommand<SysMenu> DeleteButtonCommand { get; }
 
@@ -61,14 +61,14 @@ namespace MaiziWPF.Modules.Sys
              DataList = new ObservableCollection<SysMenu>(_menuService.SelectMenuList(new SysMenu(), 1));
         }
 
-        private async Task AddMenu()
+        private async Task AddMenu(SysMenu? parentMenu = null)
         {
             await _dialogHostService.ShowDialogAsync<MenuFormView>(vm =>
             {
                 var form = (MenuFormViewModel)vm;
-                form.DialogTitle = "新增菜单";
+                form.DialogTitle = parentMenu == null ? "新增菜单" : "新增子菜单";
                 form.IsEditMode = false;
-                form.ParentId = 0;
+                form.ParentId = parentMenu?.Id ?? 0;
                 form.MenuId = 0;
                 form.LoadMenuTree();
                 form.OnSaveSuccessCallback = () =>
@@ -115,19 +115,19 @@ namespace MaiziWPF.Modules.Sys
         {
             if (menu == null) return;
 
-            var result = await _dialogHostService.ConfirmAsync($"确定要删除菜单 '{menu.MenuName}' 吗？", "确认删除");
-            if (result)
+            try
             {
-                try
+                var result = await _dialogHostService.ConfirmAsync($"确定要删除菜单 '{menu.MenuName}' 及其所有子菜单吗？", "确认删除");
+                if (result)
                 {
-                    _menuService.DeleteMenuById(menu.Id);
+                    _menuService.DeleteMenuCascade(menu.Id);
                     _snackbarService.EnqueueSuccess("删除成功");
                     LoadDataList();
                 }
-                catch (System.Exception ex)
-                {
-                    _snackbarService.EnqueueError($"删除失败：{ex.Message}");
-                }
+            }
+            catch (System.Exception ex)
+            {
+                _snackbarService.EnqueueError($"删除失败：{ex.Message}");
             }
         }
     }
