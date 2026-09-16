@@ -50,9 +50,9 @@ namespace MaiziWPF.Modules.Sys
 
         private async System.Threading.Tasks.Task OpenJobForm(SysJob job)
         {
-            await _dialogHostService.ShowDialogAsync<JobFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<JobFormView>(vm =>
             {
-                var model = view.DataContext as JobFormViewModel;
+                var model = (JobFormViewModel)vm;
 
                 if (job != null)
                 {

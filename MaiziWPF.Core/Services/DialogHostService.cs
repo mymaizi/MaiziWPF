@@ -16,17 +16,16 @@ namespace MaiziWPF.Core
             _containerProvider = containerProvider;
         }
 
-        public async Task ShowDialogAsync<TView>(Action<TView> setup = null) where TView : class
+        public Task ShowDialogAsync<TView>(Action<FormBindableBase> setup = null) where TView : class
         {
             var tcs = new TaskCompletionSource<bool>();
-            var dialogName = typeof(TView).Name;
-
-            _dialogService.ShowDialog(dialogName, null, result =>
+            var parameters = new DialogParameters();
+            if (setup != null)
             {
-                tcs.SetResult(true);
-            });
-
-            await tcs.Task;
+                parameters.Add("_SetupAction", setup);
+            }
+            _dialogService.ShowDialog(typeof(TView).Name, parameters, _ => tcs.TrySetResult(true));
+            return tcs.Task;
         }
 
         public async Task<bool> ConfirmAsync(string message, string title = "确认", string confirmButtonText = "确定", string cancelButtonText = "取消")

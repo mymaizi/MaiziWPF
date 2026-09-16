@@ -13,8 +13,8 @@ namespace MaiziWPF.Core
         private readonly ISnackbarService _snackbarService;
         public Action OnSaveSuccessCallback { get; set; }
 
-        public string Title { get; set; }
-        public DialogCloseListener RequestClose { get; set; }
+        public string DialogTitle { get; set; }
+        public DialogCloseListener RequestClose { get; private set; }
 
         public FormBindableBase(ISnackbarService snackbarService)
         {
@@ -40,9 +40,8 @@ namespace MaiziWPF.Core
             _snackbarService.EnqueueSuccess(message);
         }
 
-        protected void CloseDialog()
-        {
-            RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+        protected void CloseDialog(){
+             RequestClose.Invoke(new DialogResult(ButtonResult.OK));
         }
 
         public bool CanCloseDialog()
@@ -56,6 +55,10 @@ namespace MaiziWPF.Core
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            if (parameters != null && parameters.TryGetValue<Action<FormBindableBase>>("_SetupAction", out var setup))
+            {
+                setup(this);
+            }
         }
     }
 }

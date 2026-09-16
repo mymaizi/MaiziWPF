@@ -112,7 +112,7 @@ namespace MaiziWPF.Modules.Sys
                 }
                 OnSaveSuccessCallback?.Invoke();
                 ShowSuccess("保存成功");
-                CloseDialog();
+                OnDialogClosed();
             }
             catch (Exception ex)
             {

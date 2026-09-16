@@ -51,9 +51,9 @@ namespace MaiziWPF.Modules.Sys
 
         private async System.Threading.Tasks.Task OpenDictTypeForm(SysDictType dictType)
         {
-            await _dialogHostService.ShowDialogAsync<DictTypeFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<DictTypeFormView>(vm =>
             {
-                var model = view.DataContext as DictTypeFormViewModel;
+                var model = (DictTypeFormViewModel)vm;
 
                 if (dictType != null)
                 {

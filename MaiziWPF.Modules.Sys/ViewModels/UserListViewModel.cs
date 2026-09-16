@@ -74,15 +74,15 @@ namespace MaiziWPF.Modules.Sys
 
         private async Task AddUser()
         {
-            await _dialogHostService.ShowDialogAsync<UserFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<UserFormView>(vm =>
             {
-                var vm = view.DataContext as UserFormViewModel;
-                vm.IsEditMode = false;
-                vm.UserId = 0;
-                vm.Depts = _deptService.SelectDeptList(new SysDept(), false).Select(d => new Checked() { Id = d.Id, Name = d.DeptName }).ToList();
-                vm.Roles = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
-                vm.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
-                vm.OnSaveSuccessCallback = () =>
+                var form = (UserFormViewModel)vm;
+                form.IsEditMode = false;
+                form.UserId = 0;
+                form.Depts = _deptService.SelectDeptList(new SysDept(), false).Select(d => new Checked() { Id = d.Id, Name = d.DeptName }).ToList();
+                form.Roles = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
+                form.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };
@@ -93,30 +93,30 @@ namespace MaiziWPF.Modules.Sys
         {
             if (user == null) return;
 
-            await _dialogHostService.ShowDialogAsync<UserFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<UserFormView>(vm =>
             {
-                var vm = view.DataContext as UserFormViewModel;
-                vm.IsEditMode = true;
-                vm.UserId = user.UserId;
-                vm.UserName = user.UserName;
-                vm.NickName = user.NickName;
-                vm.PhoneNumber = user.PhoneNumber;
-                vm.Email = user.Email;
-                vm.Status = user.Status;
-                vm.Sex = user.Sex;
-                vm.Remark = user.Remark;
-                vm.Depts = _deptService.SelectDeptList(new SysDept(), false).Select(d => new Checked() { Id = d.Id, Name = d.DeptName }).ToList();
-                vm.Roles = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
-                vm.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
-                vm.InitialRoleIds = _userService.SelectUserRoleIds(user.UserId);
-                vm.InitialPostIds = _userService.SelectUserPostIds(user.UserId);
-                vm.InitialDeptIds = _userService.SelectUserDeptIds(user.UserId);
+                var form = (UserFormViewModel)vm;
+                form.IsEditMode = true;
+                form.UserId = user.UserId;
+                form.UserName = user.UserName;
+                form.NickName = user.NickName;
+                form.PhoneNumber = user.PhoneNumber;
+                form.Email = user.Email;
+                form.Status = user.Status;
+                form.Sex = user.Sex;
+                form.Remark = user.Remark;
+                form.Depts = _deptService.SelectDeptList(new SysDept(), false).Select(d => new Checked() { Id = d.Id, Name = d.DeptName }).ToList();
+                form.Roles = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
+                form.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
+                form.InitialRoleIds = _userService.SelectUserRoleIds(user.UserId);
+                form.InitialPostIds = _userService.SelectUserPostIds(user.UserId);
+                form.InitialDeptIds = _userService.SelectUserDeptIds(user.UserId);
 
-                vm.Roles?.ForEach(r => r.IsChecked = vm.InitialRoleIds.Contains(r.Id));
-                vm.Posts?.ForEach(p => p.IsChecked = vm.InitialPostIds.Contains(p.Id));
-                vm.Depts?.ForEach(d => d.IsChecked = vm.InitialDeptIds.Contains(d.Id));
+                form.Roles?.ForEach(r => r.IsChecked = form.InitialRoleIds.Contains(r.Id));
+                form.Posts?.ForEach(p => p.IsChecked = form.InitialPostIds.Contains(p.Id));
+                form.Depts?.ForEach(d => d.IsChecked = form.InitialDeptIds.Contains(d.Id));
 
-                vm.OnSaveSuccessCallback = () =>
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };

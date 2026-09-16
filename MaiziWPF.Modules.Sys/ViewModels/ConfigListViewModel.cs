@@ -50,9 +50,9 @@ namespace MaiziWPF.Modules.Sys
 
         private async System.Threading.Tasks.Task OpenConfigForm(SysConfig config)
         {
-            await _dialogHostService.ShowDialogAsync<ConfigFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<ConfigFormView>(vm =>
             {
-                var model = view.DataContext as ConfigFormViewModel;
+                var model = (ConfigFormViewModel)vm;
 
                 if (config != null)
                 {

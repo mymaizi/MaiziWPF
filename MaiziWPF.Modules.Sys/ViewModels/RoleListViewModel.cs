@@ -63,12 +63,12 @@ namespace MaiziWPF.Modules.Sys
 
         private async Task AddRole()
         {
-            await _dialogHostService.ShowDialogAsync<RoleFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<RoleFormView>(vm =>
             {
-                var vm = view.DataContext as RoleFormViewModel;
-                vm.IsEditMode = false;
-                vm.RoleId = 0;
-                vm.OnSaveSuccessCallback = () =>
+                var form = (RoleFormViewModel)vm;
+                form.IsEditMode = false;
+                form.RoleId = 0;
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };
@@ -79,18 +79,18 @@ namespace MaiziWPF.Modules.Sys
         {
             if (role == null) return;
 
-            await _dialogHostService.ShowDialogAsync<RoleFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<RoleFormView>(vm =>
             {
-                var vm = view.DataContext as RoleFormViewModel;
-                vm.IsEditMode = true;
-                vm.RoleId = role.RoleId;
-                vm.RoleName = role.RoleName;
-                vm.RoleKey = role.RoleKey;
-                vm.RoleSort = role.RoleSort;
-                vm.DataScope = role.DataScope;
-                vm.Status = role.Status;
-                vm.Remark = role.Remark;
-                vm.OnSaveSuccessCallback = () =>
+                var form = (RoleFormViewModel)vm;
+                form.IsEditMode = true;
+                form.RoleId = role.RoleId;
+                form.RoleName = role.RoleName;
+                form.RoleKey = role.RoleKey;
+                form.RoleSort = role.RoleSort;
+                form.DataScope = role.DataScope;
+                form.Status = role.Status;
+                form.Remark = role.Remark;
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };

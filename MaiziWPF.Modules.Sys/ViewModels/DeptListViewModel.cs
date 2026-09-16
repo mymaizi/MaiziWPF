@@ -63,15 +63,15 @@ namespace MaiziWPF.Modules.Sys
 
         private async Task AddDept()
         {
-            await _dialogHostService.ShowDialogAsync<DeptFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<DeptFormView>(vm =>
             {
-                var vm = view.DataContext as DeptFormViewModel;
-                vm.IsEditMode = false;
-                vm.DeptId = 0;
-                vm.ParentId = 0;
-                vm.ParentName = "顶级部门";
-                vm.LoadDeptTree();
-                vm.OnSaveSuccessCallback = () =>
+                var form = (DeptFormViewModel)vm;
+                form.IsEditMode = false;
+                form.DeptId = 0;
+                form.ParentId = 0;
+                form.ParentName = "顶级部门";
+                form.LoadDeptTree();
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };
@@ -82,20 +82,20 @@ namespace MaiziWPF.Modules.Sys
         {
             if (dept == null) return;
 
-            await _dialogHostService.ShowDialogAsync<DeptFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<DeptFormView>(vm =>
             {
-                var vm = view.DataContext as DeptFormViewModel;
-                vm.IsEditMode = true;
-                vm.DeptId = dept.Id;
-                vm.ParentId = dept.ParentId;
-                vm.DeptName = dept.DeptName;
-                vm.OrderNum = dept.OrderNum;
-                vm.Leader = dept.Leader;
-                vm.Phone = dept.Phone;
-                vm.Email = dept.Email;
-                vm.Status = dept.Status;
-                vm.LoadDeptTree();
-                vm.OnSaveSuccessCallback = () =>
+                var form = (DeptFormViewModel)vm;
+                form.IsEditMode = true;
+                form.DeptId = dept.Id;
+                form.ParentId = dept.ParentId;
+                form.DeptName = dept.DeptName;
+                form.OrderNum = dept.OrderNum;
+                form.Leader = dept.Leader;
+                form.Phone = dept.Phone;
+                form.Email = dept.Email;
+                form.Status = dept.Status;
+                form.LoadDeptTree();
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };

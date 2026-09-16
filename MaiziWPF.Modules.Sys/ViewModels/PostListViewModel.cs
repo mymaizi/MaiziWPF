@@ -63,12 +63,12 @@ namespace MaiziWPF.Modules.Sys
 
         private async Task AddPost()
         {
-            await _dialogHostService.ShowDialogAsync<PostFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<PostFormView>(vm =>
             {
-                var vm = view.DataContext as PostFormViewModel;
-                vm.IsEditMode = false;
-                vm.PostId = 0;
-                vm.OnSaveSuccessCallback = () =>
+                var form = (PostFormViewModel)vm;
+                form.IsEditMode = false;
+                form.PostId = 0;
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };
@@ -79,17 +79,17 @@ namespace MaiziWPF.Modules.Sys
         {
             if (post == null) return;
 
-            await _dialogHostService.ShowDialogAsync<PostFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<PostFormView>(vm =>
             {
-                var vm = view.DataContext as PostFormViewModel;
-                vm.IsEditMode = true;
-                vm.PostId = post.PostId;
-                vm.PostCode = post.PostCode;
-                vm.PostName = post.PostName;
-                vm.PostSort = post.PostSort;
-                vm.Status = post.Status;
-                vm.Remark = post.Remark;
-                vm.OnSaveSuccessCallback = () =>
+                var form = (PostFormViewModel)vm;
+                form.IsEditMode = true;
+                form.PostId = post.PostId;
+                form.PostCode = post.PostCode;
+                form.PostName = post.PostName;
+                form.PostSort = post.PostSort;
+                form.Status = post.Status;
+                form.Remark = post.Remark;
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadDataList();
                 };

@@ -68,15 +68,15 @@ namespace MaiziWPF.Modules.Sys
 
         private async Task AddMenu()
         {
-            await _dialogHostService.ShowDialogAsync<MenuFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<MenuFormView>(vm =>
             {
-                var vm = view.DataContext as MenuFormViewModel;
-                vm.DialogTitle = "新增菜单";
-                vm.IsEditMode = false;
-                vm.ParentId = 0;
-                vm.MenuId = 0;
-                vm.LoadMenuTree();
-                vm.OnSaveSuccessCallback = () =>
+                var form = (MenuFormViewModel)vm;
+                form.DialogTitle = "新增菜单";
+                form.IsEditMode = false;
+                form.ParentId = 0;
+                form.MenuId = 0;
+                form.LoadMenuTree();
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadMenuList();
                 };
@@ -87,28 +87,28 @@ namespace MaiziWPF.Modules.Sys
         {
             if (menu == null) return;
 
-            await _dialogHostService.ShowDialogAsync<MenuFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<MenuFormView>(vm =>
             {
-                var vm = view.DataContext as MenuFormViewModel;
-                vm.DialogTitle = "编辑菜单";
-                vm.IsEditMode = true;
-                vm.MenuId = menu.Id;
-                vm.ParentId = menu.ParentId;
-                vm.MenuName = menu.MenuName;
-                vm.MenuType = menu.MenuType;
-                vm.OrderNum = menu.OrderNum;
-                vm.Icon = menu.Icon;
-                vm.Component = menu.Component;
-                vm.Perms = menu.Perms;
-                vm.Status = menu.Status;
-                vm.Remark = menu.Remark;
-                vm.Path = menu.Path;
-                vm.Query = menu.QueryParam;
-                vm.IsFrame = menu.IsFrame == "1";
-                vm.IsCache = menu.IsCache == "0";
-                vm.IsVisible = menu.Visible == "0";
-                vm.LoadMenuTree();
-                vm.OnSaveSuccessCallback = () =>
+                var form = (MenuFormViewModel)vm;
+                form.DialogTitle = "编辑菜单";
+                form.IsEditMode = true;
+                form.MenuId = menu.Id;
+                form.ParentId = menu.ParentId;
+                form.MenuName = menu.MenuName;
+                form.MenuType = menu.MenuType;
+                form.OrderNum = menu.OrderNum;
+                form.Icon = menu.Icon;
+                form.Component = menu.Component;
+                form.Perms = menu.Perms;
+                form.Status = menu.Status;
+                form.Remark = menu.Remark;
+                form.Path = menu.Path;
+                form.Query = menu.QueryParam;
+                form.IsFrame = menu.IsFrame == "1";
+                form.IsCache = menu.IsCache == "0";
+                form.IsVisible = menu.Visible == "0";
+                form.LoadMenuTree();
+                form.OnSaveSuccessCallback = () =>
                 {
                     LoadMenuList();
                 };

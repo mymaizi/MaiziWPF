@@ -50,9 +50,9 @@ namespace MaiziWPF.Modules.Sys
 
         private async System.Threading.Tasks.Task OpenNoticeForm(SysNotice notice)
         {
-            await _dialogHostService.ShowDialogAsync<NoticeFormView>(view =>
+            await _dialogHostService.ShowDialogAsync<NoticeFormView>(vm =>
             {
-                var model = view.DataContext as NoticeFormViewModel;
+                var model = (NoticeFormViewModel)vm;
 
                 if (notice != null)
                 {
