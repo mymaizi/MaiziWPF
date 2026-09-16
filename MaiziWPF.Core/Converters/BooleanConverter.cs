@@ -1,5 +1,4 @@
-﻿using MaiziWPF.Services.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -12,12 +11,13 @@ namespace MaiziWPF.Core
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value?.Equals(parameter) ?? false;
+            if (value == null || parameter == null) return false;
+            return string.Equals(value.ToString(), parameter.ToString(), StringComparison.Ordinal);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value ? parameter : DependencyProperty.UnsetValue;
+            return (bool)value ? parameter : Binding.DoNothing;
         }
     }
 }

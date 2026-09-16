@@ -256,6 +256,19 @@
                         FontSize="13"
                         Text="{Binding Perms}"
                         materialDesign:HintAssist.Hint="请输入权限标识" />
+                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="菜单状态" />
+                    <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
+                        <RadioButton
+                            Content="正常"
+                            GroupName="BackupStatus"
+                            IsChecked="{Binding BackupStatus, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=0}"
+                            Style="{StaticResource RadioStyle}" />
+                        <RadioButton
+                            Content="停用"
+                            GroupName="BackupStatus"
+                            IsChecked="{Binding BackupStatus, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=1}"
+                            Style="{StaticResource RadioStyle}" />
+                    </StackPanel>
                 </Grid>
 
                 <Grid Margin="0,0,0,12">
@@ -336,40 +349,6 @@
                     </StackPanel>
                     <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="菜单状态" />
                     <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
-                        <RadioButton
-                            Content="正常"
-                            GroupName="Status"
-                            IsChecked="{Binding Status, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=N}"
-                            Style="{StaticResource RadioStyle}" />
-                        <RadioButton
-                            Content="停用"
-                            GroupName="Status"
-                            IsChecked="{Binding Status, Converter={StaticResource EqualToBooleanConverter}, ConverterParameter=Y}"
-                            Style="{StaticResource RadioStyle}" />
-                    </StackPanel>
-                </Grid>
-
-                <Grid Margin="0,0,0,12">
-                    <Grid.Style>
-                        <Style TargetType="Grid">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding MenuType}" Value="F">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="菜单状态" />
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                         <RadioButton
                             Content="正常"
                             GroupName="Status"

@@ -77,11 +77,18 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _perms, value); }
         }
 
-        private string _status = "N";
+        private string _status = "0";
         public string Status
         {
             get { return _status; }
             set { SetProperty(ref _status, value); }
+        }
+
+        private string _backupStatus = "0";
+        public string BackupStatus
+        {
+            get { return _backupStatus; }
+            set { SetProperty(ref _backupStatus, value); }
         }
 
         private string _remark;
@@ -125,7 +132,7 @@ namespace MaiziWPF.Modules.Sys
             get { return _isVisible; }
             set { SetProperty(ref _isVisible, value); }
         }
-        private bool _isFrame = true;
+        private bool _isFrame = false;
         public bool IsFrame
         {
             get { return _isFrame; }
@@ -167,12 +174,12 @@ namespace MaiziWPF.Modules.Sys
                 Icon = Icon,
                 Component = Component,
                 Perms = Perms,
-                Status = Status,
+                Status = MenuType == "F" ? BackupStatus : Status,
                 Remark = Remark,
                 Path = Path,
                 QueryParam = Query,
-                IsFrame = IsFrame ? "1" : "0",
-                IsCache = IsCache ? "0" : "1",
+                IsFrame = IsFrame ? "Y" : "N",
+                IsCache = IsCache ? "Y" : "N",
                 Visible = IsVisible ? "0" : "1",
             };
 

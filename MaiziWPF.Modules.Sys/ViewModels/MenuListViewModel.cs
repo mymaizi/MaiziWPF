@@ -14,24 +14,22 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysMenuService _menuService;
         private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
-        private readonly IContainerProvider _containerProvider;
 
         public MenuListViewModel(ISysMenuService menuService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
         {
             _menuService = menuService;
             _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
-            _containerProvider = containerProvider;
 
             SearchButtonCommand = new DelegateCommand<MenuListViewModel>((vm) =>
             {
-                LoadMenuList();
+                LoadDataList();
             });
 
             ResetButtonCommand = new DelegateCommand<MenuListViewModel>((vm) =>
             {
                 QueryPageInfo = new QueryMenuInput();
-                LoadMenuList();
+                LoadDataList();
             });
 
             AddButtonCommand = new DelegateCommand<MenuListViewModel>(async (vm) =>
@@ -48,6 +46,8 @@ namespace MaiziWPF.Modules.Sys
             {
                 await DeleteMenu(menu);
             });
+
+            LoadDataList();
         }
 
         public DelegateCommand<MenuListViewModel> SearchButtonCommand { get; }
@@ -58,12 +58,7 @@ namespace MaiziWPF.Modules.Sys
 
         public override void LoadDataList()
         {
-            LoadMenuList();
-        }
-
-        private void LoadMenuList()
-        {
-            DataList = new ObservableCollection<SysMenu>(_menuService.SelectMenuList(new SysMenu(), 1));
+             DataList = new ObservableCollection<SysMenu>(_menuService.SelectMenuList(new SysMenu(), 1));
         }
 
         private async Task AddMenu()
@@ -78,7 +73,7 @@ namespace MaiziWPF.Modules.Sys
                 form.LoadMenuTree();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadMenuList();
+                    LoadDataList();
                 };
             });
         }
@@ -101,16 +96,17 @@ namespace MaiziWPF.Modules.Sys
                 form.Component = menu.Component;
                 form.Perms = menu.Perms;
                 form.Status = menu.Status;
+                form.BackupStatus = menu.Status;
                 form.Remark = menu.Remark;
                 form.Path = menu.Path;
                 form.Query = menu.QueryParam;
-                form.IsFrame = menu.IsFrame == "1";
-                form.IsCache = menu.IsCache == "0";
+                form.IsFrame = menu.IsFrame == "Y";
+                form.IsCache = menu.IsCache == "Y";
                 form.IsVisible = menu.Visible == "0";
                 form.LoadMenuTree();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadMenuList();
+                    LoadDataList();
                 };
             });
         }
@@ -126,7 +122,7 @@ namespace MaiziWPF.Modules.Sys
                 {
                     _menuService.DeleteMenuById(menu.Id);
                     _snackbarService.EnqueueSuccess("删除成功");
-                    LoadMenuList();
+                    LoadDataList();
                 }
                 catch (System.Exception ex)
                 {

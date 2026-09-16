@@ -186,7 +186,7 @@
                 <materialDesign:TreeListView
                     maiziWPF:GridViewAssist.ColumnRatios="0.24,0.08,0.07,0.17,0.22,0.08,0.14"
                     Background="Transparent"
-                    ItemsSource="{Binding MenuItems}">
+                    ItemsSource="{Binding DataList}">
 
                     <materialDesign:TreeListView.Resources>
                         <HierarchicalDataTemplate DataType="{x:Type domain:SysMenu}" ItemsSource="{Binding Childs}" />
