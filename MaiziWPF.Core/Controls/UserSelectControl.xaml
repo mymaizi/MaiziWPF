@@ -1,0 +1,145 @@
+<ToggleButton
+    x:Class="MaiziWPF.Core.UserSelectControl"
+    x:Name="PART_ToggleButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Height="36"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Center"
+    Padding="12,0"
+    BorderBrush="#dcdfe6"
+    Background="White"
+    Cursor="Hand">
+    <ToggleButton.Template>
+        <ControlTemplate TargetType="ToggleButton">
+            <Border
+                x:Name="border"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="24" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        Text="{Binding DisplayText, RelativeSource={RelativeSource TemplatedParent}}"
+                        Foreground="#303133" />
+                    <materialDesign:PackIcon
+                        Grid.Column="1"
+                        Kind="ChevronDown"
+                        Width="16"
+                        Height="16"
+                        VerticalAlignment="Center"
+                        Foreground="#909399" />
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="border" Property="BorderBrush" Value="#1890ff" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </ToggleButton.Template>
+    <Popup
+        x:Name="PART_Popup"
+        PlacementTarget="{Binding ElementName=PART_ToggleButton}"
+        Placement="Bottom"
+        StaysOpen="False"
+        AllowsTransparency="True"
+        IsOpen="{Binding IsChecked, ElementName=PART_ToggleButton}"
+        PopupAnimation="Fade">
+        <Border
+            x:Name="PART_PopupBorder"
+            Background="White"
+            BorderBrush="#e4e7ed"
+            BorderThickness="1"
+            CornerRadius="4"
+            MaxHeight="280"
+            MinWidth="240"
+            MaxWidth="360">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox
+                    x:Name="PART_SearchBox"
+                    Grid.Row="0"
+                    Height="36"
+                    Margin="8,4"
+                    FontSize="13"
+                    TextChanged="PART_SearchBox_TextChanged"
+                    materialDesign:HintAssist.Hint="搜索用户" />
+                <Separator Grid.Row="1" Background="#e4e7ed" />
+                <ListBox
+                    x:Name="PART_UserList"
+                    Grid.Row="2"
+                    BorderThickness="0"
+                    ItemsSource="{Binding FilteredUsers, ElementName=PART_ToggleButton}"
+                    SelectionChanged="PART_UserList_SelectionChanged"
+                    VirtualizingStackPanel.IsVirtualizing="True"
+                    VirtualizingStackPanel.VirtualizationMode="Recycling"
+                    VirtualizingStackPanel.ScrollUnit="Pixel"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.Resources>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="Foreground" Value="#303133" />
+                            <Setter Property="Padding" Value="8,4" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#f5f7fa" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#e6f7ff" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding NickName}" FontWeight="Medium" />
+                                <TextBlock Text="{Binding UserName}" Margin="8,0,0,0" Foreground="#909399" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Separator Grid.Row="3" Background="#e4e7ed" />
+                <Grid Grid.Row="4" Margin="8,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="#909399"
+                        Text="{Binding ResultCountText, ElementName=PART_ToggleButton}" />
+                    <Button
+                        Grid.Column="1"
+                        Content="清除选择"
+                        Height="28"
+                        Padding="8,0"
+                        FontSize="12"
+                        Foreground="#909399"
+                        BorderBrush="Transparent"
+                        Background="Transparent"
+                        Click="ClearSelection_Click"
+                        Style="{StaticResource MaterialDesignFlatButton}" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Popup>
+</ToggleButton>

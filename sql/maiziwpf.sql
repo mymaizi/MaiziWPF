@@ -18,6 +18,7 @@ create table sys_dept (
     create_time       datetime                                   comment '创建时间',
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
+    remark            varchar(500)    default null               comment '备注',
     primary key (dept_id),
     key idx_sys_dept_parent_id (parent_id)
 ) engine=innodb comment = '部门表';
