@@ -1,34 +1,54 @@
 ﻿using FreeSql.DataAnnotations;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MaiziWPF.Services.Domain
 {
     /// <summary>
     /// 岗位信息表 sys_post
-    /// 注意：与原表有差异
     /// </summary>
     [Table(Name = "sys_post")]
-    public class SysPost: BaseEntity
+    public class SysPost : BaseEntity
     {
-        /** 岗位序号 */
+        /// <summary>
+        /// 岗位ID
+        /// </summary>
         [Column(Name = "post_id", IsIdentity = true, IsPrimary = true)]
         public Int64 PostId { get; set; }
-        /** 用户ID */
-        [Column(Name = "post_code",DbType = "varchar(64)")]
+
+        /// <summary>
+        /// 部门ID
+        /// </summary>
+        [Column(Name = "dept_id")]
+        public Int64 DeptId { get; set; }
+
+        /// <summary>
+        /// 岗位编码
+        /// </summary>
+        [Column(Name = "post_code", DbType = "varchar(64)")]
         public String PostCode { get; set; }
-        /** 用户ID */
+
+        /// <summary>
+        /// 岗位类别编码
+        /// </summary>
+        [Column(Name = "post_category", DbType = "varchar(100)")]
+        public String PostCategory { get; set; }
+
+        /// <summary>
+        /// 岗位名称
+        /// </summary>
         [Column(Name = "post_name", DbType = "varchar(50)")]
         public String PostName { get; set; }
-        /** 用户ID */
+
+        /// <summary>
+        /// 显示顺序
+        /// </summary>
         [Column(Name = "post_sort")]
         public Int32 PostSort { get; set; }
-        /** 状态（0正常 1停用） */
+
+        /// <summary>
+        /// 状态（0正常 1停用）
+        /// </summary>
         [Column(Name = "status", DbType = "char(1)")]
         public String Status { get; set; }
-        /** 备注 */
-        [Column(Name = "remark", DbType = "varchar(500)")]
-        public String Remark { get; set; }
     }
 }

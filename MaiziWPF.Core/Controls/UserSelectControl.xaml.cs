@@ -7,6 +7,9 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using MaiziWPF.Services.Application.Contracts;
+using MaiziWPF.Services.Domain.Shared;
+using Prism.Ioc;
 
 namespace MaiziWPF.Core
 {
@@ -27,7 +30,7 @@ namespace MaiziWPF.Core
                 typeof(UserSelectControl),
                 new FrameworkPropertyMetadata(string.Empty));
 
-        public static readonly DependencyProperty ItemsSourceProperty =
+        private static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 nameof(ItemsSource),
                 typeof(IEnumerable),
@@ -67,7 +70,7 @@ namespace MaiziWPF.Core
             set { SetValue(DisplayTextProperty, value); }
         }
 
-        public IEnumerable ItemsSource
+        private IEnumerable ItemsSource
         {
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
@@ -95,7 +98,23 @@ namespace MaiziWPF.Core
         {
             InitializeComponent();
             FilteredUsers = new ObservableCollection<object>();
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnLoaded;
+
+            var container = ContainerLocator.Container;
+            if (container != null)
+            {
+                var userService = container.Resolve<ISysUserService>();
+                var list = userService.SelectUserList(new QueryUserInput());
+                ItemsSource = list;
+            }
+
             UpdateDisplayText();
+            RebuildFilteredList();
         }
 
         private static void OnSelectedUserIdChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

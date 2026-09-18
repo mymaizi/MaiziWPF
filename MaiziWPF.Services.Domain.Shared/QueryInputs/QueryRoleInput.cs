@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryRoleInput :  BasePagingInfo
+    public class QueryRoleInput : BasePagingInfo, IPagingInfo
     {
         public String RoleName { get; set; }
         public String RoleKey { get; set; }

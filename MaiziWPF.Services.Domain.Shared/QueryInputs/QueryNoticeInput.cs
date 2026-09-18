@@ -2,7 +2,7 @@ using FreeSql.Internal.Model;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryNoticeInput : BasePagingInfo
+    public class QueryNoticeInput : BasePagingInfo, IPagingInfo
     {
         public string NoticeTitle { get; set; }
         public string NoticeType { get; set; }

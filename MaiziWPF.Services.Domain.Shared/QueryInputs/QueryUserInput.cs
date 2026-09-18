@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryUserInput :  BasePagingInfo
+    public class QueryUserInput : BasePagingInfo, IPagingInfo
     {
         public String UserName { get; set; }
         public String Phonenumber { get; set; }

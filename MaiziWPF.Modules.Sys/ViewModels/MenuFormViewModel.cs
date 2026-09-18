@@ -143,17 +143,12 @@ namespace MaiziWPF.Modules.Sys
             : base(snackbarService)
         {
             _menuService = menuService;
+            MenuTreeItems.AddRange(_menuService.SelectMenuList(new SysMenu(), 1));
+
             AcceptCommand = new DelegateCommand(() =>
             {
                 SaveMenu();
             });
-        }
-
-        public void LoadMenuTree()
-        {
-            MenuTreeItems.Clear();
-            var list = _menuService.SelectMenuList(new SysMenu(), 1);
-            MenuTreeItems.AddRange(list);
         }
 
         private async void SaveMenu()

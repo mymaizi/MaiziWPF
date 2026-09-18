@@ -8,26 +8,92 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <StackPanel Orientation="Horizontal">
-        <Button
-            x:Name="PrevButton"
-            Padding="5"
-            Content="上一页"
-            Foreground="#1890ff"
-            Style="{StaticResource MaterialDesignFlatLightButton}" />
-        <Button
-            x:Name="NextButton"
-            Padding="5"
-            Content="下一页"
-            Foreground="#1890ff"
-            Style="{StaticResource MaterialDesignFlatLightButton}" />
-        <Label
-            x:Name="CurrentText"
-            VerticalContentAlignment="Center"
-            Content="当前1/10页" />
-        <Label
-            x:Name="TotalText"
-            VerticalContentAlignment="Center"
-            Content="共100条" />
-    </StackPanel>
+    <Grid>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+
+            <ProgressBar
+                x:Name="LoadingBar"
+                Width="16"
+                Height="16"
+                Margin="0,0,8,0"
+                VerticalAlignment="Center"
+                IsIndeterminate="True">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar" BasedOn="{StaticResource MaterialDesignCircularProgressBar}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsBusy, RelativeSource={RelativeSource AncestorType={x:Type local:PageControl}}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+
+            <TextBlock
+                x:Name="TotalText"
+                VerticalAlignment="Center"
+                FontSize="13"
+                Foreground="#666666" />
+
+            <Border
+                Width="1"
+                Margin="16,4"
+                Background="#E8E8E8" />
+
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="13"
+                Foreground="#666666"
+                Text="每页" />
+
+            <ComboBox
+                x:Name="PageSizeCombo"
+                Width="68"
+                Margin="6,0"
+                FontSize="13"
+                SelectionChanged="PageSizeCombo_SelectionChanged" />
+
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="13"
+                Foreground="#666666"
+                Text="条" />
+
+            <Border
+                Width="1"
+                Margin="16,4"
+                Background="#E8E8E8" />
+
+            <Button
+                x:Name="PrevButton"
+                Padding="10,5"
+                VerticalAlignment="Center"
+                BorderBrush="#D9D9D9"
+                Command="{Binding PrevCommand, RelativeSource={RelativeSource AncestorType={x:Type local:PageControl}}}"
+                Content="上一页"
+                FontSize="13"
+                Foreground="#595959"
+                Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+
+            <TextBlock
+                x:Name="CurrentText"
+                Margin="12,0"
+                VerticalAlignment="Center"
+                FontSize="13"
+                Foreground="#333333" />
+
+            <Button
+                x:Name="NextButton"
+                Padding="10,5"
+                VerticalAlignment="Center"
+                BorderBrush="#D9D9D9"
+                Command="{Binding NextCommand, RelativeSource={RelativeSource AncestorType={x:Type local:PageControl}}}"
+                Content="下一页"
+                FontSize="13"
+                Foreground="#595959"
+                Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+
+        </StackPanel>
+    </Grid>
 </UserControl>

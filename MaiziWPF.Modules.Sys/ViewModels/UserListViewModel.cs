@@ -27,50 +27,19 @@ namespace MaiziWPF.Modules.Sys
             _dialogHostService = dialogHostService;
             _containerProvider = containerProvider;
 
-            SearchButtonCommand = new DelegateCommand<UserListViewModel>((vm) =>
-            {
-                LoadDataList();
-            });
+            RegisterQueryFunc(input => _userService.SelectUserList(input), new QueryUserInput() { PageNumber = 1, PageSize = 10 },
+                resetAction: qpi => QueryPageInfo = new QueryUserInput());
 
-            ResetButtonCommand = new DelegateCommand<UserListViewModel>((vm) =>
-            {
-                QueryPageInfo = new QueryUserInput();
-                LoadDataList();
-            });
-
-            AddButtonCommand = new DelegateCommand<UserListViewModel>(async (vm) =>
-            {
-                await AddUser();
-            });
-
-            EditButtonCommand = new DelegateCommand<SysUser>(async (user) =>
-            {
-                await EditUser(user);
-            });
-
-            DeleteButtonCommand = new DelegateCommand<SysUser>(async (user) =>
-            {
-                await DeleteUser(user);
-            });
-
-            ResetPwdButtonCommand = new DelegateCommand<SysUser>(async (user) =>
-            {
-                await ResetPwd(user);
-            });
+            AddButtonCommand = new DelegateCommand<UserListViewModel>(async (vm) => await AddUser());
+            EditButtonCommand = new DelegateCommand<SysUser>(async (user) => await EditUser(user));
+            DeleteButtonCommand = new DelegateCommand<SysUser>(async (user) => await DeleteUser(user));
+            ResetPwdButtonCommand = new DelegateCommand<SysUser>(async (user) => await ResetPwd(user));
         }
 
-        public DelegateCommand<UserListViewModel> SearchButtonCommand { get; }
-        public DelegateCommand<UserListViewModel> ResetButtonCommand { get; }
         public DelegateCommand<UserListViewModel> AddButtonCommand { get; }
         public DelegateCommand<SysUser> EditButtonCommand { get; }
         public DelegateCommand<SysUser> DeleteButtonCommand { get; }
         public DelegateCommand<SysUser> ResetPwdButtonCommand { get; }
-
-        public override void LoadDataList()
-        {
-            var users = _userService.SelectUserList(QueryPageInfo);
-            DataList = new ObservableCollection<SysUser>(users);
-        }
 
         private async Task AddUser()
         {
@@ -84,7 +53,7 @@ namespace MaiziWPF.Modules.Sys
                 form.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -118,7 +87,7 @@ namespace MaiziWPF.Modules.Sys
 
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -134,7 +103,7 @@ namespace MaiziWPF.Modules.Sys
                 {
                     _userService.DeleteUser(user.UserId);
                     _snackbarService.EnqueueSuccess("删除成功");
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 }
                 catch (System.Exception ex)
                 {

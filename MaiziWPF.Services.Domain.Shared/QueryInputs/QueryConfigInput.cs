@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryConfigInput : BasePagingInfo
+    public class QueryConfigInput : BasePagingInfo, IPagingInfo
     {
         public String ConfigName { get; set; }
         public String ConfigKey { get; set; }

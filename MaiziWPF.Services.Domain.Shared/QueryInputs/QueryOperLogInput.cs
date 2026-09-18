@@ -2,7 +2,7 @@ using FreeSql.Internal.Model;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryOperLogInput : BasePagingInfo
+    public class QueryOperLogInput : BasePagingInfo, IPagingInfo
     {
         public string Title { get; set; }
         public int? BusinessType { get; set; }

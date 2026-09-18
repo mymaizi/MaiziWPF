@@ -21,45 +21,17 @@ namespace MaiziWPF.Modules.Sys
             _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
 
-            SearchButtonCommand = new DelegateCommand<MenuListViewModel>((vm) =>
-            {
-                LoadDataList();
-            });
+            RegisterQueryFunc(input => _menuService.SelectMenuList(new SysMenu(), 1), new QueryMenuInput() { PageNumber = 1, PageSize = 10 },
+                resetAction: qpi => QueryPageInfo = new QueryMenuInput());
 
-            ResetButtonCommand = new DelegateCommand<MenuListViewModel>((vm) =>
-            {
-                QueryPageInfo = new QueryMenuInput();
-                LoadDataList();
-            });
-
-            AddButtonCommand = new DelegateCommand<SysMenu?>(async (menu) =>
-            {
-                await AddMenu(menu);
-            });
-
-            EditButtonCommand = new DelegateCommand<SysMenu>(async (menu) =>
-            {
-                await EditMenu(menu);
-            });
-
-            DeleteButtonCommand = new DelegateCommand<SysMenu>(async (menu) =>
-            {
-                await DeleteMenu(menu);
-            });
-
-            LoadDataList();
+            AddButtonCommand = new DelegateCommand<SysMenu?>(async (menu) => await AddMenu(menu));
+            EditButtonCommand = new DelegateCommand<SysMenu>(async (menu) => await EditMenu(menu));
+            DeleteButtonCommand = new DelegateCommand<SysMenu>(async (menu) => await DeleteMenu(menu));
         }
 
-        public DelegateCommand<MenuListViewModel> SearchButtonCommand { get; }
-        public DelegateCommand<MenuListViewModel> ResetButtonCommand { get; }
         public DelegateCommand<SysMenu?> AddButtonCommand { get; }
         public DelegateCommand<SysMenu> EditButtonCommand { get; }
         public DelegateCommand<SysMenu> DeleteButtonCommand { get; }
-
-        public override void LoadDataList()
-        {
-             DataList = new ObservableCollection<SysMenu>(_menuService.SelectMenuList(new SysMenu(), 1));
-        }
 
         private async Task AddMenu(SysMenu? parentMenu = null)
         {
@@ -70,10 +42,9 @@ namespace MaiziWPF.Modules.Sys
                 form.IsEditMode = false;
                 form.ParentId = parentMenu?.Id ?? 0;
                 form.MenuId = 0;
-                form.LoadMenuTree();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -103,10 +74,9 @@ namespace MaiziWPF.Modules.Sys
                 form.IsFrame = menu.IsFrame == "Y";
                 form.IsCache = menu.IsCache == "Y";
                 form.IsVisible = menu.Visible == "0";
-                form.LoadMenuTree();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -122,7 +92,7 @@ namespace MaiziWPF.Modules.Sys
                 {
                     _menuService.DeleteMenuCascade(menu.Id);
                     _snackbarService.EnqueueSuccess("删除成功");
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 }
             }
             catch (System.Exception ex)

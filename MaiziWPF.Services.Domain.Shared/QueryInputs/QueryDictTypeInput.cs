@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryDictTypeInput :  BasePagingInfo
+    public class QueryDictTypeInput : BasePagingInfo, IPagingInfo
     {
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

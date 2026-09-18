@@ -3,18 +3,12 @@ using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace MaiziWPF.Modules.Sys
 {
     public class DeptFormViewModel : FormBindableBase
     {
         private readonly ISysDeptService _deptService;
-        private readonly ISysUserService _userService;
-
-        public ObservableCollection<SysDept> DeptTreeItems { get; set; } = new();
-        public ObservableCollection<SysUser> Users { get; set; } = new();
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -34,7 +28,22 @@ namespace MaiziWPF.Modules.Sys
         public long ParentId
         {
             get { return _parentId; }
-            set { SetProperty(ref _parentId, value); }
+            set
+            {
+                if (SetProperty(ref _parentId, value))
+                    ResolveParentName();
+            }
+        }
+
+        private void ResolveParentName()
+        {
+            if (_parentId == 0)
+                ParentName = "顶级部门";
+            else if (_deptService != null)
+            {
+                var dept = _deptService.SelectDeptById(_parentId);
+                ParentName = dept?.DeptName ?? _parentId.ToString();
+            }
         }
 
         private string _parentName;
@@ -93,56 +102,15 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _status, value); }
         }
 
-        public DeptFormViewModel(ISysDeptService deptService, ISysUserService userService, ISnackbarService snackbarService)
+        public DeptFormViewModel(ISysDeptService deptService, ISnackbarService snackbarService)
             : base(snackbarService)
         {
             _deptService = deptService;
-            _userService = userService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
                 SaveDept();
             });
-        }
-
-        public void LoadDeptTree()
-        {
-            DeptTreeItems.Clear();
-            var list = _deptService.SelectDeptList(new SysDept(), true);
-            DeptTreeItems.AddRange(list);
-            UpdateParentName();
-        }
-
-        public void LoadUsers()
-        {
-            Users.Clear();
-            var users = _userService.SelectUserList(new Services.Domain.Shared.QueryUserInput { Status = "0" });
-            Users.AddRange(users);
-        }
-
-        public void UpdateParentName()
-        {
-            if (ParentId == 0)
-            {
-                ParentName = "顶级部门";
-                return;
-            }
-            var dept = FindDeptById(DeptTreeItems, ParentId);
-            ParentName = dept?.DeptName ?? ParentId.ToString();
-        }
-
-        private SysDept FindDeptById(IList<SysDept> depts, long id)
-        {
-            foreach (var d in depts)
-            {
-                if (d.Id == id) return d;
-                if (d.Childs?.Count > 0)
-                {
-                    var found = FindDeptById(d.Childs, id);
-                    if (found != null) return found;
-                }
-            }
-            return null;
         }
 
         private async void SaveDept()

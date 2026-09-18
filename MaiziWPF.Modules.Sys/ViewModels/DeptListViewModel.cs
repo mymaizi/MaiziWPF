@@ -45,53 +45,27 @@ namespace MaiziWPF.Modules.Sys
             _dialogHostService = dialogHostService;
             _containerProvider = containerProvider;
 
-            SearchButtonCommand = new DelegateCommand<DeptListViewModel>((vm) =>
+            RegisterQueryFunc(input =>
             {
-                LoadDataList();
-            });
+                var filter = new SysDept { DeptName = DeptName, DeptCategory = DeptCategory, Status = Status };
+                return _deptService.SelectDeptList(filter, true);
+            }, new QueryDeptInput() { PageNumber = 1, PageSize = 10 },
+                resetAction: qpi =>
+                {
+                    DeptName = null;
+                    DeptCategory = null;
+                    Status = null;
+                    QueryPageInfo = new QueryDeptInput();
+                });
 
-            ResetButtonCommand = new DelegateCommand<DeptListViewModel>((vm) =>
-            {
-                DeptName = null;
-                DeptCategory = null;
-                Status = null;
-                LoadDataList();
-            });
-
-            AddButtonCommand = new DelegateCommand<SysDept>(async (parent) =>
-            {
-                await AddDept(parent);
-            });
-
-            EditButtonCommand = new DelegateCommand<SysDept>(async (dept) =>
-            {
-                await EditDept(dept);
-            });
-
-            DeleteButtonCommand = new DelegateCommand<SysDept>(async (dept) =>
-            {
-                await DeleteDept(dept);
-            });
-
-            LoadDataList();
+            AddButtonCommand = new DelegateCommand<SysDept>(async (parent) => await AddDept(parent));
+            EditButtonCommand = new DelegateCommand<SysDept>(async (dept) => await EditDept(dept));
+            DeleteButtonCommand = new DelegateCommand<SysDept>(async (dept) => await DeleteDept(dept));
         }
 
-        public DelegateCommand<DeptListViewModel> SearchButtonCommand { get; }
-        public DelegateCommand<DeptListViewModel> ResetButtonCommand { get; }
         public DelegateCommand<SysDept> AddButtonCommand { get; }
         public DelegateCommand<SysDept> EditButtonCommand { get; }
         public DelegateCommand<SysDept> DeleteButtonCommand { get; }
-
-        public override void LoadDataList()
-        {
-            var filter = new SysDept
-            {
-                DeptName = DeptName,
-                DeptCategory = DeptCategory,
-                Status = Status
-            };
-            DataList = new ObservableCollection<SysDept>(_deptService.SelectDeptList(filter, true));
-        }
 
         private async Task AddDept(SysDept parent = null)
         {
@@ -102,11 +76,9 @@ namespace MaiziWPF.Modules.Sys
                 form.DeptId = 0;
                 form.ParentId = parent?.Id ?? 0;
                 form.ParentName = parent?.DeptName ?? "顶级部门";
-                form.LoadDeptTree();
-                form.LoadUsers();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -128,11 +100,9 @@ namespace MaiziWPF.Modules.Sys
                 form.Phone = dept.Phone;
                 form.Email = dept.Email;
                 form.Status = dept.Status;
-                form.LoadDeptTree();
-                form.LoadUsers();
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -153,7 +123,7 @@ namespace MaiziWPF.Modules.Sys
                 {
                     _deptService.DeleteDeptById(dept.Id);
                     _snackbarService.EnqueueSuccess("删除成功");
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 }
                 catch (System.Exception ex)
                 {

@@ -23,43 +23,17 @@ namespace MaiziWPF.Modules.Sys
             _dialogHostService = dialogHostService;
             _containerProvider = containerProvider;
 
-            SearchButtonCommand = new DelegateCommand<RoleListViewModel>((vm) =>
-            {
-                LoadDataList();
-            });
+            RegisterQueryFunc(input => _roleService.SelectRoleList(input), new QueryRoleInput() { PageNumber = 1, PageSize = 10 },
+                resetAction: qpi => QueryPageInfo = new QueryRoleInput());
 
-            ResetButtonCommand = new DelegateCommand<RoleListViewModel>((vm) =>
-            {
-                QueryPageInfo = new QueryRoleInput();
-                LoadDataList();
-            });
-
-            AddButtonCommand = new DelegateCommand<RoleListViewModel>(async (vm) =>
-            {
-                await AddRole();
-            });
-
-            EditButtonCommand = new DelegateCommand<SysRole>(async (role) =>
-            {
-                await EditRole(role);
-            });
-
-            DeleteButtonCommand = new DelegateCommand<SysRole>(async (role) =>
-            {
-                await DeleteRole(role);
-            });
+            AddButtonCommand = new DelegateCommand<RoleListViewModel>(async (vm) => await AddRole());
+            EditButtonCommand = new DelegateCommand<SysRole>(async (role) => await EditRole(role));
+            DeleteButtonCommand = new DelegateCommand<SysRole>(async (role) => await DeleteRole(role));
         }
 
-        public DelegateCommand<RoleListViewModel> SearchButtonCommand { get; }
-        public DelegateCommand<RoleListViewModel> ResetButtonCommand { get; }
         public DelegateCommand<RoleListViewModel> AddButtonCommand { get; }
         public DelegateCommand<SysRole> EditButtonCommand { get; }
         public DelegateCommand<SysRole> DeleteButtonCommand { get; }
-
-        public override void LoadDataList()
-        {
-            DataList = new ObservableCollection<SysRole>(_roleService.SelectRoleList(QueryPageInfo));
-        }
 
         private async Task AddRole()
         {
@@ -70,7 +44,7 @@ namespace MaiziWPF.Modules.Sys
                 form.RoleId = 0;
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -92,7 +66,7 @@ namespace MaiziWPF.Modules.Sys
                 form.Remark = role.Remark;
                 form.OnSaveSuccessCallback = () =>
                 {
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 };
             });
         }
@@ -108,7 +82,7 @@ namespace MaiziWPF.Modules.Sys
                 {
                     _roleService.DeleteRoleById(role.RoleId);
                     _snackbarService.EnqueueSuccess("删除成功");
-                    LoadDataList();
+                    SearchButtonCommand.Execute(this);
                 }
                 catch (System.Exception ex)
                 {

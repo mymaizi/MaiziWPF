@@ -22,8 +22,12 @@ namespace MaiziWPF.Services.MySql
 
             if (!string.IsNullOrEmpty(input.PostCode))
                 where = where.And(u => u.PostCode.Contains(input.PostCode));
+            if (!string.IsNullOrEmpty(input.PostCategory))
+                where = where.And(u => u.PostCategory.Contains(input.PostCategory));
             if (!string.IsNullOrEmpty(input.PostName))
                 where = where.And(u => u.PostName.Contains(input.PostName));
+            if (input.DeptId > 0)
+                where = where.And(u => u.DeptId == input.DeptId);
             if (!string.IsNullOrEmpty(input.Status))
                 where = where.And(u => u.Status == input.Status);
 

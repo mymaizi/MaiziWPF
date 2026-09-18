@@ -237,9 +237,11 @@
                     Margin="0,0,10,10"
                     HorizontalAlignment="Right"
                     Count="{Binding Count}"
+                    IsBusy="{Binding IsBusy}"
                     NextCommand="{Binding NextButtonCommand}"
                     PageNumber="{Binding PageNumber}"
                     PageSize="{Binding PageSize}"
+                    PageSizeChangedCommand="{Binding PageSizeChangedCommand}"
                     PrevCommand="{Binding PrevButtonCommand}" />
             </Grid>
         </Grid>

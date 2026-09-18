@@ -24,11 +24,25 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _postId, value); }
         }
 
+        private long _deptId;
+        public long DeptId
+        {
+            get { return _deptId; }
+            set { SetProperty(ref _deptId, value); }
+        }
+
         private string _postCode;
         public string PostCode
         {
             get { return _postCode; }
             set { SetProperty(ref _postCode, value); }
+        }
+
+        private string _postCategory;
+        public string PostCategory
+        {
+            get { return _postCategory; }
+            set { SetProperty(ref _postCategory, value); }
         }
 
         private string _postName;
@@ -86,7 +100,9 @@ namespace MaiziWPF.Modules.Sys
             var post = new SysPost
             {
                 PostId = PostId,
+                DeptId = DeptId,
                 PostCode = PostCode,
+                PostCategory = PostCategory,
                 PostName = PostName,
                 PostSort = PostSort,
                 Status = Status,
