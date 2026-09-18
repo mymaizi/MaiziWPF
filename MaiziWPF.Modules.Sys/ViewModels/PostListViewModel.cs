@@ -84,7 +84,7 @@ namespace MaiziWPF.Modules.Sys
             _dialogHostService = dialogHostService;
             _containerProvider = containerProvider;
 
-            RegisterQueryFunc(input =>_postService.SelectPostList(input), new QueryPostInput() { PageNumber = 1, PageSize = 2 },
+            RegisterQueryFunc(input => _postService.SelectPostList(input), new QueryPostInput() { PageNumber = 1, PageSize = 10 },
                 resetAction: qpi =>
                 {
                     PostCode = null;

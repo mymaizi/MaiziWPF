@@ -96,7 +96,15 @@ namespace MaiziWPF.ViewModels
                 var tabRegion = _regionManager.Regions[RegionNames.TabRegion];
                 if (!tabRegion.Views.Any(v => v.GetType().Name == m.Component))
                 {
-                    tabRegion.Add(GetView(m));
+                    var view = GetView(m);
+                    if (view != null)
+                    {
+                        tabRegion.Add(view);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[MenuSelection] Failed to load view for: {m.MenuName} ({m.Component})");
+                    }
                 }
                 else {                    
                     var view = tabRegion.Views.FirstOrDefault(v => v.GetType().Name == m.Component);
@@ -108,15 +116,33 @@ namespace MaiziWPF.ViewModels
             });
         }
 
-        private  FrameworkElement GetView(SysMenu m)
+        private FrameworkElement GetView(SysMenu m)
         {
-            string ns = string.IsNullOrEmpty(m.Path) ? "MaiziWPF.Modules.Sys" : m.Path;
-            string fullName = $"{ns}.{m.Component}, {ns}";
-            Type viewType = Type.GetType(fullName);
-            var view = ContainerLocator.Container.Resolve(viewType) as FrameworkElement;
-            (view.DataContext as ITabItemInfo)?.Header = m.MenuName;
-            (view.DataContext as ITabItemInfo)?.Component = m.Component;
-            return view;
+            try
+            {
+                string ns = string.IsNullOrEmpty(m.Path) ? "MaiziWPF.Modules.Sys" : m.Path;
+                string fullName = $"{ns}.{m.Component}, {ns}";
+                Type viewType = Type.GetType(fullName);
+                if (viewType == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[GetView] Type not found: {fullName}");
+                    return null;
+                }
+                var view = ContainerLocator.Container.Resolve(viewType) as FrameworkElement;
+                if (view == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[GetView] Resolve failed: {fullName}");
+                    return null;
+                }
+                (view.DataContext as ITabItemInfo)?.Header = m.MenuName;
+                (view.DataContext as ITabItemInfo)?.Component = m.Component;
+                return view;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[GetView] Error: {ex.Message}");
+                return null;
+            }
         }
      
         public void OnNavigatedTo(NavigationContext navigationContext)

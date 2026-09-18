@@ -1,7 +1,6 @@
-﻿using System.Linq;
+﻿using MaiziWPF.Core;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace MaiziWPF.Modules.Sys
 {
@@ -27,18 +26,11 @@ namespace MaiziWPF.Modules.Sys
         {
             if (sender is CheckBox checkBox)
             {
-                var row = FindParent<DataGridRow>(checkBox);
+                var row = VisualControlHelper.FindParent<DataGridRow>(checkBox);
                 if (row != null)
                     row.IsSelected = !row.IsSelected;
                 e.Handled = true;
             }
-        }
-
-        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
-        {
-            var parent = VisualTreeHelper.GetParent(child);
-            if (parent == null) return null;
-            return parent is T t ? t : FindParent<T>(parent);
         }
     }
 }

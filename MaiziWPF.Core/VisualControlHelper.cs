@@ -21,5 +21,12 @@ namespace MaiziWPF.Core
             }
             return null;
         }
+
+        public static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            var parent = VisualTreeHelper.GetParent(child);
+            if (parent == null) return null;
+            return parent is T t ? t : FindParent<T>(parent);
+        }
     }
 }

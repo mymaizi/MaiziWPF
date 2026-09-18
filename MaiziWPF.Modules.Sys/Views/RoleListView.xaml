@@ -7,167 +7,407 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True">
-    <UserControl.Resources>
-        <maiziWPF:DateTimeConverter x:Key="DateTimeConverter" />
-        <maiziWPF:BooleanConverter x:Key="BooleanConverter" />
-    </UserControl.Resources>
+
     <Border Background="WhiteSmoke" CornerRadius="0 0 10 0">
-        <Grid Margin="10,6,0,0">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--  条件  -->
-            <WrapPanel>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <TextBox
-                        materialDesign:HintAssist.Hint="请输入角色名称"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        Text="{Binding QueryPageInfo.RoleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </materialDesign:Card>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <TextBox
-                        materialDesign:HintAssist.Hint="请输入权限字符"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        Text="{Binding QueryPageInfo.RoleKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </materialDesign:Card>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <ComboBox
-                        maiziWPF:DataDictAssist.Type="sys_normal_disable"
-                        materialDesign:HintAssist.Hint="角色状态"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        SelectedItem="{Binding QueryPageInfo.Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type domain:SysDictData}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding DictLabel}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </materialDesign:Card>
-                <materialDesign:Card Width="280" Style="{StaticResource FormCardStyle}">
-                    <maiziWPF:DateRangeControl EndDateTime="{Binding QueryPageInfo.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" StartDateTime="{Binding QueryPageInfo.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </materialDesign:Card>
-                <StackPanel Margin="6,0,0,6" Orientation="Horizontal">
-                    <Button
-                        Margin="0,0,8,0"
-                        Background="#1890ff"
-                        BorderBrush="#1890ff"
-                        Command="{Binding SearchButtonCommand}"
-                        Content="搜索"
-                        Foreground="#fff"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                    <Button
-                        BorderBrush="#dcdfe6"
-                        Content="重置"
-                        Foreground="#606266"
-                        Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
-                </StackPanel>
-            </WrapPanel>
-            <StackPanel Grid.Row="1" Margin="0,6,10,6" Orientation="Horizontal">
-                <Button
-                    Padding="8,4"
-                    Background="#1890ff"
-                    BorderBrush="#1890ff"
-                    Command="{Binding AddRoleCommand}"
-                    Content="新增"
-                    Foreground="#fff"
-                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
-            </StackPanel>
+
+            <!--  筛选条件  -->
+            <Border Grid.Row="0" Margin="12,12,12,6" Background="#ffffff" CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="16,12,16,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="筛选条件" Foreground="#333333" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <ToggleButton x:Name="FilterToggle" Grid.Column="1" Width="24" Height="24" IsChecked="True">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <materialDesign:PackIcon Kind="ChevronUp" Foreground="#595959" Width="16" Height="16" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="0">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <materialDesign:PackIcon Kind="ChevronDown" Foreground="#595959" Width="16" Height="16" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </Grid>
+
+                    <Border x:Name="FilterPanel" Grid.Row="1" Padding="16,0,16,16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=FilterToggle}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <WrapPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="角色名称" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox Width="200" Height="36" Padding="8,6" FontSize="13" Text="{Binding RoleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="权限字符" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox Width="200" Height="36" Padding="8,6" FontSize="13" Text="{Binding RoleKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="创建时间" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <maiziWPF:DateRangeControl Width="320" Height="36" StartDateTime="{Binding QueryPageInfo.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EndDateTime="{Binding QueryPageInfo.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="状态" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <ComboBox
+                                    Width="120"
+                                    Height="36"
+                                    Padding="8,6"
+                                    FontSize="13"
+                                    maiziWPF:DataDictAssist.Type="sys_normal_disable"
+                                    SelectedValuePath="DictValue"
+                                    SelectedValue="{Binding Status, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type domain:SysDictData}">
+                                            <TextBlock Text="{Binding DictLabel}" FontSize="13" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    Padding="16,6"
+                                    Background="#1890ff"
+                                    BorderBrush="#1890ff"
+                                    Command="{Binding SearchButtonCommand}"
+                                    Content="搜索"
+                                    Foreground="#fff"
+                                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                                <Button
+                                    Padding="16,6"
+                                    BorderBrush="#dcdfe6"
+                                    Command="{Binding ResetButtonCommand}"
+                                    Content="重置"
+                                    Foreground="#606266"
+                                    Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+                            </StackPanel>
+                        </WrapPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!--  角色列表标题栏  -->
+            <Border Grid.Row="1" Margin="12,6,12,6" Background="#ffffff" CornerRadius="8">
+                <Grid Margin="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="角色列表" Foreground="#333333" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Text="角色是系统内用户权限的集合，与菜单、部门建立关联，支持灵活分配。" Foreground="#999999" FontSize="12" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Background="#1890ff"
+                            BorderBrush="#1890ff"
+                            Command="{Binding AddButtonCommand}"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Plus" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="新增" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Padding="12,6"
+                            Background="#ff4d4f"
+                            BorderBrush="#ff4d4f"
+                            Command="{Binding BatchDeleteCommand}"
+                            CommandParameter="{Binding SelectedItems, ElementName=RoleDataGrid}"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="删除" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
             <!--  表格  -->
-            <DataGrid
-                Grid.Row="2"
-                AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                GridLinesVisibility="None"
-                ItemsSource="{Binding DataList}">
-                <DataGrid.CellStyle>
-                    <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="BorderThickness" Value="0" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Binding="{Binding RoleId}"
-                        Header="角色编号"
-                        IsReadOnly="True" />
-                    <DataGridTextColumn
-                        Binding="{Binding RoleName}"
-                        Header="角色名称"
-                        IsReadOnly="True" />
-                    <DataGridTextColumn
-                        Binding="{Binding RoleKey}"
-                        Header="权限字符"
-                        IsReadOnly="True" />
-                    <DataGridTextColumn
-                        Binding="{Binding RoleSort}"
-                        Header="显示顺序"
-                        IsReadOnly="True" />
-                    <DataGridTemplateColumn Header="状态">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <ToggleButton IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='1'}" Style="{StaticResource MaterialDesignSwitchToggleButton}">
-                                    <materialDesign:ToggleButtonAssist.SwitchTrackOnBackground>
-                                        <SolidColorBrush Color="#cf3539" />
-                                    </materialDesign:ToggleButtonAssist.SwitchTrackOnBackground>
-                                </ToggleButton>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn
-                        Binding="{Binding CreateTime, Converter={StaticResource DateTimeConverter}}"
-                        Header="创建时间"
-                        IsReadOnly="True" />
-                    <DataGridTemplateColumn Header="操作">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button
-                                        Padding="5"
-                                        Content="修改"
-                                        Foreground="#1890ff"
-                                        Style="{StaticResource MaterialDesignFlatLightButton}"
-                                        Command="{Binding DataContext.NewOrEditButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                        CommandParameter="{Binding}" />
-                                    <Button
-                                        Padding="5"
-                                        Content="删除"
-                                        Foreground="#cf3539"
-                                        Style="{StaticResource MaterialDesignFlatLightButton}"
-                                        Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                        CommandParameter="{Binding}" />
-                                    <Menu materialDesign:MenuAssist.MenuItemsPresenterMargin="3" materialDesign:MenuAssist.TopLevelMenuItemHeight="30">
-                                        <MenuItem Padding="5" Header="更多&gt;&gt;">
-                                            <MenuItem Header="数据权限" />
-                                            <MenuItem Header="分配用户" />
-                                        </MenuItem>
-                                    </Menu>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Border Grid.Row="2" Margin="12,0,12,0">
+                <DataGrid
+                    Grid.Row="0"
+                    x:Name="RoleDataGrid"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    GridLinesVisibility="None"
+                    SelectionMode="Extended"
+                    ItemsSource="{Binding DataList}">
+                    <DataGrid.Resources>
+                        <Style x:Key="StatusBadgeStyle" TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="Padding" Value="10,2" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Background" Value="#f6ffed" />
+                            <Setter Property="BorderBrush" Value="#b7eb8f" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="1">
+                                    <Setter Property="Background" Value="#fff1f0" />
+                                    <Setter Property="BorderBrush" Value="#ffa39e" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#fafafa" />
+                            <Setter Property="Foreground" Value="#333333" />
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="BorderBrush" Value="#e8e8e8" />
+                            <Setter Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter Property="Padding" Value="16,0" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="60" IsReadOnly="False">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <CheckBox x:Name="SelectAllCheckBox"
+                                              Click="SelectAllCheckBox_Click"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox HorizontalAlignment="Center"
+                                              PreviewMouseLeftButtonDown="RowCheckBox_PreviewMouseLeftButtonDown">
+                                        <CheckBox.Style>
+                                            <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" Value="True">
+                                                        <Setter Property="IsChecked" Value="True" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </CheckBox.Style>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding RoleName}" Header="角色名称" IsReadOnly="True" />
+                        <DataGridTextColumn Width="*" Binding="{Binding RoleKey}" Header="权限字符" IsReadOnly="True" />
+                        <DataGridTextColumn Width="*" Binding="{Binding RoleSort}" Header="排序" IsReadOnly="True" />
+                        <DataGridTemplateColumn Width="*" Header="数据范围">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontSize="13" Foreground="#666666" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding DataScope}" Value="1">
+                                                        <Setter Property="Text" Value="全部数据权限" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DataScope}" Value="2">
+                                                        <Setter Property="Text" Value="自定义数据权限" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DataScope}" Value="3">
+                                                        <Setter Property="Text" Value="本部门数据权限" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DataScope}" Value="4">
+                                                        <Setter Property="Text" Value="本部门及以下数据权限" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DataScope}" Value="5">
+                                                        <Setter Property="Text" Value="仅本人数据权限" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="*" Header="状态">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource StatusBadgeStyle}" HorizontalAlignment="Center">
+                                        <TextBlock FontSize="11" HorizontalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#52c41a" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="0">
+                                                            <Setter Property="Text" Value="正常" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="1">
+                                                            <Setter Property="Text" Value="停用" />
+                                                            <Setter Property="Foreground" Value="#ff4d4f" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding CreateTime, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Header="创建时间" IsReadOnly="True" />
+                        <DataGridTemplateColumn Width="*" Header="操作">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <Button
+                                            Width="26"
+                                            Height="24"
+                                            Margin="0,0,4,0"
+                                            Background="#e6f7ff"
+                                            BorderBrush="#91d5ff"
+                                            BorderThickness="1"
+                                            Command="{Binding DataContext.EditButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="修改">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <materialDesign:PackIcon Kind="Pencil" Foreground="#91d5ff" Width="14" Height="14" />
+                                        </Button>
+                                        <Button
+                                            Width="26"
+                                            Height="24"
+                                            Margin="0,0,4,0"
+                                            Background="#fff7e6"
+                                            BorderBrush="#ffd591"
+                                            BorderThickness="1"
+                                            Command="{Binding DataContext.DataScopeButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="权限">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <materialDesign:PackIcon Kind="ShieldCheck" Foreground="#ffd591" Width="14" Height="14" />
+                                        </Button>
+                                        <Button
+                                            Width="26"
+                                            Height="24"
+                                            Margin="0,0,4,0"
+                                            Background="#f9f0ff"
+                                            BorderBrush="#d3adf7"
+                                            BorderThickness="1"
+                                            Command="{Binding DataContext.AuthUserButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="用户">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <materialDesign:PackIcon Kind="AccountMultiple" Foreground="#d3adf7" Width="14" Height="14" />
+                                        </Button>
+                                        <Button
+                                            Width="26"
+                                            Height="24"
+                                            Background="#fff1f0"
+                                            BorderBrush="#ffa39e"
+                                            BorderThickness="1"
+                                            Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="删除">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <materialDesign:PackIcon Kind="Delete" Foreground="#ffa39e" Width="14" Height="14" />
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
             <maiziWPF:PageControl
                 Grid.Row="3"
-                Margin="0,0,10,10"
+                Margin="0,8,12,12"
                 HorizontalAlignment="Right"
                 Count="{Binding Count}"
                 IsBusy="{Binding IsBusy}"

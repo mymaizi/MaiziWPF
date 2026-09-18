@@ -1,4 +1,4 @@
-﻿﻿using MaiziWPF.Core;
+﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -40,6 +40,8 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterDialog<MenuFormView>();
             containerRegistry.RegisterDialog<IconPickerView>();
             containerRegistry.RegisterDialog<RoleFormView>();
+            containerRegistry.RegisterDialog<RolePermissionView>();
+            containerRegistry.RegisterDialog<RoleAuthUserView>();
             containerRegistry.RegisterDialog<PostFormView>();
             containerRegistry.RegisterDialog<DictTypeFormView>();
             containerRegistry.RegisterDialog<DictDataFormView>();

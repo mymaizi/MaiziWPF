@@ -1,4 +1,4 @@
-﻿using FreeSql.DataAnnotations;
+using FreeSql.DataAnnotations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,17 +6,17 @@ using System.Text;
 namespace MaiziWPF.Services.Domain
 {
     /// <summary>
-    /// 角色和菜单关联 sys_role_menu
+    /// 角色和部门关联 sys_role_dept
     /// </summary>
-    [Table(Name = "sys_role_menu")]
-    public class SysRoleMenu
+    [Table(Name = "sys_role_dept")]
+    public class SysRoleDept
     {
         /** 角色ID */
         [Column(Name = "role_id", IsPrimary = true)]
         public Int64 RoleId { get; set; }
 
-        /** 菜单ID */
-        [Column(Name = "menu_id", IsPrimary = true)]
-        public Int64 MenuId { get; set; }
+        /** 部门ID */
+        [Column(Name = "dept_id", IsPrimary = true)]
+        public Int64 DeptId { get; set; }
     }
 }
