@@ -111,9 +111,6 @@ namespace MaiziWPF.Modules.Sys
                 form.RoleName = role.RoleName;
                 form.RoleKey = role.RoleKey;
                 form.RoleSort = role.RoleSort;
-                form.DataScope = role.DataScope;
-                form.MenuCheckStrictly = role.MenuCheckStrictly ?? false;
-                form.DeptCheckStrictly = role.DeptCheckStrictly ?? false;
                 form.Status = role.Status;
                 form.Remark = role.Remark;
                 form.OnSaveSuccessCallback = () =>

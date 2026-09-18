@@ -2,6 +2,7 @@ using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
+using Prism.Dialogs;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,58 @@ namespace MaiziWPF.Modules.Sys
             }
         }
 
+        private bool _menuExpandAll;
+        public bool MenuExpandAll
+        {
+            get { return _menuExpandAll; }
+            set
+            {
+                if (SetProperty(ref _menuExpandAll, value))
+                {
+                    SetAllMenuExpanded(value);
+                }
+            }
+        }
+
+        private bool _menuSelectAll;
+        public bool MenuSelectAll
+        {
+            get { return _menuSelectAll; }
+            set
+            {
+                if (SetProperty(ref _menuSelectAll, value))
+                {
+                    SetAllMenuChecked(value);
+                }
+            }
+        }
+
+        private void SetAllMenuExpanded(bool isExpanded)
+        {
+            foreach (var node in MenuTreeItems)
+                SetNodeExpanded(node, isExpanded);
+        }
+
+        private void SetNodeExpanded(MenuItemNode node, bool isExpanded)
+        {
+            node.IsExpanded = isExpanded;
+            foreach (var child in node.Children)
+                SetNodeExpanded(child, isExpanded);
+        }
+
+        private void SetAllMenuChecked(bool isChecked)
+        {
+            foreach (var node in MenuTreeItems)
+                SetNodeChecked(node, isChecked);
+        }
+
+        private void SetNodeChecked(MenuItemNode node, bool isChecked)
+        {
+            node.IsChecked = isChecked;
+            foreach (var child in node.Children)
+                SetNodeChecked(child, isChecked);
+        }
+
         public ObservableCollection<MenuItemNode> MenuTreeItems { get; set; } = new();
         public ObservableCollection<DeptNode> DeptTreeItems { get; set; } = new();
 
@@ -110,6 +163,12 @@ namespace MaiziWPF.Modules.Sys
             });
         }
 
+        public override void OnDialogOpened(IDialogParameters parameters)
+        {
+            base.OnDialogOpened(parameters);
+            LoadData();
+        }
+
         public void LoadData()
         {
             LoadMenuTree();
@@ -120,17 +179,16 @@ namespace MaiziWPF.Modules.Sys
         private void LoadMenuTree()
         {
             var menus = _menuService.SelectMenuList(new SysMenu(), 1);
-            var rootMenus = menus.Where(m => m.ParentId == 0).OrderBy(m => m.OrderNum).ToList();
             MenuTreeItems.Clear();
-            foreach (var menu in rootMenus)
+            foreach (var menu in menus)
             {
-                var node = BuildMenuNode(menu, menus);
+                var node = BuildMenuNode(menu);
                 node.SetStrictMode(MenuCheckStrictly);
                 MenuTreeItems.Add(node);
             }
         }
 
-        private MenuItemNode BuildMenuNode(SysMenu menu, List<SysMenu> allMenus)
+        private MenuItemNode BuildMenuNode(SysMenu menu)
         {
             var node = new MenuItemNode
             {
@@ -141,12 +199,14 @@ namespace MaiziWPF.Modules.Sys
                 IsChecked = false
             };
 
-            var children = allMenus.Where(m => m.ParentId == menu.Id).OrderBy(m => m.OrderNum).ToList();
-            foreach (var child in children)
+            if (menu.Childs != null)
             {
-                var childNode = BuildMenuNode(child, allMenus);
-                childNode.Parent = node;
-                node.Children.Add(childNode);
+                foreach (var child in menu.Childs)
+                {
+                    var childNode = BuildMenuNode(child);
+                    childNode.Parent = node;
+                    node.Children.Add(childNode);
+                }
             }
             return node;
         }
@@ -280,6 +340,13 @@ namespace MaiziWPF.Modules.Sys
         protected bool _isStrict = true;
         protected bool _isUpdating;
 
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { SetProperty(ref _isExpanded, value); }
+        }
+
         public virtual void SetStrictMode(bool isStrict)
         {
             _isStrict = isStrict;
@@ -311,7 +378,7 @@ namespace MaiziWPF.Modules.Sys
                 if (SetProperty(ref _isChecked, value))
                 {
                     RaisePropertyChanged(nameof(IsEnabled));
-                    if (!_isStrict)
+                    if (_isStrict)
                     {
                         _isUpdating = true;
                         CascadeToChildren(value);

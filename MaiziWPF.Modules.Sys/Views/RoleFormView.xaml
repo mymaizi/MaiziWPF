@@ -7,7 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    Width="580" Height="620">
+    Width="520" Height="320">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
             <Setter Property="Title" Value="{Binding DialogTitle}" />
@@ -28,15 +28,19 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="0">
+    <Grid Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="460" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="1" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" Margin="20,12,20,12" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,12,0,12">
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -51,16 +55,14 @@
                         Grid.Column="2"
                         Height="36"
                         FontSize="13"
-                        Text="{Binding RoleName}"
+                        Text="{Binding RoleName, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Hint="请输入角色名称" />
                     <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="显示排序" />
                     <TextBox
                         Grid.Column="5"
                         Height="36"
-                        Width="120"
-                        HorizontalAlignment="Left"
                         FontSize="13"
-                        Text="{Binding RoleSort}"
+                        Text="{Binding RoleSort, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Hint="请输入排序号" />
                 </Grid>
 
@@ -78,7 +80,7 @@
                         Grid.Column="2"
                         Height="36"
                         FontSize="13"
-                        Text="{Binding RoleKey}"
+                        Text="{Binding RoleKey, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Hint="请输入权限字符" />
                     <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="角色状态" />
                     <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
@@ -101,65 +103,21 @@
                         <ColumnDefinition Width="12" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="数据范围" />
-                    <ComboBox
-                        Grid.Column="2"
-                        Height="36"
-                        FontSize="13"
-                        ItemsSource="{Binding DataScopeItems}"
-                        SelectedValuePath="Value"
-                        SelectedValue="{Binding DataScope}"
-                        DisplayMemberPath="Label"
-                        materialDesign:HintAssist.Hint="请选择数据范围" />
-                </Grid>
-
-                <Grid Margin="0,0,0,12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="备注" />
                     <TextBox
                         Grid.Column="2"
                         Height="36"
                         FontSize="13"
-                        Text="{Binding Remark}"
+                        Text="{Binding Remark, UpdateSourceTrigger=PropertyChanged}"
                         materialDesign:HintAssist.Hint="请输入备注" />
                 </Grid>
 
-                <Border
-                    Margin="0,4,0,0"
-                    Padding="12,10"
-                    Background="#fafafa"
-                    CornerRadius="6">
-                    <StackPanel>
-                        <TextBlock
-                            Margin="0,0,0,6"
-                            FontSize="12"
-                            Foreground="#909399"
-                            Text="树选择联动设置（在「分配权限」弹窗中生效）" />
-                        <CheckBox
-                            Margin="0,2"
-                            Content="菜单父子联动（勾选父节点时自动选中所有子节点）"
-                            FontSize="12"
-                            Foreground="#606266"
-                            IsChecked="{Binding MenuCheckStrictly}" />
-                        <CheckBox
-                            Margin="0,2"
-                            Content="部门父子联动（勾选父节点时自动选中所有子节点）"
-                            FontSize="12"
-                            Foreground="#606266"
-                            IsChecked="{Binding DeptCheckStrictly}" />
-                    </StackPanel>
-                </Border>
             </StackPanel>
-        </ScrollViewer>
 
-        <Border Grid.Row="1" Background="#f0f0f0" />
+        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="#f0f0f0" />
 
         <StackPanel
-            Grid.Row="2"
+            Grid.Row="2" Grid.ColumnSpan="3"
             Margin="20,12,20,16"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
@@ -174,9 +132,10 @@
                 Style="{StaticResource MaterialDesignRaisedLightButton}" />
             <Button
                 Padding="24,8"
+                BorderBrush="#dcdfe6"
                 Command="{Binding CancelCommand}"
                 Content="取消"
-                Foreground="#333333"
+                Foreground="#606266"
                 Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
         </StackPanel>
     </Grid>

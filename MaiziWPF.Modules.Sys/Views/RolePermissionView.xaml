@@ -6,7 +6,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    Width="820" Height="600">
+    Width="680" Height="560">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
@@ -19,46 +19,87 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="1" />
             <RowDefinition Height="*" />
             <RowDefinition Height="1" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Padding="16,12" Background="#fafafa" BorderBrush="#e8e8e8" BorderThickness="0,0,0,1">
-            <StackPanel>
-                <TextBlock FontSize="12" Foreground="#999">
-                    <Run Text="角色：" /><Run Text="{Binding RoleName}" FontWeight="SemiBold" Foreground="#333" />
-                    <Run Text="  |  权限字符：" /><Run Text="{Binding RoleKey}" Foreground="#666" />
-                </TextBlock>
-            </StackPanel>
+        <!-- 角色信息 -->
+        <Border Grid.Row="0" Padding="20,12" Background="#fafafa" BorderBrush="#e8e8e8" BorderThickness="0,0,0,1">
+            <TextBlock FontSize="12" Foreground="#999">
+                <Run Text="角色：" /><Run Text="{Binding RoleName}" FontWeight="SemiBold" Foreground="#333" />
+                <Run Text="  |  权限字符：" /><Run Text="{Binding RoleKey}" Foreground="#666" />
+            </TextBlock>
         </Border>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="320" />
-            </Grid.ColumnDefinitions>
+        <!-- Tab 切换 -->
+        <TabControl
+            Grid.Row="2"
+            Margin="0"
+            BorderThickness="0"
+            Background="#ffffff">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="FontSize" Value="13" />
+                    <Setter Property="Foreground" Value="#606266" />
+                    <Setter Property="Padding" Value="20,10" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border
+                                    x:Name="Border"
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0,0,0,2"
+                                    Cursor="Hand">
+                                    <ContentPresenter
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        ContentSource="Header" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="#1890ff" />
+                                        <Setter Property="Foreground" Value="#1890ff" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="#1890ff" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
 
-            <Border Grid.Column="0" Background="#ffffff" Margin="12">
-                <Grid>
+            <!-- 菜单权限 Tab -->
+            <TabItem Header="菜单权限">
+                <Grid Margin="20,16,20,12">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="12,12,12,8"
-                        FontSize="14"
-                        FontWeight="SemiBold"
-                        Foreground="#333"
-                        Text="菜单权限" />
-
-                    <StackPanel Grid.Row="1" Margin="12,0,12,8" Orientation="Horizontal">
+                    <!-- 工具栏 -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,12" Orientation="Horizontal">
                         <CheckBox
-                            x:Name="MenuCheckStrictlyCheck"
+                        Content="展开/折叠"
+                        FontSize="12"
+                        Foreground="#606266"
+                        IsChecked="{Binding MenuExpandAll}"
+                        VerticalAlignment="Center" />
+                        <CheckBox
+                            Margin="20,0,0,0"
+                            Content="全选/全不选"
+                            FontSize="12"
+                            Foreground="#606266"
+                            IsChecked="{Binding MenuSelectAll}"
+                            VerticalAlignment="Center" />
+                        <CheckBox
+                            Margin="20,0,0,0"
                             Content="父子联动"
                             FontSize="12"
                             Foreground="#606266"
@@ -66,108 +107,109 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
 
-                    <TreeView
-                        Grid.Row="2"
-                        Margin="8,0,8,8"
-                        BorderThickness="0"
-                        ItemsSource="{Binding MenuTreeItems}">
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="TreeViewItem">
-                                <Setter Property="IsExpanded" Value="True" />
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                <CheckBox
-                                    Margin="0,2"
-                                    Content="{Binding Name}"
-                                    FontSize="13"
-                                    Foreground="#333"
-                                    IsChecked="{Binding IsChecked}"
-                                    IsEnabled="{Binding IsEnabled}" />
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                    </TreeView>
+                    <!-- 菜单树 -->
+                    <Border Grid.Row="1" BorderBrush="#e8e8e8" BorderThickness="1" CornerRadius="4">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TreeView
+                                Margin="8"
+                                BorderThickness="0"
+                                ItemsSource="{Binding MenuTreeItems}">
+                                <TreeView.ItemContainerStyle>
+                                    <Style TargetType="TreeViewItem">
+                                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                                    </Style>
+                                </TreeView.ItemContainerStyle>
+                                <TreeView.ItemTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                        <CheckBox
+                                            Margin="0,3"
+                                            Content="{Binding Name}"
+                                            FontSize="13"
+                                            Foreground="#333"
+                                            IsChecked="{Binding IsChecked}"
+                                            IsEnabled="{Binding IsEnabled}" />
+                                    </HierarchicalDataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </ScrollViewer>
+                    </Border>
                 </Grid>
-            </Border>
+            </TabItem>
 
-            <GridSplitter
-                Grid.Column="1"
-                Width="2"
-                Background="#e8e8e8"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Stretch" />
-
-            <Border Grid.Column="2" Background="#ffffff" Margin="12">
-                <Grid>
+            <!-- 数据权限 Tab -->
+            <TabItem Header="数据权限">
+                <Grid Margin="20,16,20,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
                     <TextBlock
                         Grid.Row="0"
-                        Margin="12,12,12,8"
-                        FontSize="14"
-                        FontWeight="SemiBold"
-                        Foreground="#333"
-                        Text="数据权限" />
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        Foreground="#606266"
+                        Text="权限范围" />
 
-                    <StackPanel Grid.Row="1" Margin="12,0,12,8">
-                        <TextBlock
-                            Margin="0,0,0,4"
-                            FontSize="12"
-                            Foreground="#606266"
-                            Text="权限范围" />
-                        <ComboBox
-                            Height="34"
-                            FontSize="13"
-                            ItemsSource="{Binding DataScopeOptions}"
-                            SelectedValuePath="Value"
-                            SelectedValue="{Binding DataScope}"
-                            DisplayMemberPath="Label" />
+                    <ComboBox
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Height="36"
+                        FontSize="13"
+                        ItemsSource="{Binding DataScopeOptions}"
+                        SelectedValuePath="Value"
+                        SelectedValue="{Binding DataScope}"
+                        DisplayMemberPath="Label"
+                        materialDesign:HintAssist.Hint="请选择数据权限范围" />
 
-                        <CheckBox
-                            x:Name="DeptCheckStrictlyCheck"
-                            Margin="0,12,0,8"
-                            Content="父子联动"
-                            FontSize="12"
-                            Foreground="#606266"
-                            IsChecked="{Binding DeptCheckStrictly}" />
-
-                        <TreeView
-                            Grid.Row="2"
-                            MaxHeight="280"
-                            Margin="0,4,0,0"
-                            BorderThickness="0"
-                            ItemsSource="{Binding DeptTreeItems}"
-                            Visibility="{Binding IsCustomDataScope, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TreeView.ItemContainerStyle>
-                                <Style TargetType="TreeViewItem">
-                                    <Setter Property="IsExpanded" Value="True" />
-                                </Style>
-                            </TreeView.ItemContainerStyle>
-                            <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                    <CheckBox
-                                        Margin="0,2"
-                                        Content="{Binding DeptName}"
-                                        FontSize="13"
-                                        Foreground="#333"
-                                        IsChecked="{Binding IsChecked}" />
-                                </HierarchicalDataTemplate>
-                            </TreeView.ItemTemplate>
-                        </TreeView>
-                    </StackPanel>
+                    <!-- 部门树（仅自定义数据权限时显示） -->
+                    <Border
+                        Grid.Row="1"
+                        Grid.ColumnSpan="3"
+                        Margin="0,16,0,0"
+                        BorderBrush="#e8e8e8"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Visibility="{Binding IsCustomDataScope, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                            <TreeView
+                                Margin="8"
+                                BorderThickness="0"
+                                ItemsSource="{Binding DeptTreeItems}">
+                                <TreeView.ItemContainerStyle>
+                                    <Style TargetType="TreeViewItem">
+                                        <Setter Property="IsExpanded" Value="True" />
+                                    </Style>
+                                </TreeView.ItemContainerStyle>
+                                <TreeView.ItemTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                        <CheckBox
+                                            Margin="0,3"
+                                            Content="{Binding DeptName}"
+                                            FontSize="13"
+                                            Foreground="#333"
+                                            IsChecked="{Binding IsChecked}" />
+                                    </HierarchicalDataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </ScrollViewer>
+                    </Border>
                 </Grid>
-            </Border>
-        </Grid>
+            </TabItem>
+        </TabControl>
 
-        <Border Grid.Row="2" Background="#f0f0f0" />
+        <!-- 底部分隔线 -->
+        <Border Grid.Row="3" Background="#f0f0f0" />
 
+        <!-- 底部按钮 -->
         <StackPanel
-            Grid.Row="3"
+            Grid.Row="4"
             Margin="20,12,20,16"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
@@ -182,9 +224,10 @@
                 Style="{StaticResource MaterialDesignRaisedLightButton}" />
             <Button
                 Padding="24,8"
+                BorderBrush="#dcdfe6"
                 Command="{Binding CancelCommand}"
                 Content="取消"
-                Foreground="#333333"
+                Foreground="#606266"
                 Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
         </StackPanel>
     </Grid>

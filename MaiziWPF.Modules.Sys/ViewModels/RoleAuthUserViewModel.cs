@@ -2,6 +2,7 @@ using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
+using Prism.Dialogs;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
@@ -72,6 +73,12 @@ namespace MaiziWPF.Modules.Sys
             BatchAddCommand = new DelegateCommand(BatchAddUsers);
         }
 
+        public override void OnDialogOpened(IDialogParameters parameters)
+        {
+            base.OnDialogOpened(parameters);
+            LoadData();
+        }
+
         public void LoadData()
         {
             LoadAllocatedList();
@@ -102,6 +109,7 @@ namespace MaiziWPF.Modules.Sys
             {
                 _roleService.CancelAuthUser(RoleId, user.UserId);
                 AllocatedList.Remove(user);
+                LoadUnallocatedList();
                 ShowSuccess("已取消用户授权");
             }
             catch (Exception ex)

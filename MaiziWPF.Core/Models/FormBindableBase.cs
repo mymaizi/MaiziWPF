@@ -53,7 +53,7 @@ namespace MaiziWPF.Core
         {
         }
 
-        public void OnDialogOpened(IDialogParameters parameters)
+        public virtual void OnDialogOpened(IDialogParameters parameters)
         {
             if (parameters != null && parameters.TryGetValue<Action<FormBindableBase>>("_SetupAction", out var setup))
             {

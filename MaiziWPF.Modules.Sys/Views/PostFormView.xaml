@@ -7,7 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    Width="520" Height="420">
+    Width="520" Height="320">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
             <Setter Property="Title" Value="{Binding DialogTitle}" />
@@ -29,14 +29,18 @@
     </UserControl.Resources>
 
     <Grid Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="460" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="1" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="0" Margin="20,12,20,12" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,12,0,12">
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -112,12 +116,11 @@
                         materialDesign:HintAssist.Hint="请输入备注" />
                 </Grid>
             </StackPanel>
-        </ScrollViewer>
 
-        <Border Grid.Row="1" Background="#f0f0f0" />
+        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="#f0f0f0" />
 
         <StackPanel
-            Grid.Row="2"
+            Grid.Row="2" Grid.ColumnSpan="3"
             Margin="20,12,20,16"
             HorizontalAlignment="Right"
             Orientation="Horizontal">

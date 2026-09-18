@@ -13,22 +13,26 @@
     </prism:Dialog.WindowStyle>
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="740" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="1" />
             <RowDefinition Height="*" />
             <RowDefinition Height="1" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Padding="16,12" Background="#fafafa" BorderBrush="#e8e8e8" BorderThickness="0,0,0,1">
-            <StackPanel>
-                <TextBlock FontSize="12" Foreground="#999">
-                    <Run Text="角色：" /><Run Text="{Binding RoleName}" FontWeight="SemiBold" Foreground="#333" />
-                </TextBlock>
-            </StackPanel>
+        <Border Grid.Row="0" Grid.ColumnSpan="3" Padding="20,12" Background="#fafafa" BorderBrush="#e8e8e8" BorderThickness="0,0,0,1">
+            <TextBlock FontSize="12" Foreground="#999">
+                <Run Text="角色：" /><Run Text="{Binding RoleName}" FontWeight="SemiBold" Foreground="#333" />
+            </TextBlock>
         </Border>
 
-        <Grid Grid.Row="1" Margin="12">
+        <Grid Grid.Row="2" Grid.Column="1" Margin="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -55,48 +59,82 @@
                         </TextBlock>
                     </Border>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding AllocatedList}">
-                            <ItemsControl.ItemTemplate>
+                    <ListBox
+                        Grid.Row="1"
+                        ItemsSource="{Binding AllocatedList}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling"
+                        VirtualizingPanel.ScrollUnit="Pixel"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        BorderThickness="0"
+                        Background="Transparent">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border
-                                        Padding="12,8"
+                                        Padding="10,6"
                                         BorderBrush="#f0f0f0"
                                         BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                <TextBlock FontSize="13" Foreground="#333" FontWeight="SemiBold">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="13"
+                                                    Foreground="#333"
+                                                    FontWeight="SemiBold"
+                                                    TextTrimming="CharacterEllipsis">
                                                     <Run Text="{Binding NickName}" />
                                                     <Run Text="  " />
-                                                    <TextBlock FontSize="11" Foreground="#999" Text="{Binding UserName, StringFormat='({0})'}" />
+                                                    <Run Text="{Binding UserName, StringFormat='({0})'}" FontSize="11" Foreground="#999" />
                                                 </TextBlock>
-                                                <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="#999" Text="{Binding PhoneNumber}" />
-                                            </StackPanel>
-                                            <Button
-                                                Grid.Column="1"
-                                                Padding="8,3"
-                                                Background="#fff1f0"
-                                                BorderBrush="#ffa39e"
-                                                BorderThickness="1"
-                                                Command="{Binding DataContext.CancelUserCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                                                CommandParameter="{Binding}"
-                                                Foreground="#ff4d4f"
-                                                FontSize="12">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <materialDesign:PackIcon Kind="AccountRemove" Width="12" Height="12" Margin="0,0,3,0" />
-                                                    <TextBlock Text="取消授权" />
-                                                </StackPanel>
-                                            </Button>
-                                        </Grid>
+                                                <Button
+                                                    Grid.Column="1"
+                                                    Padding="6,2"
+                                                    VerticalAlignment="Center"
+                                                    Background="#fff1f0"
+                                                    BorderBrush="#ffa39e"
+                                                    BorderThickness="1"
+                                                    Command="{Binding DataContext.CancelUserCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Foreground="#ff4d4f"
+                                                    FontSize="12">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <materialDesign:PackIcon Kind="AccountRemove" Width="12" Height="12" Margin="0,0,3,0" />
+                                                        <TextBlock Text="取消授权" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </Grid>
+                                            <TextBlock Margin="0,0,0,0" FontSize="11" Foreground="#999" Text="{Binding PhoneNumber}" />
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                 </Grid>
             </Border>
 
@@ -164,38 +202,71 @@
                         </Grid>
                     </Border>
 
-                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding UnallocatedList}">
-                            <ItemsControl.ItemTemplate>
+                    <ListBox
+                        Grid.Row="2"
+                        ItemsSource="{Binding UnallocatedList}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling"
+                        VirtualizingPanel.ScrollUnit="Pixel"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        BorderThickness="0"
+                        Background="Transparent">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border
-                                        Padding="12,8"
+                                        Padding="10,6"
                                         BorderBrush="#f0f0f0"
                                         BorderThickness="0,0,0,1">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <CheckBox
-                                                Grid.Column="0"
-                                                Margin="0,0,8,0"
-                                                VerticalAlignment="Center"
-                                                IsChecked="{Binding IsSelected}" />
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock FontSize="13" Foreground="#333" FontWeight="SemiBold">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,0,8,0"
+                                                    IsChecked="{Binding IsSelected}" />
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="13"
+                                                    Foreground="#333"
+                                                    FontWeight="SemiBold"
+                                                    TextTrimming="CharacterEllipsis">
                                                     <Run Text="{Binding User.NickName}" />
                                                     <Run Text="  " />
-                                                    <TextBlock FontSize="11" Foreground="#999" Text="{Binding User.UserName, StringFormat='({0})'}" />
+                                                    <Run Text="{Binding User.UserName, StringFormat='({0})'}" FontSize="11" Foreground="#999" />
                                                 </TextBlock>
-                                                <TextBlock Margin="0,2,0,0" FontSize="11" Foreground="#999" Text="{Binding User.PhoneNumber}" />
-                                            </StackPanel>
-                                        </Grid>
+                                            </Grid>
+                                            <TextBlock Margin="20,0,0,0" FontSize="11" Foreground="#999" Text="{Binding User.PhoneNumber}" />
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
                     <Border Grid.Row="3" Padding="12,10" BorderBrush="#f0f0f0" BorderThickness="0,1,0,0">
                         <Grid>
@@ -230,18 +301,19 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="2" Background="#f0f0f0" />
+        <Border Grid.Row="3" Grid.ColumnSpan="3" Background="#f0f0f0" />
 
         <StackPanel
-            Grid.Row="3"
+            Grid.Row="4" Grid.ColumnSpan="3"
             Margin="20,12,20,16"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
                 Padding="24,8"
+                BorderBrush="#dcdfe6"
                 Command="{Binding CancelCommand}"
                 Content="关闭"
-                Foreground="#333333"
+                Foreground="#606266"
                 Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
         </StackPanel>
     </Grid>
