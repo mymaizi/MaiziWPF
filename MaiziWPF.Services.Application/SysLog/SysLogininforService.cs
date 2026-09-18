@@ -13,12 +13,12 @@ namespace MaiziWPF.Services.Application
             _repository = repository;
         }
 
-        public List<SysLogininfor> SelectLogininforList(QueryLogininforInput input)
+        public List<SysLogininfo> SelectLogininforList(QueryLoginInfoInput input)
         {
             return _repository.SelectLogininforList(input);
         }
 
-        public int InsertLogininfor(SysLogininfor logininfor)
+        public int InsertLogininfor(SysLogininfo logininfor)
         {
             return _repository.InsertLogininfor(logininfor);
         }

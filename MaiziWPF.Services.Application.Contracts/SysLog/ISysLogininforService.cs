@@ -6,9 +6,9 @@ namespace MaiziWPF.Services.Application.Contracts
 {
     public interface ISysLogininforService : ITransientDependency
     {
-        List<SysLogininfor> SelectLogininforList(QueryLogininforInput input);
+        List<SysLogininfo> SelectLogininforList(QueryLoginInfoInput input);
 
-        int InsertLogininfor(SysLogininfor logininfor);
+        int InsertLogininfor(SysLogininfo logininfor);
 
         int DeleteLogininforById(long infoId);
 

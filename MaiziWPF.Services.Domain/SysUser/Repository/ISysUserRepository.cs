@@ -42,14 +42,6 @@ namespace MaiziWPF.Services.Domain
         */
         public int BatchUserRole(List<SysUserRole> userRoleList);
         /**
-        * 批量新增用户部门信息
-        * 
-        * @param userDeptList 用户角色列表
-        * @return 结果
-        */
-        public int BatchUserDept(List<SysUserDept> userDeptList);
-        
-        /**
         * 删除用户信息
         * 
         * @param userId 用户ID
@@ -77,13 +69,9 @@ namespace MaiziWPF.Services.Domain
 
         int DeleteUserPosts(long userId);
 
-        int DeleteUserDepts(long userId);
-
         List<long> SelectUserRoleIds(long userId);
 
         List<long> SelectUserPostIds(long userId);
-
-        List<long> SelectUserDeptIds(long userId);
 
         void ResetPwd(long userId);
     }

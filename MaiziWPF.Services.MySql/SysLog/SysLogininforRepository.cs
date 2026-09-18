@@ -5,7 +5,7 @@ using System;
 
 namespace MaiziWPF.Services.MySql
 {
-    public class SysLogininforRepository : BaseRepository<SysLogininfor, int>, ISysLogininforRepository
+    public class SysLogininforRepository : BaseRepository<SysLogininfo, int>, ISysLogininforRepository
     {
         private readonly IFreeSql _fsql;
 
@@ -14,9 +14,9 @@ namespace MaiziWPF.Services.MySql
             _fsql = fsql;
         }
 
-        public List<SysLogininfor> SelectLogininforList(QueryLogininforInput input)
+        public List<SysLogininfo> SelectLogininforList(QueryLoginInfoInput input)
         {
-            System.Linq.Expressions.Expression<Func<SysLogininfor, bool>> where = d => d.DelFlag == "0";
+            System.Linq.Expressions.Expression<Func<SysLogininfo, bool>> where = d => d.DelFlag == "0";
             if (!string.IsNullOrEmpty(input.UserName))
                 where = where.And(d => d.UserName.Contains(input.UserName));
             if (!string.IsNullOrEmpty(input.Ipaddr))
@@ -26,14 +26,14 @@ namespace MaiziWPF.Services.MySql
             if (input.StartDate.HasValue && input.EndDate.HasValue)
                 where = where.And(d => d.LoginTime.Value.Between(input.StartDate.Value, input.EndDate.Value));
 
-            return _fsql.Select<SysLogininfor>()
+            return _fsql.Select<SysLogininfo>()
                 .Where(where)
                 .OrderByDescending(d => d.LoginTime)
                 .Page(input)
                 .ToList();
         }
 
-        public int InsertLogininfor(SysLogininfor logininfor)
+        public int InsertLogininfor(SysLogininfo logininfor)
         {
             logininfor.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(logininfor).ExecuteAffrows();
@@ -41,14 +41,14 @@ namespace MaiziWPF.Services.MySql
 
         public int DeleteLogininforById(long infoId)
         {
-            return _fsql.Delete<SysLogininfor>()
+            return _fsql.Delete<SysLogininfo>()
                 .Where(d => d.InfoId == infoId)
                 .ExecuteAffrows();
         }
 
         public int CleanLogininfor()
         {
-            return _fsql.Delete<SysLogininfor>()
+            return _fsql.Delete<SysLogininfo>()
                 .Where(d => 1 == 1)
                 .ExecuteAffrows();
         }

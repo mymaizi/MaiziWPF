@@ -36,7 +36,6 @@ namespace MaiziWPF.Services.Application
             user.UserId = userId;
             InsertUserPost(user);
             InsertUserRole(user);
-            InsertUserDept(user);
             return userId;
         }
 
@@ -46,10 +45,8 @@ namespace MaiziWPF.Services.Application
             var result = _repository.UpdateUser(user);
             _repository.DeleteUserRoles(user.UserId);
             _repository.DeleteUserPosts(user.UserId);
-            _repository.DeleteUserDepts(user.UserId);
             InsertUserPost(user);
             InsertUserRole(user);
-            InsertUserDept(user);
             return result;
         }
 
@@ -105,21 +102,7 @@ namespace MaiziWPF.Services.Application
             }
         }
 
-        public void InsertUserDept(SysUser user)
-        {
-            if (user.Depts != null && user.Depts.Any())
-            {
-                List<SysUserDept> list = new();
-                user.Depts.ForEach(dept =>
-                {
-                    SysUserDept ud = new SysUserDept();
-                    ud.UserId = user.UserId;
-                    ud.DeptId = dept.Id;
-                    list.Add(ud);
-                });
-                _repository.BatchUserDept(list);
-            }
-        }
+    
 
         public List<long> SelectUserRoleIds(long userId)
         {
@@ -129,11 +112,6 @@ namespace MaiziWPF.Services.Application
         public List<long> SelectUserPostIds(long userId)
         {
             return _repository.SelectUserPostIds(userId);
-        }
-
-        public List<long> SelectUserDeptIds(long userId)
-        {
-            return _repository.SelectUserDeptIds(userId);
         }
 
         public List<SysRole> SelectAllRoles()

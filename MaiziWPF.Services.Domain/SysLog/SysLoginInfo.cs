@@ -3,8 +3,8 @@ using System;
 
 namespace MaiziWPF.Services.Domain
 {
-    [Table(Name = "sys_logininfor")]
-    public class SysLogininfor : BaseEntity
+    [Table(Name = "sys_login_info")]
+    public class SysLogininfo : BaseEntity
     {
         [Column(Name = "info_id", IsIdentity = true, IsPrimary = true)]
         public Int64 InfoId { get; set; }

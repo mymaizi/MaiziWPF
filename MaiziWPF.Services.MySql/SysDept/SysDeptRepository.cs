@@ -81,12 +81,7 @@ namespace MaiziWPF.Services.MySql
                 .Any();
         }
 
-        public bool CheckDeptExistUser(long deptId)
-        {
-            return _fsql.Select<SysUserDept>()
-                .Where(d => d.DeptId == deptId)
-                .Any();
-        }
+  
 
         public bool CheckDeptNameUnique(SysDept dept)
         {

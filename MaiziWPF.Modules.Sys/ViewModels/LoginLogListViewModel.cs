@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace MaiziWPF.Modules.Sys
 {
-    public class LoginLogListViewModel : PageBindableBase<SysLogininfor, QueryLogininforInput>
+    public class LoginLogListViewModel : PageBindableBase<SysLogininfo, QueryLoginInfoInput>
     {
         private readonly ISysLogininforService _logininforService;
         private readonly IDialogHostService _dialogHostService;
@@ -25,9 +25,9 @@ namespace MaiziWPF.Modules.Sys
             RegisterQueryFunc(input =>
             {
                 return _logininforService.SelectLogininforList(input);
-            }, new QueryLogininforInput() { PageNumber = 1, PageSize = 10 });
+            }, new QueryLoginInfoInput() { PageNumber = 1, PageSize = 10 });
 
-            DeleteButtonCommand = new DelegateCommand<SysLogininfor>(async (log) =>
+            DeleteButtonCommand = new DelegateCommand<SysLogininfo>(async (log) =>
             {
                 await DeleteLog(log);
             });
@@ -40,7 +40,7 @@ namespace MaiziWPF.Modules.Sys
             SearchButtonCommand.Execute(this);
         }
 
-        private async System.Threading.Tasks.Task DeleteLog(SysLogininfor log)
+        private async System.Threading.Tasks.Task DeleteLog(SysLogininfo log)
         {
             if (log == null) return;
 

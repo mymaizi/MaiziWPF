@@ -36,12 +36,11 @@ namespace MaiziWPF.Services.MySql
             if (!string.IsNullOrEmpty(menu.Status))
                 where = where.And(w => w.Status == menu.Status);
 
-            return _fsql.Select<SysMenu, SysRoleMenu, SysUserRole, SysUserMenu>()
-                     .LeftJoin((m, rm, ur, um) => m.Id == rm.MenuId)
-                     .LeftJoin((m, rm, ur, um) => rm.RoleId == ur.RoleId)
-                     .LeftJoin((m, rm, ur, um) => m.Id == um.MenuId)
-                     .Where((m, rm, ur, um) => ur.UserId == userId || um.UserId == userId)
-                     .WithTempQuery((m, rm, ur, um) => m)
+            return _fsql.Select<SysMenu, SysRoleMenu, SysUserRole>()
+                     .LeftJoin((m, rm, ur) => m.Id == rm.MenuId)
+                     .LeftJoin((m, rm, ur) => rm.RoleId == ur.RoleId)
+                     .Where((m, rm, ur) => ur.UserId == userId)
+                     .WithTempQuery((m, rm, ur) => m)
                      .Where(where)
                      .OrderBy(o => o.OrderNum)
                      .ToTreeList();

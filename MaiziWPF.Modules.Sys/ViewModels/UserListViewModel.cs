@@ -79,7 +79,6 @@ namespace MaiziWPF.Modules.Sys
                 form.Posts = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
                 form.InitialRoleIds = _userService.SelectUserRoleIds(user.UserId);
                 form.InitialPostIds = _userService.SelectUserPostIds(user.UserId);
-                form.InitialDeptIds = _userService.SelectUserDeptIds(user.UserId);
 
                 form.Roles?.ForEach(r => r.IsChecked = form.InitialRoleIds.Contains(r.Id));
                 form.Posts?.ForEach(p => p.IsChecked = form.InitialPostIds.Contains(p.Id));

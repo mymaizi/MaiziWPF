@@ -31,10 +31,7 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterForNavigation<OperLogListView>();
             containerRegistry.RegisterForNavigation<LoginLogListView>();
             containerRegistry.RegisterForNavigation<NoticeListView>();
-            containerRegistry.RegisterForNavigation<OnlineUserListView>();
-            containerRegistry.RegisterForNavigation<JobListView>();
             containerRegistry.RegisterForNavigation<OssListView>();
-            containerRegistry.RegisterForNavigation<CacheMonitorView>();
             containerRegistry.RegisterDialog<UserFormView>();
             containerRegistry.RegisterDialog<DeptFormView>();
             containerRegistry.RegisterDialog<MenuFormView>();
@@ -47,7 +44,6 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterDialog<DictDataFormView>();
             containerRegistry.RegisterDialog<ConfigFormView>();
             containerRegistry.RegisterDialog<NoticeFormView>();
-            containerRegistry.RegisterDialog<JobFormView>();
             containerRegistry.RegisterDialog<ConfirmDialog, ConfirmDialogViewModel>();
             containerRegistry.RegisterDialog<MessageDialog, MessageDialogViewModel>();
         }

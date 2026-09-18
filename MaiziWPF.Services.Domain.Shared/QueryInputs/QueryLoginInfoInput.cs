@@ -2,7 +2,7 @@ using FreeSql.Internal.Model;
 
 namespace MaiziWPF.Services.Domain.Shared
 {
-    public class QueryLogininforInput : BasePagingInfo, IPagingInfo
+    public class QueryLoginInfoInput : BasePagingInfo, IPagingInfo
     {
         public string UserName { get; set; }
         public string Ipaddr { get; set; }

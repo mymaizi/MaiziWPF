@@ -61,10 +61,6 @@ namespace MaiziWPF.Services.Application
             return _repository.HasChildByDeptId(deptId);
         }
 
-        public bool CheckDeptExistUser(long deptId)
-        {
-            return _repository.CheckDeptExistUser(deptId);
-        }
 
         public bool CheckDeptNameUnique(SysDept dept)
         {

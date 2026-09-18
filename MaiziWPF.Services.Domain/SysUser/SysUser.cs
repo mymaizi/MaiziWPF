@@ -55,8 +55,7 @@ namespace MaiziWPF.Services.Domain
 
         [Navigate(ManyToMany = typeof(SysUserRole))]
         public List<SysRole> Roles { get; set; }
-        [Navigate(ManyToMany = typeof(SysUserDept))]
-        public List<SysDept> Depts { get; set; }
+      
         [Navigate(ManyToMany = typeof(SysUserPost))]
         public List<SysPost> Posts { get; set; }
     }

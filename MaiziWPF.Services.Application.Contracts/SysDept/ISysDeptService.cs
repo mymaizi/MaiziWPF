@@ -20,8 +20,6 @@ namespace MaiziWPF.Services.Application.Contracts
 
         bool HasChildByDeptId(long deptId);
 
-        bool CheckDeptExistUser(long deptId);
-
         bool CheckDeptNameUnique(SysDept dept);
     }
 }

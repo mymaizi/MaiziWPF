@@ -27,17 +27,11 @@ namespace MaiziWPF.Services.Application.Contracts
 
         bool CheckEmailUnique(SysUser user);
 
-        void InsertUserPost(SysUser user);
-
         void InsertUserRole(SysUser user);
-
-        void InsertUserDept(SysUser user);
 
         List<long> SelectUserRoleIds(long userId);
 
         List<long> SelectUserPostIds(long userId);
-
-        List<long> SelectUserDeptIds(long userId);
 
         List<SysRole> SelectAllRoles();
 

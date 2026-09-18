@@ -165,7 +165,6 @@ namespace MaiziWPF.Modules.Sys
                         Remark = this.Remark,
                         Posts = this.Posts?.Select(p => new SysPost() { PostId = p.Id }).ToList(),
                         Roles = this.Roles?.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
-                        Depts = this.Depts?.Select(d => new SysDept() { Id = d.Id }).ToList(),
                     };
 
                     var success = _userService.UpdateUser(user);
@@ -195,7 +194,6 @@ namespace MaiziWPF.Modules.Sys
                         Remark = this.Remark,
                         Posts = this.Posts?.Select(p => new SysPost() { PostId = p.Id }).ToList(),
                         Roles = this.Roles?.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
-                        Depts = this.Depts?.Select(d => new SysDept() { Id = d.Id }).ToList(),
                     };
 
                     _userService.InsertUser(user);

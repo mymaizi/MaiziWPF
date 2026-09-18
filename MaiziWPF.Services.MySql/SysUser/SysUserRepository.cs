@@ -16,11 +16,6 @@ namespace MaiziWPF.Services.MySql
             _fsql = fsql;
         }
 
-        public int BatchUserDept(List<SysUserDept> userDeptList)
-        {
-            return _fsql.Insert(userDeptList).ExecuteAffrows();
-        }
-
         public int BatchUserPost(List<SysUserPost> userPostList)
         {
             return _fsql.Insert(userPostList).ExecuteAffrows();
@@ -40,7 +35,6 @@ namespace MaiziWPF.Services.MySql
         {
                return _fsql.Select<SysUser>()
                     .IncludeMany(a => a.Roles)
-                    .IncludeMany(a=>a.Depts)
                     .IncludeMany(a=>a.Posts)
                     .Where(a=>a.UserName == userName)
                     .First();
@@ -60,16 +54,7 @@ namespace MaiziWPF.Services.MySql
             if (input.StartDate.HasValue && input.EndDate.HasValue)
                 where = where.And(u => u.CreateTime.Between(input.StartDate.Value, input.EndDate.Value));
 
-            return _fsql.Select<SysUser, SysUserDept, SysDept>()
-                       .LeftJoin((u, ud, d) => u.UserId == ud.UserId)
-                       .LeftJoin((u, ud, d) => ud.DeptId == d.Id)
-                       .Distinct()
-                       .WhereIf(input.DeptId.HasValue, (u, ud, d) => d.Ancestors.Contains(input.DeptId.Value.ToString()))
-                       .WithTempQuery((u, ud, d) => u)
-                       .IncludeMany(a => a.Depts)
-                       .Where(where)
-                       .Page(input)
-                       .ToList();
+            return null;
         }
 
         public bool DeleteUser(long userId)
@@ -105,7 +90,6 @@ namespace MaiziWPF.Services.MySql
         {
             return _fsql.Select<SysUser>()
                 .IncludeMany(a => a.Roles)
-                .IncludeMany(a => a.Depts)
                 .IncludeMany(a => a.Posts)
                 .Where(a => a.UserId == userId && a.DelFlag == "0")
                 .First();
@@ -152,12 +136,7 @@ namespace MaiziWPF.Services.MySql
                 .ExecuteAffrows();
         }
 
-        public int DeleteUserDepts(long userId)
-        {
-            return _fsql.Delete<SysUserDept>()
-                .Where(d => d.UserId == userId)
-                .ExecuteAffrows();
-        }
+     
 
         public List<long> SelectUserRoleIds(long userId)
         {
@@ -173,12 +152,7 @@ namespace MaiziWPF.Services.MySql
                 .ToList(p => p.PostId);
         }
 
-        public List<long> SelectUserDeptIds(long userId)
-        {
-            return _fsql.Select<SysUserDept>()
-                .Where(d => d.UserId == userId)
-                .ToList(d => d.DeptId);
-        }
+     
 
         public void ResetPwd(long userId)
         {

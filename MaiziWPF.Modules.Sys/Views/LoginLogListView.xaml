@@ -113,23 +113,6 @@
                         Binding="{Binding Os}"
                         Header="操作系统"
                         IsReadOnly="True" />
-                    <DataGridTemplateColumn Header="登录状态">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type domain:SysLogininfor}">
-                                <Label x:Name="statusLabel" HorizontalAlignment="Center" />
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding Status}" Value="0">
-                                        <Setter TargetName="statusLabel" Property="Content" Value="成功" />
-                                        <Setter TargetName="statusLabel" Property="Foreground" Value="#1890ff" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Status}" Value="1">
-                                        <Setter TargetName="statusLabel" Property="Content" Value="失败" />
-                                        <Setter TargetName="statusLabel" Property="Foreground" Value="#cf3539" />
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
                     <DataGridTextColumn
                         Binding="{Binding Msg}"
                         Header="提示消息"
