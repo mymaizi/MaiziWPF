@@ -126,68 +126,73 @@ create table sys_menu (
     del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (menu_id)
 ) engine=innodb comment = '菜单权限表';
+-- ==================== 首页（C）====================
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (1, '首页', 0, 0, 'MaiziWPF.Modules.Sys', 'DashboardView', 'C', '0', '0', '', 'Home', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
+
 -- ==================== 目录（M）====================
--- 1. 系统管理
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (1, '系统管理', 0, 1, '', '', 'M', '0', '0', '', 'Cog', 'N', 'Y');
+-- 2. 系统管理
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2, '系统管理', 0, 2, '', '', 'M', '0', '0', '', 'Cog', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
--- 2. 系统监控
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (2, '系统监控', 0, 2, '', '', 'M', '0', '0', '', 'MonitorDashboard', 'N', 'Y');
+-- 3. 系统监控
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3, '系统监控', 0, 3, '', '', 'M', '0', '0', '', 'MonitorDashboard', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
--- 3. 日志管理
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (3, '日志管理', 0, 3, '', '', 'M', '0', '0', '', 'TextBoxSearch', 'N', 'Y');
+-- 4. 日志管理
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (4, '日志管理', 0, 4, '', '', 'M', '0', '0', '', 'TextBoxSearch', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
--- 4. 文件管理
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (4, '文件管理', 0, 4, '', '', 'M', '0', '0', '', 'FolderOpen', 'N', 'Y');
+-- 5. 文件管理
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (5, '文件管理', 0, 5, '', '', 'M', '0', '0', '', 'FolderOpen', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 系统管理 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (100, '用户管理', 1, 1, 'MaiziWPF.Modules.Sys', 'UserListView', 'C', '0', '0', 'system:user:list', 'Account', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (20, '用户管理', 2, 1, 'MaiziWPF.Modules.Sys', 'UserListView', 'C', '0', '0', 'system:user:list', 'Account', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (101, '角色管理', 1, 2, 'MaiziWPF.Modules.Sys', 'RoleListView', 'C', '0', '0', 'system:role:list', 'AccountGroup', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (21, '角色管理', 2, 2, 'MaiziWPF.Modules.Sys', 'RoleListView', 'C', '0', '0', 'system:role:list', 'AccountGroup', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (102, '菜单管理', 1, 3, 'MaiziWPF.Modules.Sys', 'MenuListView', 'C', '0', '0', 'system:menu:list', 'Menu', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (22, '菜单管理', 2, 3, 'MaiziWPF.Modules.Sys', 'MenuListView', 'C', '0', '0', 'system:menu:list', 'Menu', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (103, '部门管理', 1, 4, 'MaiziWPF.Modules.Sys', 'DeptListView', 'C', '0', '0', 'system:dept:list', 'Domain', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (23, '部门管理', 2, 4, 'MaiziWPF.Modules.Sys', 'DeptListView', 'C', '0', '0', 'system:dept:list', 'Domain', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (104, '岗位管理', 1, 5, 'MaiziWPF.Modules.Sys', 'PostListView', 'C', '0', '0', 'system:post:list', 'BadgeAccount', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (24, '岗位管理', 2, 5, 'MaiziWPF.Modules.Sys', 'PostListView', 'C', '0', '0', 'system:post:list', 'BadgeAccount', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (105, '字典管理', 1, 6, 'MaiziWPF.Modules.Sys', 'DictListView', 'C', '0', '0', 'system:dict:list', 'BookOpenVariant', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (25, '字典管理', 2, 6, 'MaiziWPF.Modules.Sys', 'DictListView', 'C', '0', '0', 'system:dict:list', 'BookOpenVariant', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (106, '参数设置', 1, 7, 'MaiziWPF.Modules.Sys', 'ConfigListView', 'C', '0', '0', 'system:config:list', 'CogOutline', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (26, '参数设置', 2, 7, 'MaiziWPF.Modules.Sys', 'ConfigListView', 'C', '0', '0', 'system:config:list', 'CogOutline', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (107, '通知公告', 1, 8, 'MaiziWPF.Modules.Sys', 'NoticeListView', 'C', '0', '0', 'system:notice:list', 'BellRing', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (27, '通知公告', 2, 8, 'MaiziWPF.Modules.Sys', 'NoticeListView', 'C', '0', '0', 'system:notice:list', 'BellRing', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 系统监控 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (200, '在线用户', 2, 1, 'MaiziWPF.Modules.Sys', 'OnlineUserListView', 'C', '0', '0', 'monitor:online:list', 'AccountCheck', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (30, '在线用户', 3, 1, 'MaiziWPF.Modules.Sys', 'OnlineUserListView', 'C', '0', '0', 'monitor:online:list', 'AccountCheck', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (201, '定时任务', 2, 2, 'MaiziWPF.Modules.Sys', 'JobListView', 'C', '0', '0', 'monitor:job:list', 'ClockOutline', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (31, '定时任务', 3, 2, 'MaiziWPF.Modules.Sys', 'JobListView', 'C', '0', '0', 'monitor:job:list', 'ClockOutline', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (202, '缓存监控', 2, 3, 'MaiziWPF.Modules.Sys', 'CacheMonitorView', 'C', '0', '0', 'monitor:cache:list', 'Database', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (32, '缓存监控', 3, 3, 'MaiziWPF.Modules.Sys', 'CacheMonitorView', 'C', '0', '0', 'monitor:cache:list', 'Database', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 日志管理 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (300, '操作日志', 3, 1, 'MaiziWPF.Modules.Sys', 'OperLogListView', 'C', '0', '0', 'monitor:operlog:list', 'TextBox', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (40, '操作日志', 4, 1, 'MaiziWPF.Modules.Sys', 'OperLogListView', 'C', '0', '0', 'monitor:operlog:list', 'TextBox', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (301, '登录日志', 3, 2, 'MaiziWPF.Modules.Sys', 'LoginLogListView', 'C', '0', '0', 'monitor:logininfor:list', 'LoginVariant', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (41, '登录日志', 4, 2, 'MaiziWPF.Modules.Sys', 'LoginLogListView', 'C', '0', '0', 'monitor:logininfor:list', 'LoginVariant', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 文件管理 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache) 
-VALUES (400, '文件管理', 4, 1, 'MaiziWPF.Modules.Sys', 'OssListView', 'C', '0', '0', 'system:oss:list', 'FileDocument', 'N', 'Y');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (50, '文件管理', 5, 1, 'MaiziWPF.Modules.Sys', 'OssListView', 'C', '0', '0', 'system:oss:list', 'FileDocument', 'N', 'Y', 103, 1, NOW(), 1, NOW(), '', '0');
+
 -- ----------------------------
 -- 6、用户和角色关联表  用户N-1角色
 -- ----------------------------
