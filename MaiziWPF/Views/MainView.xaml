@@ -14,6 +14,123 @@
     <UserControl.Resources>
         <maiziWPF:VisibilityConverter x:Key="VisibilityConverter" />
         <maiziWPF:FirstCharConverter x:Key="FirstCharConverter" />
+
+        <ControlTemplate x:Key="ScrollableTabControlTemplate" TargetType="TabControl">
+            <Grid KeyboardNavigation.TabNavigation="Local">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--  Tab Header 区域  -->
+                <Border
+                    Grid.Row="0"
+                    Background="Transparent"
+                    BorderBrush="#E8E8E8"
+                    BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  左箭头  -->
+                        <RepeatButton
+                            x:Name="PART_ScrollLeft"
+                            Grid.Column="0"
+                            Width="36"
+                            Height="36"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Cursor="Hand"
+                            Foreground="#666666"
+                            Focusable="False">
+                            <RepeatButton.Template>
+                                <ControlTemplate TargetType="RepeatButton">
+                                    <Border
+                                        x:Name="border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <materialDesign:PackIcon
+                                            x:Name="arrow"
+                                            Kind="ChevronLeft"
+                                            Width="18"
+                                            Height="18"
+                                            Foreground="#999999"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#F0F0F0" />
+                                            <Setter TargetName="arrow" Property="Foreground" Value="#333333" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RepeatButton.Template>
+                        </RepeatButton>
+
+                        <!--  Tab Item 容器  -->
+                        <ScrollViewer
+                            x:Name="PART_HeaderScrollViewer"
+                            Grid.Column="1"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Disabled"
+                            Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+
+                        <!--  右箭头  -->
+                        <RepeatButton
+                            x:Name="PART_ScrollRight"
+                            Grid.Column="2"
+                            Width="36"
+                            Height="36"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Cursor="Hand"
+                            Foreground="#666666"
+                            Focusable="False">
+                            <RepeatButton.Template>
+                                <ControlTemplate TargetType="RepeatButton">
+                                    <Border
+                                        x:Name="border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        <materialDesign:PackIcon
+                                            x:Name="arrow"
+                                            Kind="ChevronRight"
+                                            Width="18"
+                                            Height="18"
+                                            Foreground="#999999"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#F0F0F0" />
+                                            <Setter TargetName="arrow" Property="Foreground" Value="#333333" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </RepeatButton.Template>
+                        </RepeatButton>
+                    </Grid>
+                </Border>
+
+                <!--  Tab 内容区域  -->
+                <Border
+                    Grid.Row="1"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
+                    <ContentPresenter ContentSource="SelectedContent" />
+                </Border>
+            </Grid>
+        </ControlTemplate>
     </UserControl.Resources>
     <Grid Margin="20">
         <Grid.Effect>
@@ -407,35 +524,96 @@
 
                 <!--  TAB区域  -->
                 <TabControl
+                    x:Name="TabRegionControl"
                     Grid.Row="1"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
                     HorizontalContentAlignment="Left"
                     prism:RegionManager.RegionName="TabRegion"
-                    SelectedItem="{Binding SelectedItem}">
+                    SelectedItem="{Binding SelectedItem}"
+                    Template="{StaticResource ScrollableTabControlTemplate}"
+                    Loaded="TabRegionControl_Loaded">
+                    <TabControl.ItemContainerStyle>
+                        <Style TargetType="TabItem">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="#333333" />
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="MinWidth" Value="80" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TabItem">
+                                        <Border
+                                            x:Name="border"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="Transparent"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Padding="12,6,12,6">
+                                            <ContentPresenter
+                                                ContentSource="Header"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#07bf96" />
+                                                <Setter TargetName="border" Property="BorderThickness" Value="0,0,0,2" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#F5F5F5" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                            </Style.Triggers>
+                        </Style>
+                    </TabControl.ItemContainerStyle>
+                    <TabControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </TabControl.ItemsPanel>
                     <TabControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel
-                                Height="20"
+                                Height="24"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
                                 <TextBlock
                                     FontSize="13"
                                     Foreground="#333333"
+                                    VerticalAlignment="Center"
                                     Text="{Binding DataContext.DataContext.Header, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabItem}}" />
                                 <Button
+                                    Width="24"
+                                    Height="24"
                                     Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    Cursor="Hand"
                                     Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabControl}}"
                                     CommandParameter="{Binding DataContext.DataContext.Component, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabItem}}"
                                     Visibility="{Binding DataContext.DataContext.Component, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TabItem}, Converter={StaticResource VisibilityConverter}, ConverterParameter='DashboardView'}">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
-                                            <materialDesign:PackIcon
-                                                x:Name="ClosePackIcon"
-                                                Kind="Close"
-                                                Foreground="#999999"
-                                                Width="12"
-                                                Height="12" />
+                                            <Border
+                                                x:Name="closeBorder"
+                                                Background="Transparent"
+                                                CornerRadius="3" 
+                                                Margin="5">
+                                                <materialDesign:PackIcon
+                                                    x:Name="ClosePackIcon"
+                                                    Kind="Close"
+                                                    Foreground="#999999"
+                                                    Width="14"
+                                                    Height="14" />
+                                            </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="closeBorder" Property="Background" Value="#E8E8E8" />
                                                     <Setter TargetName="ClosePackIcon" Property="Foreground" Value="#ff4b5c" />
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
