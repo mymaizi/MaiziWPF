@@ -20,13 +20,43 @@ namespace MaiziWPF.Core
     /// </summary>
     public partial class DateRangeControl : UserControl
     {
-        public static readonly DependencyProperty StartDateProperty = DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(DateRangeControl),new FrameworkPropertyMetadata(null));
-        public DateTime StartDateTime { get => (DateTime)GetValue(StartDateProperty); set => SetValue(StartDateProperty, value); }
-        public static readonly DependencyProperty EndDateProperty =  DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(DateRangeControl), new FrameworkPropertyMetadata(null));
-        public DateTime EndDateTime { get => (DateTime)GetValue(EndDateProperty); set => SetValue(EndDateProperty, value); }
+        public static readonly DependencyProperty StartDateTimeProperty =
+            DependencyProperty.Register("StartDateTime", typeof(DateTime), typeof(DateRangeControl),
+                new FrameworkPropertyMetadata(default(DateTime),
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnStartDateTimeChanged));
+
+        public DateTime StartDateTime
+        {
+            get => (DateTime)GetValue(StartDateTimeProperty);
+            set => SetValue(StartDateTimeProperty, value);
+        }
+
+        public static readonly DependencyProperty EndDateTimeProperty =
+            DependencyProperty.Register("EndDateTime", typeof(DateTime), typeof(DateRangeControl),
+                new FrameworkPropertyMetadata(default(DateTime),
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnEndDateTimeChanged));
+
+        public DateTime EndDateTime
+        {
+            get => (DateTime)GetValue(EndDateTimeProperty);
+            set => SetValue(EndDateTimeProperty, value);
+        }
+
+        public static readonly DependencyProperty UnderlineBrushProperty =
+            DependencyProperty.Register("UnderlineBrush", typeof(Brush), typeof(DateRangeControl),
+                new PropertyMetadata(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#BDBDBD"))));
+
+        public Brush UnderlineBrush
+        {
+            get => (Brush)GetValue(UnderlineBrushProperty);
+            set => SetValue(UnderlineBrushProperty, value);
+        }
+
         public DateRangeControl()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             this.CancelDateRange.Click += CancelDateRange_Click;
             this.ConfirmDateRange.Click += ConfirmDateRange_Click;
             this.StartDate.SelectedDatesChanged += StartDate_SelectedDatesChanged;
@@ -34,12 +64,28 @@ namespace MaiziWPF.Core
             this.EndDateText.TextChanged += EndDateText_TextChanged;
         }
 
+        private static void OnStartDateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (DateRangeControl)d;
+            var value = (DateTime)e.NewValue;
+            control.StartDateText.Text = value == default ? string.Empty : value.ToString("yyyy-MM-dd");
+        }
+
+        private static void OnEndDateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (DateRangeControl)d;
+            var value = (DateTime)e.NewValue;
+            control.EndDateText.Text = value == default ? string.Empty : value.ToString("yyyy-MM-dd");
+        }
+
         private void EndDateText_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox textBox = sender as TextBox;
-            if (textBox.Text == "")
+            if (string.IsNullOrEmpty(textBox.Text))
             {
-                this.StartDateText.Text = "";
+                this.StartDateText.Text = string.Empty;
+                this.StartDateTime = default;
+                this.EndDateTime = default;
             }
         }
 

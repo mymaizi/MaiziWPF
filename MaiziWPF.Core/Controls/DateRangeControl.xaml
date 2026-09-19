@@ -19,7 +19,7 @@
                     <Style TargetType="CalendarDayButton">
                         <Setter Property="MinWidth" Value="36" />
                         <Setter Property="MinHeight" Value="36" />
-                        <Setter Property="FontSize" Value="10" />
+                        <Setter Property="FontSize" Value="13" />
                         <Setter Property="FontWeight" Value="Normal" />
                         <Setter Property="Template">
                             <Setter.Value>
@@ -34,7 +34,7 @@
                                     </Grid>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsToday" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#FFEBF5FF" />
+                                            <Setter TargetName="Border" Property="Background" Value="#EBF5FF" />
                                             <Setter TargetName="Border" Property="BorderBrush" Value="#2196F3" />
                                         </Trigger>
                                         <Trigger Property="IsSelected" Value="True">
@@ -42,8 +42,8 @@
                                             <Setter Property="Foreground" Value="White" />
                                         </Trigger>
                                         <Trigger Property="IsBlackedOut" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#FFE7E5E5" />
-                                            <Setter TargetName="Border" Property="BorderBrush" Value="#FFE7E5E5" />
+                                            <Setter TargetName="Border" Property="Background" Value="#F5F5F5" />
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#F5F5F5" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -54,79 +54,99 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <TextBox
-            x:Name="StartDateText"
-            HorizontalContentAlignment="Center"
-            materialDesign:HintAssist.Hint="开始时间"
-            materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-            BorderThickness="0"
-            FontSize="16" />
-        <Label Grid.Column="1" Content="-" />
-        <TextBox
-            x:Name="EndDateText"
-            Grid.Column="2"
-            HorizontalContentAlignment="Center"
-            materialDesign:HintAssist.Hint="结束时间"
-            materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-            materialDesign:TextFieldAssist.HasClearButton="True"
-            BorderThickness="0"
-            FontSize="16" />
-        <Button
-            Grid.Column="3"
-            Padding="0"
-            Style="{StaticResource MaterialDesignToolButton}">
-            <materialDesign:PopupBox
-                x:Name="DateRangePopupBox"
-                Padding="0"
-                PlacementMode="BottomAndAlignRightEdges"
-                StaysOpen="True">
-                <materialDesign:PopupBox.ToggleContent>
-                    <materialDesign:PackIcon Kind="DateRange" Opacity=".56" />
-                </materialDesign:PopupBox.ToggleContent>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="CalendarCol" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="CalendarCol" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" SharedSizeGroup="CalendarCol" />
-                        <RowDefinition Height="Auto" SharedSizeGroup="CalendarCol" />
-                    </Grid.RowDefinitions>
-                    <Calendar
-                        x:Name="StartDate"
-                        Grid.Column="0"
-                        Margin="0,-2,0,0"
-                        Style="{StaticResource MaterialCalendarStyle}" />
-                    <Calendar
-                        x:Name="EndDate"
-                        Grid.Column="1"
-                        Margin="0,-2,0,0"
-                        Style="{StaticResource MaterialCalendarStyle}" />
-                    <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="0,0,4,4"
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal">
-                        <Button
-                            x:Name="ConfirmDateRange"
-                            Content="确定"
-                            Style="{StaticResource MaterialDesignFlatButton}" />
-                        <Button
-                            x:Name="CancelDateRange"
-                            Content="取消"
-                            Foreground="#9e9d9d"
-                            Style="{StaticResource MaterialDesignFlatButton}" />
-                    </StackPanel>
-                </Grid>
-            </materialDesign:PopupBox>
-        </Button>
-    </Grid>
+    <Border BorderBrush="{Binding UnderlineBrush, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" BorderThickness="0,0,0,1">
+        <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                x:Name="StartDateText"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                IsReadOnly="True"
+                materialDesign:HintAssist.Hint="开始时间"
+                materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                BorderThickness="0"
+                FontSize="16" />
+            <TextBlock
+                Grid.Column="1"
+                Margin="4,0"
+                VerticalAlignment="Center"
+                FontSize="16"
+                Foreground="#999"
+                Text="—" />
+            <TextBox
+                x:Name="EndDateText"
+                Grid.Column="2"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                IsReadOnly="True"
+                materialDesign:HintAssist.Hint="结束时间"
+                materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                materialDesign:TextFieldAssist.HasClearButton="True"
+                BorderThickness="0"
+                FontSize="16" />
+            <Button
+                Grid.Column="3"
+                Padding="4"
+                VerticalAlignment="Center"
+                Style="{StaticResource MaterialDesignToolButton}">
+                <materialDesign:PopupBox
+                    x:Name="DateRangePopupBox"
+                    Padding="4"
+                    PlacementMode="BottomAndAlignRightEdges"
+                    StaysOpen="True">
+                    <materialDesign:PopupBox.ToggleContent>
+                        <materialDesign:PackIcon Kind="DateRange" Opacity=".56" />
+                    </materialDesign:PopupBox.ToggleContent>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="CalendarCol" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="CalendarCol" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Calendar
+                            x:Name="StartDate"
+                            Grid.Column="0"
+                            Margin="0,0,4,0"
+                            Style="{StaticResource MaterialCalendarStyle}" />
+                        <Calendar
+                            x:Name="EndDate"
+                            Grid.Column="1"
+                            Margin="4,0,0,0"
+                            Style="{StaticResource MaterialCalendarStyle}" />
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="0,8,0,4"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <Button
+                                x:Name="CancelDateRange"
+                                Margin="0,0,8,0"
+                                Padding="12,6"
+                                BorderBrush="#dcdfe6"
+                                Content="取消"
+                                Foreground="#606266"
+                                Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+                            <Button
+                                x:Name="ConfirmDateRange"
+                                Padding="12,6"
+                                Background="#2196F3"
+                                BorderThickness="0"
+                                Content="确定"
+                                Foreground="White"
+                                Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                        </StackPanel>
+                    </Grid>
+                </materialDesign:PopupBox>
+            </Button>
+        </Grid>
+    </Border>
 </UserControl>

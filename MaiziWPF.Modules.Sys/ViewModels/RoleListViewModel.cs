@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
@@ -64,8 +64,7 @@ namespace MaiziWPF.Modules.Sys
                     RoleName = null;
                     RoleKey = null;
                     Status = null;
-                    qpi.StartDate = null;
-                    qpi.EndDate = null;
+                    QueryPageInfo = new QueryRoleInput();
                 });
 
             AddButtonCommand = new DelegateCommand<RoleListViewModel>(async (vm) => await AddRole());
