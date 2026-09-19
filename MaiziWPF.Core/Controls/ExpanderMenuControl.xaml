@@ -54,7 +54,7 @@
                             <ControlTemplate TargetType="RadioButton">
                                 <Border
                                     Background="{TemplateBinding Background}"
-                                    BorderBrush="#07bf96"
+                                    BorderBrush="#ffffff"
                                     BorderThickness="4,0,0,0">
                                     <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                                 </Border>
