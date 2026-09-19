@@ -26,6 +26,19 @@ namespace MaiziWPF.Core
             set => SetValue(HeaderTextProperty, value);
         }
 
+        public static readonly DependencyProperty IsExpandedProperty =
+            DependencyProperty.Register(
+                nameof(IsExpanded),
+                typeof(bool),
+                typeof(DeptTreePanelControl),
+                new PropertyMetadata(true));
+
+        public bool IsExpanded
+        {
+            get => (bool)GetValue(IsExpandedProperty);
+            set => SetValue(IsExpandedProperty, value);
+        }
+
         public static readonly DependencyProperty SearchTextProperty =
             DependencyProperty.Register(
                 nameof(SearchText),

@@ -4,45 +4,166 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Border Background="#ffffff" CornerRadius="8">
+    <Border Background="#ffffff" CornerRadius="8" HorizontalAlignment="Left">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Width" Value="240" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsChecked, ElementName=PART_ExpandToggle}" Value="False">
+                        <Setter Property="Width" Value="40" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock
-                Margin="16,12,16,8"
-                FontSize="14"
-                FontWeight="SemiBold"
-                Foreground="#333333"
-                Text="{Binding HeaderText, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+            <Grid Grid.Row="0" Margin="16,12,12,4">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=PART_ExpandToggle}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Foreground="#333333"
+                    Text="{Binding HeaderText, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                <ToggleButton
+                    x:Name="PART_ExpandToggle"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Width="24"
+                    Height="24"
+                    IsChecked="True"
+                    ToolTip="收起面板">
+                    <ToggleButton.Style>
+                        <Style TargetType="ToggleButton">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <materialDesign:PackIcon Kind="ChevronLeft" Foreground="#595959" Width="16" Height="16" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <materialDesign:PackIcon Kind="ChevronRight" Foreground="#595959" Width="16" Height="16" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="ToolTip" Value="展开面板" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+            </Grid>
 
-            <TextBox
-                x:Name="PART_SearchBox"
+            <ToggleButton
+                x:Name="PART_CollapsedToggle"
                 Grid.Row="0"
-                Margin="12,40,12,8"
-                Padding="8,6"
-                FontSize="13"
-                materialDesign:HintAssist.Hint="请输入部门名称"
-                Text="{Binding SearchText, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Delay=300, UpdateSourceTrigger=PropertyChanged}" />
+                Width="24"
+                Height="24"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Center"
+                IsChecked="{Binding IsChecked, ElementName=PART_ExpandToggle, Mode=TwoWay}"
+                ToolTip="展开面板"
+                Background="Transparent"
+                BorderBrush="Transparent">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=PART_ExpandToggle}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+                <ToggleButton.Template>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </ToggleButton.Template>
+                <materialDesign:PackIcon Kind="ChevronRight" Foreground="#595959" Width="16" Height="16" />
+            </ToggleButton>
 
-            <TreeView
-                x:Name="PART_TreeView"
+            <Border
+                x:Name="PART_SearchBoxBorder"
                 Grid.Row="1"
-                Margin="12,0,12,12"
-                BorderThickness="0"
-                ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
-                SelectedItemChanged="PART_TreeView_SelectedItemChanged">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Childs}">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontSize="13"
-                            Text="{Binding DeptName}" />
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+                Margin="12,0,12,8">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=PART_ExpandToggle}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBox
+                    x:Name="PART_SearchBox"
+                    Padding="8,6"
+                    FontSize="13"
+                    materialDesign:HintAssist.Hint="请输入部门名称"
+                    Text="{Binding SearchText, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Delay=300, UpdateSourceTrigger=PropertyChanged}" />
+            </Border>
+
+            <Border
+                x:Name="PART_TreeViewBorder"
+                Grid.Row="2"
+                Margin="12,0,12,12">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=PART_ExpandToggle}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TreeView
+                    x:Name="PART_TreeView"
+                    BorderThickness="0"
+                    ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                    SelectedItemChanged="PART_TreeView_SelectedItemChanged">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Childs}">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="13"
+                                Text="{Binding DeptName}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </Border>
         </Grid>
     </Border>
 </UserControl>
