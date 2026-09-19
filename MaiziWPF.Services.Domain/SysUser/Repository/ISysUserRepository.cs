@@ -74,5 +74,13 @@ namespace MaiziWPF.Services.Domain
         List<long> SelectUserPostIds(long userId);
 
         void ResetPwd(long userId);
+
+        List<SysRole> SelectAllocatedRolesByUserId(long userId);
+
+        List<SysRole> SelectUnallocatedRolesByUserId(long userId, string roleName, string roleKey);
+
+        int InsertAuthRoles(long userId, long[] roleIds);
+
+        int CancelAuthRole(long userId, long roleId);
     }
 }

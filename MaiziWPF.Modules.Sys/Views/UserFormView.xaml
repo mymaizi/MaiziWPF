@@ -1,621 +1,199 @@
 <UserControl
     x:Class="MaiziWPF.Modules.Sys.UserFormView"
+    x:Name="RootUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:core="clr-namespace:MaiziWPF.Core;assembly=MaiziWPF.Core"
-    xmlns:domain="clr-namespace:MaiziWPF.Services.Domain;assembly=MaiziWPF.Services.Domain"
+    xmlns:maiziWPF="clr-namespace:MaiziWPF.Core;assembly=MaiziWPF.Core"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
-    prism:ViewModelLocator.AutoWireViewModel="True">
-
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Width="580" Height="380">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="Title" Value="{Binding DialogTitle}" />
+        </Style>
+    </prism:Dialog.WindowStyle>
     <UserControl.Resources>
-        <core:BooleanConverter x:Key="BooleanConverter" />
-        <core:EditModeVisibilityConverter x:Key="EditModeVisibilityConverter" />
-
-
-        <!--  表单标签样式  -->
+        <maiziWPF:BooleanConverter x:Key="EqualToBooleanConverter" />
         <Style x:Key="FormLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Foreground" Value="#606266" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="TextAlignment" Value="Right" />
         </Style>
-
-        <!--  表单输入框样式  -->
-        <Style
-            x:Key="FormTextBox"
-            BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
-            TargetType="TextBox">
-            <Setter Property="materialDesign:HintAssist.IsFloating" Value="False" />
-            <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="True" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Height" Value="36" />
-            <Setter Property="Padding" Value="8,0" />
+        <Style x:Key="RadioStyle" TargetType="RadioButton">
             <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#606266" />
+            <Setter Property="Margin" Value="0,0,24,0" />
         </Style>
-
-        <!--  表单下拉框样式  -->
-        <Style
-            x:Key="FormComboBox"
-            BasedOn="{StaticResource MaterialDesignOutlinedComboBox}"
-            TargetType="ComboBox">
-            <Setter Property="materialDesign:HintAssist.IsFloating" Value="False" />
-            <Setter Property="materialDesign:TextFieldAssist.HasClearButton" Value="False" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Height" Value="36" />
-            <Setter Property="Padding" Value="8,0" />
-            <Setter Property="FontSize" Value="13" />
-        </Style>
-
-        <!--  单选按钮组样式  -->
-        <Style x:Key="FormRadioGroup" TargetType="StackPanel">
-            <Setter Property="Orientation" Value="Horizontal" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Height" Value="36" />
-        </Style>
-
-        <!--  新增模式模板  -->
-        <DataTemplate x:Key="NewModeTemplate" DataType="{x:Type domain:SysUser}">
-            <Grid Width="520" Margin="24">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="88" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <!--  第一行：用户昵称 + 手机号码  -->
-                <StackPanel
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="0,0,8,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,2,0"
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#ff4444"
-                        Text="*" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#606266"
-                        Text="用户昵称：" />
-                </StackPanel>
-                <TextBox
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    materialDesign:HintAssist.Hint="请输入用户昵称"
-                    Style="{StaticResource FormTextBox}">
-                    <TextBox.Text>
-                        <Binding Path="NickName" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <core:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
-                                <core:LengthValidationRule
-                                    MaxLength="20"
-                                    MinLength="2"
-                                    ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="手机号码：" />
-                <TextBox
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    materialDesign:HintAssist.Hint="请输入手机号码"
-                    Style="{StaticResource FormTextBox}"
-                    Text="{Binding PhoneNumber}" />
-
-                <!--  第二行：邮箱 + 性别  -->
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="邮箱：" />
-                <TextBox
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    materialDesign:HintAssist.Hint="请输入邮箱"
-                    Style="{StaticResource FormTextBox}"
-                    Text="{Binding Email}" />
-
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="性别：" />
-                <ComboBox
-                    Grid.Row="1"
-                    Grid.Column="3"
-                    core:DataDictAssist.Type="sys_user_sex"
-                    materialDesign:HintAssist.Hint="请选择性别"
-                    SelectedItem="{Binding Sex}"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type domain:SysDictData}">
-                            <TextBlock Text="{Binding DictLabel}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <!--  第三行：用户名称 + 密码  -->
-                <StackPanel
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="0,0,8,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,2,0"
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#ff4444"
-                        Text="*" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#606266"
-                        Text="用户名称：" />
-                </StackPanel>
-                <TextBox
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    materialDesign:HintAssist.Hint="请输入用户名称"
-                    Style="{StaticResource FormTextBox}">
-                    <TextBox.Text>
-                        <Binding Path="UserName" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <core:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
-                                <core:LengthValidationRule
-                                    MaxLength="20"
-                                    MinLength="2"
-                                    ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-
-                <StackPanel
-                    Grid.Row="2"
-                    Grid.Column="2"
-                    Margin="0,0,8,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,2,0"
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#ff4444"
-                        Text="*" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#606266"
-                        Text="用户密码：" />
-                </StackPanel>
-                <TextBox
-                    Grid.Row="2"
-                    Grid.Column="3"
-                    materialDesign:HintAssist.Hint="请输入用户密码"
-                    Style="{StaticResource FormTextBox}">
-                    <TextBox.Text>
-                        <Binding Path="Password" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <core:PasswordValidationRule ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-
-                <!--  第四行：部门 + 状态  -->
-                <TextBlock
-                    Grid.Row="3"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="部门：" />
-                <ComboBox
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    core:DbAssist.Bind="dept"
-                    core:DbAssist.BindField="{Binding Depts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    core:DbAssist.InitialSelectedIds="{Binding InitialDeptIds}"
-                    materialDesign:HintAssist.Hint="请选择部门"
-                    materialDesign:TextFieldAssist.HasClearButton="False"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.Template>
-                        <ControlTemplate TargetType="{x:Type ComboBox}" />
-                    </ComboBox.Template>
-                </ComboBox>
-
-                <TextBlock
-                    Grid.Row="3"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="状态：" />
-                <StackPanel
-                    Grid.Row="3"
-                    Grid.Column="3"
-                    Style="{StaticResource FormRadioGroup}">
-                    <RadioButton
-                        Margin="0,0,16,0"
-                        Content="启用"
-                        IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='1'}" />
-                    <RadioButton Content="禁用" IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='0'}" />
-                </StackPanel>
-
-                <!--  第五行：岗位 + 角色  -->
-                <TextBlock
-                    Grid.Row="4"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="岗位：" />
-                <ComboBox
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    core:DbAssist.Bind="post"
-                    core:DbAssist.BindField="{Binding Posts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    core:DbAssist.InitialSelectedIds="{Binding InitialPostIds}"
-                    materialDesign:HintAssist.Hint="请选择岗位"
-                    materialDesign:TextFieldAssist.HasClearButton="False"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type core:Checked}">
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <TextBlock
-                    Grid.Row="4"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="角色：" />
-                <ComboBox
-                    Grid.Row="4"
-                    Grid.Column="3"
-                    core:DbAssist.Bind="role"
-                    core:DbAssist.BindField="{Binding Roles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    core:DbAssist.InitialSelectedIds="{Binding InitialRoleIds}"
-                    materialDesign:HintAssist.Hint="请选择角色"
-                    materialDesign:TextFieldAssist.HasClearButton="False"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type core:Checked}">
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <!--  第六行：备注  -->
-                <TextBlock
-                    Grid.Row="5"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="备注：" />
-                <TextBox
-                    Grid.Row="5"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="3"
-                    Height="60"
-                    materialDesign:HintAssist.Hint="请输入备注"
-                    AcceptsReturn="True"
-                    Style="{StaticResource FormTextBox}"
-                    TextWrapping="Wrap">
-                    <TextBox.Text>
-                        <Binding Path="Remark" UpdateSourceTrigger="PropertyChanged" />
-                    </TextBox.Text>
-                </TextBox>
-
-                <!--  第七行：按钮  -->
-                <StackPanel
-                    Grid.Row="6"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Margin="0,16,0,0"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal">
-                    <Button
-                        Margin="0,0,8,0"
-                        Command="{Binding CancelCommand}"
-                        Content="取消"
-                        Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
-                    <Button
-                        Background="#2196F3"
-                        BorderThickness="0"
-                        Command="{Binding AcceptCommand}"
-                        Content="确定"
-                        Foreground="White"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-
-        <!--  编辑模式模板  -->
-        <DataTemplate x:Key="EditModeTemplate" DataType="{x:Type domain:SysUser}">
-            <Grid Width="520" Margin="24">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="60" />
-                    <RowDefinition Height="88" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <!--  第一行：用户昵称 + 手机号码  -->
-                <StackPanel
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="0,0,8,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,2,0"
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#ff4444"
-                        Text="*" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#606266"
-                        Text="用户昵称：" />
-                </StackPanel>
-                <TextBox
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    materialDesign:HintAssist.Hint="请输入用户昵称"
-                    Style="{StaticResource FormTextBox}">
-                    <TextBox.Text>
-                        <Binding Path="NickName" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <core:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
-                                <core:LengthValidationRule
-                                    MaxLength="20"
-                                    MinLength="2"
-                                    ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="手机号码：" />
-                <TextBox
-                    Grid.Row="0"
-                    Grid.Column="3"
-                    materialDesign:HintAssist.Hint="请输入手机号码"
-                    Style="{StaticResource FormTextBox}"
-                    Text="{Binding PhoneNumber}" />
-
-                <!--  第二行：邮箱 + 性别  -->
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="邮箱：" />
-                <TextBox
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    materialDesign:HintAssist.Hint="请输入邮箱"
-                    Style="{StaticResource FormTextBox}"
-                    Text="{Binding Email}" />
-
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="性别：" />
-                <ComboBox
-                    Grid.Row="1"
-                    Grid.Column="3"
-                    core:DataDictAssist.Type="sys_user_sex"
-                    materialDesign:HintAssist.Hint="请选择性别"
-                    SelectedItem="{Binding Sex}"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type domain:SysDictData}">
-                            <TextBlock Text="{Binding DictLabel}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <!--  第三行：部门 + 状态  -->
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="部门：" />
-                <ComboBox
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    core:DbAssist.Bind="dept"
-                    core:DbAssist.BindField="{Binding Depts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    core:DbAssist.InitialSelectedIds="{Binding InitialDeptIds}"
-                    materialDesign:HintAssist.Hint="请选择部门"
-                    materialDesign:TextFieldAssist.HasClearButton="False"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.Template>
-                        <ControlTemplate TargetType="{x:Type ComboBox}">
-                            <materialDesign:TreeListView ItemsSource="{TemplateBinding ItemsSource}">
-                                <materialDesign:TreeListView.Resources>
-                                    <HierarchicalDataTemplate DataType="{x:Type core:Checked}" ItemsSource="{Binding Childs}">
-                                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HierarchicalDataTemplate>
-                                </materialDesign:TreeListView.Resources>
-                                <materialDesign:TreeListView.View>
-                                    <GridView>
-                                        <GridView.ColumnHeaderContainerStyle>
-                                            <Style TargetType="GridViewColumnHeader">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </Style>
-                                        </GridView.ColumnHeaderContainerStyle>
-                                        <GridView.Columns>
-                                            <GridViewColumn Width="210">
-                                                <GridViewColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <ContentPresenter Content="{Binding}" />
-                                                    </DataTemplate>
-                                                </GridViewColumn.CellTemplate>
-                                            </GridViewColumn>
-                                        </GridView.Columns>
-                                    </GridView>
-                                </materialDesign:TreeListView.View>
-                            </materialDesign:TreeListView>
-                        </ControlTemplate>
-                    </ComboBox.Template>
-                </ComboBox>
-
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="状态：" />
-                <StackPanel
-                    Grid.Row="2"
-                    Grid.Column="3"
-                    Style="{StaticResource FormRadioGroup}">
-                    <RadioButton
-                        Margin="0,0,16,0"
-                        Content="启用"
-                        IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='1'}" />
-                    <RadioButton Content="禁用" IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='0'}" />
-                </StackPanel>
-
-                <!--  第四行：岗位 + 角色  -->
-                <TextBlock
-                    Grid.Row="3"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="岗位：" />
-                <ComboBox
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    core:DbAssist.Bind="post"
-                    core:DbAssist.BindField="{Binding Posts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    core:DbAssist.InitialSelectedIds="{Binding InitialPostIds}"
-                    materialDesign:HintAssist.Hint="请选择岗位"
-                    materialDesign:TextFieldAssist.HasClearButton="False"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type core:Checked}">
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <TextBlock
-                    Grid.Row="3"
-                    Grid.Column="2"
-                    Style="{StaticResource FormLabel}"
-                    Text="角色：" />
-                <ComboBox
-                    Grid.Row="3"
-                    Grid.Column="3"
-                    core:DbAssist.Bind="role"
-                    core:DbAssist.BindField="{Binding Roles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    core:DbAssist.InitialSelectedIds="{Binding InitialRoleIds}"
-                    materialDesign:HintAssist.Hint="请选择角色"
-                    materialDesign:TextFieldAssist.HasClearButton="False"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    Style="{StaticResource FormComboBox}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type core:Checked}">
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <!--  第五行：备注  -->
-                <TextBlock
-                    Grid.Row="4"
-                    Grid.Column="0"
-                    Style="{StaticResource FormLabel}"
-                    Text="备注：" />
-                <TextBox
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    Grid.ColumnSpan="3"
-                    Height="60"
-                    materialDesign:HintAssist.Hint="请输入备注"
-                    AcceptsReturn="True"
-                    Style="{StaticResource FormTextBox}"
-                    TextWrapping="Wrap">
-                    <TextBox.Text>
-                        <Binding Path="Remark" UpdateSourceTrigger="PropertyChanged" />
-                    </TextBox.Text>
-                </TextBox>
-
-                <!--  第六行：按钮  -->
-                <StackPanel
-                    Grid.Row="5"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Margin="0,16,0,0"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal">
-                    <Button
-                        Margin="0,0,8,0"
-                        Command="{Binding CancelCommand}"
-                        Content="取消"
-                        Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
-                    <Button
-                        Background="#2196F3"
-                        BorderThickness="0"
-                        Command="{Binding AcceptCommand}"
-                        Content="确定"
-                        Foreground="White"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-
-        <core:FormTemplateSelector
-            x:Key="FormTemplateSelector"
-            EditModeTemplate="{StaticResource EditModeTemplate}"
-            NewModeTemplate="{StaticResource NewModeTemplate}" />
     </UserControl.Resources>
 
-    <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource FormTemplateSelector}" />
+    <Grid Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="1" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,12,20,12">
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Foreground="#ff4d4f" Text="* 用户昵称" />
+                <TextBox
+                    Grid.Column="2"
+                    Height="36"
+                    FontSize="13"
+                    Text="{Binding NickName, UpdateSourceTrigger=PropertyChanged}"
+                    materialDesign:HintAssist.Hint="请输入用户昵称" />
+
+                <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="归属部门" />
+                <maiziWPF:DeptTreeSelectControl
+                    Grid.Column="5"
+                    SelectedDeptId="{Binding DeptId, Mode=TwoWay}" />
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="手机号码" />
+                <TextBox
+                    Grid.Column="2"
+                    Height="36"
+                    FontSize="13"
+                    Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
+                    materialDesign:HintAssist.Hint="请输入手机号码" />
+
+                <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="邮箱" />
+                <TextBox
+                    Grid.Column="5"
+                    Height="36"
+                    FontSize="13"
+                    Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                    materialDesign:HintAssist.Hint="请输入邮箱" />
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="用户性别" />
+                <ComboBox
+                    Grid.Column="2"
+                    Height="36"
+                    FontSize="13"
+                    VerticalAlignment="Center"
+                    maiziWPF:DataDictAssist.Type="sys_user_gender"
+                    DisplayMemberPath="DictLabel"
+                    SelectedValue="{Binding Gender, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="DictValue"
+                    materialDesign:HintAssist.Hint="请选择用户性别" />
+
+                <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="状态" />
+                <ComboBox
+                    Grid.Column="5"
+                    Height="36"
+                    FontSize="13"
+                    VerticalAlignment="Center"
+                    maiziWPF:DataDictAssist.Type="sys_normal_disable"
+                    DisplayMemberPath="DictLabel"
+                    SelectedValue="{Binding Status, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedValuePath="DictValue"
+                    materialDesign:HintAssist.Hint="请选择状态" />
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="岗位" />
+                <maiziWPF:SearchableComboBox
+                    Grid.Column="2"
+                    ItemsSource="{Binding Posts}"
+                    SelectedValue="{Binding SelectedPostId, Mode=TwoWay}"
+                    LoadMoreCommand="{Binding LoadMorePostsCommand}"
+                    Placeholder="请选择岗位" />
+
+                <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Foreground="#ff4d4f" Text="* 角色" />
+                <maiziWPF:MultiSelectComboBox
+                    Grid.Column="5"
+                    ItemsSource="{Binding Roles}"
+                    SelectedItems="{Binding SelectedRoles, Mode=TwoWay}"
+                    LoadMoreCommand="{Binding LoadMoreRolesCommand}"
+                    Placeholder="请选择角色" />
+            </Grid>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="备注" />
+                <TextBox
+                    Grid.Column="2"
+                    Height="60"
+                    FontSize="13"
+                    AcceptsReturn="True"
+                    Text="{Binding Remark, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap"
+                    materialDesign:HintAssist.Hint="请输入备注" />
+            </Grid>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="#f0f0f0" />
+
+        <StackPanel
+            Grid.Row="2"
+            Margin="20,12,20,16"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Width="80" Height="36"
+                Margin="0,0,12,0"
+                Background="#1890ff"
+                BorderBrush="#1890ff"
+                Command="{Binding AcceptCommand}"
+                Content="确定"
+                Foreground="#fff"
+                Style="{StaticResource MaterialDesignRaisedLightButton}" />
+            <Button
+                Width="80" Height="36"
+                BorderBrush="#dcdfe6"
+                Command="{Binding CancelCommand}"
+                Content="取消"
+                Foreground="#606266"
+                Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+        </StackPanel>
+    </Grid>
 </UserControl>

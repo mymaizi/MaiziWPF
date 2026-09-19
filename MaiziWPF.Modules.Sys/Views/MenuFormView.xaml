@@ -9,7 +9,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    Width="620" Height="520">
+    Width="620" Height="400">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
             <Setter Property="Title" Value="{Binding DialogTitle}" />
@@ -35,8 +35,6 @@
     <Grid Margin="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="560" />
-            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -44,7 +42,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,12,0,12">
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,12,20,12">
                 <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />

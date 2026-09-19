@@ -72,6 +72,7 @@ namespace MaiziWPF.Modules.Sys
             await _dialogHostService.ShowDialogAsync<DeptFormView>(vm =>
             {
                 var form = (DeptFormViewModel)vm;
+                form.DialogTitle = "新增部门";
                 form.IsEditMode = false;
                 form.DeptId = 0;
                 form.ParentId = parent?.Id ?? 0;
@@ -90,6 +91,7 @@ namespace MaiziWPF.Modules.Sys
             await _dialogHostService.ShowDialogAsync<DeptFormView>(vm =>
             {
                 var form = (DeptFormViewModel)vm;
+                form.DialogTitle = "编辑部门";
                 form.IsEditMode = true;
                 form.DeptId = dept.Id;
                 form.ParentId = dept.ParentId;

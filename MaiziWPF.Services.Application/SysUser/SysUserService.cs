@@ -128,5 +128,48 @@ namespace MaiziWPF.Services.Application
         {
             _repository.ResetPwd(userId);
         }
+
+        public (SysUser User, List<SysRole> Roles) GetAuthRole(long userId)
+        {
+            var user = _repository.SelectUserById(userId);
+            var roleIds = _repository.SelectUserRoleIds(userId);
+            var allRoles = _repository.Orm.Select<SysRole>().ToList();
+            foreach (var role in allRoles)
+            {
+                role.Flag = roleIds.Contains(role.RoleId);
+            }
+            return (user, allRoles);
+        }
+
+        [Transactional]
+        public void UpdateAuthRole(long userId, List<long> roleIds)
+        {
+            _repository.DeleteUserRoles(userId);
+            if (roleIds != null && roleIds.Any())
+            {
+                var list = roleIds.Select(rid => new SysUserRole { UserId = userId, RoleId = rid }).ToList();
+                _repository.BatchUserRole(list);
+            }
+        }
+
+        public List<SysRole> SelectAllocatedRolesByUserId(long userId)
+        {
+            return _repository.SelectAllocatedRolesByUserId(userId);
+        }
+
+        public List<SysRole> SelectUnallocatedRolesByUserId(long userId, string roleName, string roleKey)
+        {
+            return _repository.SelectUnallocatedRolesByUserId(userId, roleName, roleKey);
+        }
+
+        public int InsertAuthRoles(long userId, long[] roleIds)
+        {
+            return _repository.InsertAuthRoles(userId, roleIds);
+        }
+
+        public int CancelAuthRole(long userId, long roleId)
+        {
+            return _repository.CancelAuthRole(userId, roleId);
+        }
     }
 }

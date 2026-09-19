@@ -36,6 +36,10 @@ namespace MaiziWPF.Services.Domain
         [Column(Name = "status", DbType = "char(1)")]
         public String Status { get; set; }
 
+        /** 是否已分配（前端标记，不映射到数据库） */
+        [Column(IsIgnore = true)]
+        public Boolean Flag { get; set; }
+
         [Navigate(nameof(SysRoleMenu.RoleId))]
         public List<SysRoleMenu> RoleMenus { get; set; }
 

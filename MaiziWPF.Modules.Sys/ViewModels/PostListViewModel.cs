@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
@@ -110,6 +110,7 @@ namespace MaiziWPF.Modules.Sys
             await _dialogHostService.ShowDialogAsync<PostFormView>(vm =>
             {
                 var form = (PostFormViewModel)vm;
+                form.DialogTitle = "新增岗位";
                 form.IsEditMode = false;
                 form.PostId = 0;
                 form.DeptId = DeptId;
@@ -124,6 +125,7 @@ namespace MaiziWPF.Modules.Sys
             await _dialogHostService.ShowDialogAsync<PostFormView>(vm =>
             {
                 var form = (PostFormViewModel)vm;
+                form.DialogTitle = "编辑岗位";
                 form.IsEditMode = true;
                 form.PostId = post.PostId;
                 form.DeptId = post.DeptId;

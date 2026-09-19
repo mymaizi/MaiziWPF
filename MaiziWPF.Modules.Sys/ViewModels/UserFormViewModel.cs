@@ -3,6 +3,7 @@ using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace MaiziWPF.Modules.Sys
@@ -57,29 +58,160 @@ namespace MaiziWPF.Modules.Sys
             get { return _status; }
             set { SetProperty(ref _status, value); }
         }
-        public string _sex;
-        public string Sex
+        public string _gender;
+        public string Gender
         {
-            get { return _sex; }
-            set { SetProperty(ref _sex, value); }
+            get { return _gender; }
+            set { SetProperty(ref _gender, value); }
         }
-        public List<Checked> _roles;
-        public List<Checked> Roles
+        private long _deptId;
+        public long DeptId
+        {
+            get { return _deptId; }
+            set { SetProperty(ref _deptId, value); }
+        }
+        private long _selectedPostId;
+        public long SelectedPostId
+        {
+            get { return _selectedPostId; }
+            set { SetProperty(ref _selectedPostId, value); }
+        }
+        private ObservableCollection<Checked> _selectedRoles = new ObservableCollection<Checked>();
+        public ObservableCollection<Checked> SelectedRoles
+        {
+            get { return _selectedRoles; }
+            set { SetProperty(ref _selectedRoles, value); }
+        }
+        private ObservableCollection<Checked> _roles = new ObservableCollection<Checked>();
+        public ObservableCollection<Checked> Roles
         {
             get { return _roles; }
             set { SetProperty(ref _roles, value); }
         }
-        public List<Checked> _posts;
-        public List<Checked> Posts
+        private int _rolePageSize = 10;
+        private int _roleCurrentPage = 1;
+        private bool _hasMoreRoles = true;
+        private List<Checked> _allRolesCache;
+
+        public void LoadRoles(int page = 1, bool append = false)
+        {
+            if (_allRolesCache == null)
+            {
+                _allRolesCache = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
+            }
+
+            var pagedRoles = _allRolesCache.Skip((page - 1) * _rolePageSize).Take(_rolePageSize).ToList();
+            _hasMoreRoles = page * _rolePageSize < _allRolesCache.Count;
+
+            if (append)
+            {
+                foreach (var role in pagedRoles)
+                {
+                    if (!Roles.Any(r => r.Id == role.Id))
+                    {
+                        Roles.Add(role);
+                    }
+                }
+            }
+            else
+            {
+                Roles.Clear();
+                foreach (var role in pagedRoles)
+                {
+                    Roles.Add(role);
+                }
+            }
+
+            _roleCurrentPage = page;
+        }
+
+        public void LoadMoreRoles()
+        {
+            if (_hasMoreRoles)
+            {
+                LoadRoles(_roleCurrentPage + 1, append: true);
+            }
+        }
+
+        public bool HasMoreRoles => _hasMoreRoles;
+
+        public List<Checked> GetAllRoles()
+        {
+            if (_allRolesCache == null)
+            {
+                _allRolesCache = _userService.SelectAllRoles().Select(r => new Checked() { Id = r.RoleId, Name = r.RoleName }).ToList();
+            }
+            return _allRolesCache;
+        }
+
+        private DelegateCommand _loadMoreRolesCommand;
+        public DelegateCommand LoadMoreRolesCommand =>
+            _loadMoreRolesCommand ?? (_loadMoreRolesCommand = new DelegateCommand(LoadMoreRoles));
+
+        private List<Checked> _allPostsCache;
+        private int _postPageSize = 10;
+        private int _postCurrentPage = 1;
+        private bool _hasMorePosts = true;
+
+        public void LoadPosts(int page = 1, bool append = false)
+        {
+            if (_allPostsCache == null)
+            {
+                _allPostsCache = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
+            }
+
+            var pagedPosts = _allPostsCache.Skip((page - 1) * _postPageSize).Take(_postPageSize).ToList();
+            _hasMorePosts = page * _postPageSize < _allPostsCache.Count;
+
+            if (append)
+            {
+                foreach (var post in pagedPosts)
+                {
+                    if (!Posts.Any(r => r.Id == post.Id))
+                    {
+                        Posts.Add(post);
+                    }
+                }
+            }
+            else
+            {
+                Posts.Clear();
+                foreach (var post in pagedPosts)
+                {
+                    Posts.Add(post);
+                }
+            }
+
+            _postCurrentPage = page;
+        }
+
+        public void LoadMorePosts()
+        {
+            if (_hasMorePosts)
+            {
+                LoadPosts(_postCurrentPage + 1, append: true);
+            }
+        }
+
+        public bool HasMorePosts => _hasMorePosts;
+
+        private DelegateCommand _loadMorePostsCommand;
+        public DelegateCommand LoadMorePostsCommand =>
+            _loadMorePostsCommand ?? (_loadMorePostsCommand = new DelegateCommand(LoadMorePosts));
+
+        public List<Checked> GetAllPosts()
+        {
+            if (_allPostsCache == null)
+            {
+                _allPostsCache = _userService.SelectAllPosts().Select(p => new Checked() { Id = p.PostId, Name = p.PostName }).ToList();
+            }
+            return _allPostsCache;
+        }
+        private ObservableCollection<Checked> _posts = new ObservableCollection<Checked>();
+        public ObservableCollection<Checked> Posts
         {
             get { return _posts; }
             set { SetProperty(ref _posts, value); }
-        }
-        private List<Checked> _depts;
-        public List<Checked> Depts
-        {
-            get { return _depts; }
-            set { SetProperty(ref _depts, value); }
         }
         private string _remark;
         public string Remark
@@ -106,13 +238,6 @@ namespace MaiziWPF.Modules.Sys
         {
             get { return _initialPostIds; }
             set { SetProperty(ref _initialPostIds, value); }
-        }
-
-        private List<long> _initialDeptIds;
-        public List<long> InitialDeptIds
-        {
-            get { return _initialDeptIds; }
-            set { SetProperty(ref _initialDeptIds, value); }
         }
         #endregion
 
@@ -145,6 +270,10 @@ namespace MaiziWPF.Modules.Sys
         public UserFormViewModel(ISysUserService userService, ISnackbarService snackbarService) : base(snackbarService)
         {
             _userService = userService;
+
+            LoadRoles(page: 1, append: false);
+            LoadPosts(page: 1, append: false);
+
             this.AcceptCommand = new DelegateCommand(async () =>
             {
                 if (!ValidateForm())
@@ -157,14 +286,15 @@ namespace MaiziWPF.Modules.Sys
                     var user = new SysUser()
                     {
                         UserId = this.UserId,
+                        DeptId = this.DeptId,
                         NickName = this.NickName,
                         PhoneNumber = this.PhoneNumber,
                         Email = this.Email,
                         Status = this.Status,
-                        Sex = this.Sex,
+                        Gender = this.Gender,
                         Remark = this.Remark,
-                        Posts = this.Posts?.Select(p => new SysPost() { PostId = p.Id }).ToList(),
-                        Roles = this.Roles?.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
+                        Posts = this.SelectedPostId > 0 ? new List<SysPost> { new SysPost { PostId = this.SelectedPostId } } : null,
+                        Roles = this.SelectedRoles.Any() ? this.SelectedRoles.Select(r => new SysRole { RoleId = r.Id }).ToList() : null,
                     };
 
                     var success = _userService.UpdateUser(user);
@@ -185,15 +315,16 @@ namespace MaiziWPF.Modules.Sys
                     var user = new SysUser()
                     {
                         UserName = this.UserName,
+                        DeptId = this.DeptId,
                         NickName = this.NickName,
                         PhoneNumber = this.PhoneNumber,
                         Email = this.Email,
                         Password = this.Password,
                         Status = this.Status,
-                        Sex = this.Sex,
+                        Gender = this.Gender,
                         Remark = this.Remark,
-                        Posts = this.Posts?.Select(p => new SysPost() { PostId = p.Id }).ToList(),
-                        Roles = this.Roles?.Select(r => new SysRole() { RoleId = r.Id }).ToList(),
+                        Posts = this.SelectedPostId > 0 ? new List<SysPost> { new SysPost { PostId = this.SelectedPostId } } : null,
+                        Roles = this.SelectedRoles.Any() ? this.SelectedRoles.Select(r => new SysRole { RoleId = r.Id }).ToList() : null,
                     };
 
                     _userService.InsertUser(user);
