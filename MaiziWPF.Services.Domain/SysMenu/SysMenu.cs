@@ -1,4 +1,5 @@
 ﻿using FreeSql.DataAnnotations;
+using System.ComponentModel;
 
 namespace MaiziWPF.Services.Domain
 {
@@ -6,8 +7,27 @@ namespace MaiziWPF.Services.Domain
     /// 菜单权限表 sys_menu
     /// </summary>
     [Table(Name = "sys_menu")]
-    public class SysMenu : BaseEntity
+    public class SysMenu : BaseEntity, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool _isMenuSelected;
+        /// <summary>
+        /// 菜单是否选中（UI绑定用，不映射到数据库）
+        /// </summary>
+        [Column(IsIgnore = true)]
+        public bool IsMenuSelected
+        {
+            get => _isMenuSelected;
+            set
+            {
+                if (_isMenuSelected != value)
+                {
+                    _isMenuSelected = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMenuSelected)));
+                }
+            }
+        }
         /// <summary>
         /// 菜单ID
         /// </summary>

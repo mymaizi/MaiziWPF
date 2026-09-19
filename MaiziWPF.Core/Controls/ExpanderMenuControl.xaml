@@ -188,7 +188,7 @@
         <DataTemplate x:Key="MenuButtonDataTemplate" DataType="{x:Type domain:SysMenu}">
             <RadioButton
                 CommandParameter="{Binding}"
-                GroupName="SelectionGroup"
+                IsChecked="{Binding IsMenuSelected, Mode=TwoWay}"
                 Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="{Binding Icon}" Style="{StaticResource MenuButtonIconStyle}" />

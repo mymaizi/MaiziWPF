@@ -38,6 +38,19 @@ namespace MaiziWPF.ViewModels
             get { return _selectedItem; }
             set { SetProperty(ref _selectedItem, value); }
         }
+
+        private String _selectedComponent;
+        public String SelectedComponent
+        {
+            get { return _selectedComponent; }
+            set
+            {
+                if (SetProperty(ref _selectedComponent, value))
+                {
+                    SyncMenuSelection(value);
+                }
+            }
+        }
         public String MaxsizeIcon
         {
             get { return _maxsizeIcon; }
@@ -79,6 +92,7 @@ namespace MaiziWPF.ViewModels
                 if (currentView != null)
                 {
                     tabRegion.Remove(currentView);
+                    UpdateSelectionAfterTabClose(tabRegion);
                 }
             });
             ToggleMoreMenuCommand = new DelegateCommand(() =>
@@ -93,6 +107,7 @@ namespace MaiziWPF.ViewModels
 
             MenuSelectionCommand = new DelegateCommand<SysMenu>(m =>
             {
+                SelectedComponent = m.Component;
                 var tabRegion = _regionManager.Regions[RegionNames.TabRegion];
                 if (!tabRegion.Views.Any(v => v.GetType().Name == m.Component))
                 {
@@ -160,6 +175,49 @@ namespace MaiziWPF.ViewModels
                 if (view != null)
                 {
                     _regionManager.Regions[RegionNames.TabRegion].Add(view);
+                    SelectedComponent = m.Component;
+                }
+            }
+        }
+
+        private void UpdateSelectionAfterTabClose(IRegion tabRegion)
+        {
+            var views = tabRegion.Views.OfType<FrameworkElement>().ToList();
+            if (views.Count == 0)
+            {
+                SelectedComponent = null;
+            }
+            else if (views.Count == 1)
+            {
+                var lastView = views[0];
+                var component = (lastView.DataContext as ITabItemInfo)?.Component ?? lastView.GetType().Name;
+                SelectedComponent = component;
+            }
+            else
+            {
+                var activeView = tabRegion.ActiveViews.FirstOrDefault() as FrameworkElement;
+                if (activeView != null)
+                {
+                    var component = (activeView.DataContext as ITabItemInfo)?.Component ?? activeView.GetType().Name;
+                    SelectedComponent = component;
+                }
+            }
+        }
+
+        private void SyncMenuSelection(String activeComponent)
+        {
+            SyncMenuItemsRecursive(MenuItems, activeComponent);
+        }
+
+        private void SyncMenuItemsRecursive(List<SysMenu> items, String activeComponent)
+        {
+            if (items == null) return;
+            foreach (var item in items)
+            {
+                item.IsMenuSelected = !string.IsNullOrEmpty(activeComponent) && item.Component == activeComponent;
+                if (item.Childs != null && item.Childs.Count > 0)
+                {
+                    SyncMenuItemsRecursive(item.Childs, activeComponent);
                 }
             }
         }
