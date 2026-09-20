@@ -113,7 +113,7 @@ namespace MaiziWPF.Core
                             }
                         };
                     }
-                    datas = depts.BuildTreeList(a => (int)a.Id, a => (int)a.ParentId, (p, c) => p.Childs.Add(c));
+                    datas = depts.BuildTreeList(a => (long)a.Id, a => (long)a.ParentId, (p, c) => p.Childs.Add(c));
                 }
             }
             if (d is ComboBox cb)

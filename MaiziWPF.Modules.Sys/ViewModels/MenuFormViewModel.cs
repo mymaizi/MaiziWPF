@@ -11,6 +11,7 @@ namespace MaiziWPF.Modules.Sys
     public class MenuFormViewModel : FormBindableBase
     {
         private readonly ISysMenuService _menuService;
+        private readonly ICurrentUserService _currentUserService;
 
         public ObservableCollection<SysMenu> MenuTreeItems { get; set; } = new();
 
@@ -139,11 +140,12 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _isFrame, value); }
         }
 
-        public MenuFormViewModel(ISysMenuService menuService, ISnackbarService snackbarService)
+        public MenuFormViewModel(ISysMenuService menuService, ISnackbarService snackbarService, ICurrentUserService currentUserService)
             : base(snackbarService)
         {
             _menuService = menuService;
-            MenuTreeItems.AddRange(_menuService.SelectMenuList(new SysMenu(), 1));
+            _currentUserService = currentUserService;
+            MenuTreeItems.AddRange(_menuService.SelectMenuList(new SysMenu(), _currentUserService.UserId));
 
             AcceptCommand = new DelegateCommand(() =>
             {

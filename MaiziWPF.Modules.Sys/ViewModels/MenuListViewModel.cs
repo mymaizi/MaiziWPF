@@ -14,14 +14,16 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysMenuService _menuService;
         private readonly ISnackbarService _snackbarService;
         private readonly IDialogHostService _dialogHostService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public MenuListViewModel(ISysMenuService menuService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider)
+        public MenuListViewModel(ISysMenuService menuService, ISnackbarService snackbarService, IDialogHostService dialogHostService, IContainerProvider containerProvider, ICurrentUserService currentUserService)
         {
             _menuService = menuService;
             _snackbarService = snackbarService;
             _dialogHostService = dialogHostService;
+            _currentUserService = currentUserService;
 
-            RegisterQueryFunc(input => _menuService.SelectMenuList(new SysMenu(), 1), new QueryMenuInput() { PageNumber = 1, PageSize = 10 },
+            RegisterQueryFunc(input => _menuService.SelectMenuList(new SysMenu(), _currentUserService.UserId), new QueryMenuInput() { PageNumber = 1, PageSize = 10 },
                 resetAction: qpi => QueryPageInfo = new QueryMenuInput());
 
             AddButtonCommand = new DelegateCommand<SysMenu?>(async (menu) => await AddMenu(menu));

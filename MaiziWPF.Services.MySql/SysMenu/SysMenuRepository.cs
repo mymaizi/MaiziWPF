@@ -117,5 +117,26 @@ namespace MaiziWPF.Services.MySql
                 query = query.Where(m => m.Id != menu.Id);
             return !query.Any();
         }
+
+        public List<SysMenu> SelectMenuListByRoleIds(List<long> roleIds)
+        {
+            if (roleIds == null || roleIds.Count == 0)
+                return new List<SysMenu>();
+
+            var menuIds = _fsql.Select<SysRoleMenu>()
+                .Where(rm => roleIds.Contains(rm.RoleId))
+                .ToList(rm => rm.MenuId)
+                .Distinct()
+                .ToList();
+
+            if (menuIds.Count == 0)
+                return new List<SysMenu>();
+
+            return _fsql.Select<SysMenu>()
+                .Where(m => menuIds.Contains(m.Id))
+                .Where(m => m.DelFlag == "0" && m.Status == "0")
+                .OrderBy(m => m.OrderNum)
+                .ToList();
+        }
     }
 }

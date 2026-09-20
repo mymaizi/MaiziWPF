@@ -16,6 +16,7 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysRoleService _roleService;
         private readonly ISysMenuService _menuService;
         private readonly ISysDeptService _deptService;
+        private readonly ICurrentUserService _currentUserService;
 
         private long _roleId;
         public long RoleId
@@ -150,12 +151,13 @@ namespace MaiziWPF.Modules.Sys
             new() { Label = "仅本人数据权限", Value = "5" }
         };
 
-        public RolePermissionViewModel(ISysRoleService roleService, ISysMenuService menuService, ISysDeptService deptService, ISnackbarService snackbarService)
+        public RolePermissionViewModel(ISysRoleService roleService, ISysMenuService menuService, ISysDeptService deptService, ISnackbarService snackbarService, ICurrentUserService currentUserService)
             : base(snackbarService)
         {
             _roleService = roleService;
             _menuService = menuService;
             _deptService = deptService;
+            _currentUserService = currentUserService;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -178,7 +180,7 @@ namespace MaiziWPF.Modules.Sys
 
         private void LoadMenuTree()
         {
-            var menus = _menuService.SelectMenuList(new SysMenu(), 1);
+            var menus = _menuService.SelectMenuList(new SysMenu(), _currentUserService.UserId);
             MenuTreeItems.Clear();
             foreach (var menu in menus)
             {

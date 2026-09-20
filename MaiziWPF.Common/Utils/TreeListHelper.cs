@@ -15,7 +15,7 @@ namespace MaiziWPF.Common
         /// <param name="parentIdSelector">父级id选择器</param>
         /// <param name="childsSetter">子级设置(T1为父级,T2为子级),把子级向父级添加</param>
         /// <returns></returns>
-        public static List<T> BuildTreeList<T>(this List<T> flatList, Func<T, int> idSelector,Func<T, int> parentIdSelector, Action<T, T> childsSetter) where T : class, new()
+        public static List<T> BuildTreeList<T>(this List<T> flatList, Func<T, long> idSelector,Func<T, long> parentIdSelector, Action<T, T> childsSetter) where T : class, new()
         {
             if (flatList == null || flatList.Count == 0)
                 return new List<T>();
@@ -23,7 +23,7 @@ namespace MaiziWPF.Common
             var rootNodes = new List<T>();
             foreach (var node in flatList)
             {
-                int parentId = parentIdSelector(node);
+                long parentId = parentIdSelector(node);
                 if (parentId == 0)
                 {
                     rootNodes.Add(node);

@@ -24,5 +24,7 @@ namespace MaiziWPF.Services.Domain
         bool CheckMenuExistRole(long menuId);
 
         bool CheckMenuNameUnique(SysMenu menu);
+
+        List<SysMenu> SelectMenuListByRoleIds(List<long> roleIds);
     }
 }

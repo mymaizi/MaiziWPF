@@ -1,5 +1,4 @@
-﻿using MaiziWPF.Common;
-using MaiziWPF.Services.Application.Contracts;
+﻿using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using System.Collections.Generic;
 
@@ -8,16 +7,18 @@ namespace MaiziWPF.Services.Application
     public class SysMenuService : ISysMenuService
     {
         private readonly ISysMenuRepository _repository;
+        private readonly ICurrentUserService _currentUserService;
 
-        public SysMenuService(ISysMenuRepository repository)
+        public SysMenuService(ISysMenuRepository repository, ICurrentUserService currentUserService)
         {
             _repository = repository;
+            _currentUserService = currentUserService;
         }
 
         public List<SysMenu> SelectMenuList(SysMenu menu, long userId)
         {
             List<SysMenu> menuList;
-            if (SecurityUtils.IsAdmin(userId))
+            if (_currentUserService.IsSuperAdmin)
             {
                 menuList = _repository.SelectMenuList(menu);
             }

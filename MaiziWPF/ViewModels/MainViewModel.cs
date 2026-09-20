@@ -7,6 +7,7 @@ using Prism.Container.DryIoc;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
+using Prism.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,8 @@ namespace MaiziWPF.ViewModels
 {
     public class MainViewModel : BindableBase, INavigationAware
     {
-        private readonly ISysMenuService _menuService;
+        private readonly IPermissionService _permissionService;
+        private readonly ICurrentUserService _currentUserService;
         private readonly Window _mainWindow;
         private readonly IRegionManager _regionManager;
         private String _maxsizeIcon = "Maximize";
@@ -67,9 +69,14 @@ namespace MaiziWPF.ViewModels
             set { SetProperty(ref _isMoreMenuOpen, value); }
         }
 
-        public MainViewModel(IRegionManager regionManager, IContainerProvider containerProvider, ISysMenuService menuService)
+        public MainViewModel(
+            IRegionManager regionManager,
+            IContainerProvider containerProvider,
+            IPermissionService permissionService,
+            ICurrentUserService currentUserService)
         {
-            _menuService = menuService;
+            _permissionService = permissionService;
+            _currentUserService = currentUserService;
             _mainWindow = Application.Current.MainWindow as Window;
             _regionManager = regionManager;
             CloseWindowCommand = new DelegateCommand(() =>
@@ -99,11 +106,8 @@ namespace MaiziWPF.ViewModels
             {
                 IsMoreMenuOpen = !IsMoreMenuOpen;
             });
-            MenuItems = _menuService.SelectMenuList(new SysMenu()
-            {
-                MenuType = "M,C",
-                Status = "0"
-            }, 1);
+
+            MenuItems = _currentUserService.MenuTree;
 
             MenuSelectionCommand = new DelegateCommand<SysMenu>(m =>
             {
@@ -121,7 +125,8 @@ namespace MaiziWPF.ViewModels
                         System.Diagnostics.Debug.WriteLine($"[MenuSelection] Failed to load view for: {m.MenuName} ({m.Component})");
                     }
                 }
-                else {                    
+                else
+                {
                     var view = tabRegion.Views.FirstOrDefault(v => v.GetType().Name == m.Component);
                     if (view != null)
                     {
@@ -162,11 +167,7 @@ namespace MaiziWPF.ViewModels
      
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            var parameters = navigationContext.Parameters;
-            if (parameters.ContainsKey("CurrentUser"))
-            {
-                CurrentUser = parameters.GetValue<SysUser>("CurrentUser");
-            }
+            CurrentUser = _currentUserService.CurrentUser;
 
             var m = MenuItems.FirstOrDefault(x => !string.IsNullOrEmpty(x.Component));
             if (m != null)

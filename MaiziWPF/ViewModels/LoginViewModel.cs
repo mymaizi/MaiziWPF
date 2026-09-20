@@ -7,28 +7,38 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
 using Prism.Navigation;
-using Serilog;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Volo.Abp;
+
 namespace MaiziWPF.ViewModels
 {
     public class LoginViewModel : BindableBase
     {
         private readonly IRegionManager _regionManager;
         private readonly ISysUserService _userService;
+        private readonly ICurrentUserService _currentUserService;
+        private readonly IPermissionService _permissionService;
+
         public ICommand CloseWindowCommand { get; }
         public ICommand LoginCommand { get; }
         private String _userName;
         private String _password;
-        public string UserName { get => _userName; set => SetProperty(ref _userName, value); } 
+        public string UserName { get => _userName; set => SetProperty(ref _userName, value); }
         public string Password { get => _password; set => SetProperty(ref _password, value); }
 
-        public LoginViewModel(IRegionManager regionManager, ISysUserService userService)
+        public LoginViewModel(
+            IRegionManager regionManager,
+            ISysUserService userService,
+            ICurrentUserService currentUserService,
+            IPermissionService permissionService)
         {
             _regionManager = regionManager;
             _userService = userService;
+            _currentUserService = currentUserService;
+            _permissionService = permissionService;
             CloseWindowCommand = new DelegateCommand(() =>
             {
                 System.Windows.Application.Current.Shutdown();
@@ -59,9 +69,17 @@ namespace MaiziWPF.ViewModels
             }
             if (BCrypt.Net.BCrypt.Verify(_password, user.Password))
             {
-                var parameters = new NavigationParameters();
-                parameters.Add("CurrentUser", user);
-                _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(MainView), parameters);
+                _currentUserService.SetCurrentUser(user);
+
+                var roleIds = _userService.SelectUserRoleIds(user.UserId);
+                var roles = _userService.SelectAllRoles()
+                    .Where(r => roleIds.Contains(r.RoleId))
+                    .ToList();
+                _currentUserService.SetRoles(roles.Select(r => r.RoleKey).ToList());
+
+                _permissionService.LoadUserPermissions(user.UserId);
+
+                _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(MainView));
             }
             else
             {
