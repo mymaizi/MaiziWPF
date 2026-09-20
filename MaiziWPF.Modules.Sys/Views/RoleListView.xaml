@@ -117,6 +117,7 @@
                                     Command="{Binding SearchButtonCommand}"
                                     Content="搜索"
                                     Foreground="#fff"
+                                    maiziWPF:PermsAssist.Perms="system:role:query"
                                     Style="{StaticResource MaterialDesignRaisedLightButton}" />
                                 <Button
                                     Padding="16,6"
@@ -124,6 +125,7 @@
                                     Command="{Binding ResetButtonCommand}"
                                     Content="重置"
                                     Foreground="#606266"
+                                    maiziWPF:PermsAssist.Perms="system:role:query"
                                     Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
                             </StackPanel>
                         </WrapPanel>
@@ -152,6 +154,7 @@
                             BorderBrush="#1890ff"
                             Command="{Binding AddButtonCommand}"
                             Foreground="#fff"
+                            maiziWPF:PermsAssist.Perms="system:role:add"
                             Style="{StaticResource MaterialDesignRaisedLightButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Plus" Width="14" Height="14" Margin="0,0,4,0" />
@@ -165,6 +168,7 @@
                             Command="{Binding BatchDeleteCommand}"
                             CommandParameter="{Binding SelectedItems, ElementName=RoleDataGrid}"
                             Foreground="#fff"
+                            maiziWPF:PermsAssist.Perms="system:role:remove"
                             Style="{StaticResource MaterialDesignRaisedLightButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" Margin="0,0,4,0" />
@@ -319,6 +323,7 @@
                                             BorderThickness="1"
                                             Command="{Binding DataContext.EditButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"
+                                            maiziWPF:PermsAssist.Perms="system:role:edit"
                                             ToolTip="修改">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">
@@ -341,6 +346,7 @@
                                             BorderThickness="1"
                                             Command="{Binding DataContext.DataScopeButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"
+                                            maiziWPF:PermsAssist.Perms="system:role:assignPerms"
                                             ToolTip="权限">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">
@@ -363,6 +369,7 @@
                                             BorderThickness="1"
                                             Command="{Binding DataContext.AuthUserButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"
+                                            maiziWPF:PermsAssist.Perms="system:role:assignUser"
                                             ToolTip="用户">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">
@@ -384,6 +391,7 @@
                                             BorderThickness="1"
                                             Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"
+                                            maiziWPF:PermsAssist.Perms="system:role:remove"
                                             ToolTip="删除">
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">

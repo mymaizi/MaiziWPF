@@ -61,15 +61,19 @@ namespace MaiziWPF.Services.Application
 
         private void LoadAdminPermissions()
         {
-            var tree = _menuRepository.SelectMenuList(new SysMenu());
+            var allMenus = _menuRepository.SelectMenuList(new SysMenu());
             var permissions = new HashSet<string>();
             var menuItems = new List<SysMenu>();
 
-            FlattenTree(tree, permissions, menuItems);
-            SetTreeLevel(tree, 1);
+            FlattenTree(allMenus, permissions, menuItems);
+
+            foreach (var item in menuItems)
+            {
+                item.Childs = null;
+            }
 
             _currentUserService.SetPermissions(permissions);
-            _currentUserService.SetMenuTree(tree);
+            _currentUserService.SetMenuTree(BuildTree(menuItems));
         }
 
         private static void FlattenTree(List<SysMenu> nodes, HashSet<string> permissions, List<SysMenu> menuItems)

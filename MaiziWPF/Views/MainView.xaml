@@ -412,6 +412,7 @@
                                                     HorizontalContentAlignment="Left"
                                                     Background="Transparent"
                                                     BorderThickness="0"
+                                                    Command="{Binding LogoutCommand}"
                                                     Cursor="Hand">
                                                     <Button.Style>
                                                         <Style TargetType="Button">

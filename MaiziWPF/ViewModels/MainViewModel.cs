@@ -2,6 +2,7 @@ using MaiziWPF.Core;
 using MaiziWPF.Modules.Sys;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
+using MaiziWPF.Views;
 using Prism.Commands;
 using Prism.Container.DryIoc;
 using Prism.Ioc;
@@ -33,7 +34,8 @@ namespace MaiziWPF.ViewModels
         public ICommand CloseTabCommand { get; }
         public ICommand MenuSelectionCommand { get; }
         public ICommand ToggleMoreMenuCommand { get; }
-        public List<SysMenu> MenuItems { get; }
+        public ICommand LogoutCommand { get; }
+        public List<SysMenu> MenuItems { get; set; }
         public object _selectedItem;
         public object SelectedItem
         {
@@ -106,6 +108,12 @@ namespace MaiziWPF.ViewModels
             {
                 IsMoreMenuOpen = !IsMoreMenuOpen;
             });
+            LogoutCommand = new DelegateCommand(() =>
+            {
+                _currentUserService.Clear();
+                _regionManager.Regions[RegionNames.TabRegion].RemoveAll();
+                _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(Views.LoginView));
+            });
 
             MenuItems = _currentUserService.MenuTree;
 
@@ -119,6 +127,7 @@ namespace MaiziWPF.ViewModels
                     if (view != null)
                     {
                         tabRegion.Add(view);
+                        SelectedItem = view;
                     }
                     else
                     {
@@ -168,6 +177,7 @@ namespace MaiziWPF.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             CurrentUser = _currentUserService.CurrentUser;
+            MenuItems = _currentUserService.MenuTree;
 
             var m = MenuItems.FirstOrDefault(x => !string.IsNullOrEmpty(x.Component));
             if (m != null)
@@ -177,6 +187,7 @@ namespace MaiziWPF.ViewModels
                 {
                     _regionManager.Regions[RegionNames.TabRegion].Add(view);
                     SelectedComponent = m.Component;
+                    SelectedItem = view;
                 }
             }
         }
