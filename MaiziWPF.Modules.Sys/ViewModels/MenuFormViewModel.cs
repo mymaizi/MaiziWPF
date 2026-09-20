@@ -145,7 +145,7 @@ namespace MaiziWPF.Modules.Sys
         {
             _menuService = menuService;
             _currentUserService = currentUserService;
-            MenuTreeItems.AddRange(_menuService.SelectMenuList(new SysMenu(), _currentUserService.UserId));
+            MenuTreeItems.AddRange(_menuService.SelectMenuTreeByUserId(_currentUserService.UserId));
 
             AcceptCommand = new DelegateCommand(() =>
             {

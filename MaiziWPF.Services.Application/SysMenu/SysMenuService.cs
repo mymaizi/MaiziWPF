@@ -1,4 +1,5 @@
-﻿using MaiziWPF.Services.Application.Contracts;
+﻿using MaiziWPF.Common;
+using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using System.Collections.Generic;
 
@@ -15,32 +16,37 @@ namespace MaiziWPF.Services.Application
             _currentUserService = currentUserService;
         }
 
-        public List<SysMenu> SelectMenuList(SysMenu menu, long userId)
+        public List<SysMenu> SelectMenuList(SysMenu menu)
         {
-            List<SysMenu> menuList;
+            var flatList = _repository.SelectMenuList(menu);
+            return BuildMenuTree(flatList);
+        }
+
+        public List<SysMenu> SelectMenuTreeByUserId(long userId)
+        {
+            List<SysMenu> flatList;
             if (_currentUserService.IsSuperAdmin)
             {
-                menuList = _repository.SelectMenuList(menu);
+                flatList = _repository.SelectMenuList(new SysMenu());
             }
             else
             {
-                menuList = _repository.SelectMenuListByUserId(menu, userId);
+                flatList = _repository.SelectMenuListByUserId(new SysMenu(), userId);
             }
-            SetMenuLevel(menuList, 1);
-            return menuList;
+            return BuildMenuTree(flatList);
         }
 
-        private void SetMenuLevel(List<SysMenu> menus, int level)
+        private static List<SysMenu> BuildMenuTree(List<SysMenu> flatList)
         {
-            if (menus == null) return;
-            foreach (var menu in menus)
-            {
-                menu.Level = level;
-                if (menu.Childs != null && menu.Childs.Count > 0)
+            return flatList.BuildTreeList(
+                m => m.Id,
+                m => m.ParentId,
+                (p, c) =>
                 {
-                    SetMenuLevel(menu.Childs, level + 1);
-                }
-            }
+                    p.Childs ??= new List<SysMenu>();
+                    p.Childs.Add(c);
+                },
+                m => m.Childs);
         }
 
         public SysMenu SelectMenuById(long menuId)

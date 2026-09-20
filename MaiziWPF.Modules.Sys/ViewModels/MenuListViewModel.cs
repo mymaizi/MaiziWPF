@@ -23,7 +23,7 @@ namespace MaiziWPF.Modules.Sys
             _dialogHostService = dialogHostService;
             _currentUserService = currentUserService;
 
-            RegisterQueryFunc(input => _menuService.SelectMenuList(new SysMenu(), _currentUserService.UserId), new QueryMenuInput() { PageNumber = 1, PageSize = 10 },
+            RegisterQueryFunc(input => _menuService.SelectMenuTreeByUserId(_currentUserService.UserId), new QueryMenuInput() { PageNumber = 1, PageSize = 10 },
                 resetAction: qpi => QueryPageInfo = new QueryMenuInput());
 
             AddButtonCommand = new DelegateCommand<SysMenu?>(async (menu) => await AddMenu(menu));

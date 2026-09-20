@@ -1,3 +1,4 @@
+using MaiziWPF.Common;
 using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
@@ -119,6 +120,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task EditUser(SysUser user)
         {
             if (user == null) return;
+            if (user.UserId == SecurityUtils.SUPER_ADMIN_USER_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员用户");
+                return;
+            }
 
             await _dialogHostService.ShowDialogAsync<UserFormView>(vm =>
             {
@@ -150,6 +156,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task DeleteUser(SysUser user)
         {
             if (user == null) return;
+            if (user.UserId == SecurityUtils.SUPER_ADMIN_USER_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员用户");
+                return;
+            }
 
             var result = await _dialogHostService.ConfirmAsync($"确定要删除用户 '{user.UserName}' 吗？", "确认删除");
             if (result)
@@ -175,12 +186,19 @@ namespace MaiziWPF.Modules.Sys
                 return;
             }
 
-            var result = await _dialogHostService.ConfirmAsync($"确定要删除选中的 {selectedItems.Count} 个用户吗？", "确认删除");
+            var users = selectedItems.Cast<SysUser>().ToList();
+            if (users.Any(u => u.UserId == SecurityUtils.SUPER_ADMIN_USER_ID))
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员用户");
+                return;
+            }
+
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除选中的 {users.Count} 个用户吗？", "确认删除");
             if (result)
             {
                 try
                 {
-                    foreach (var item in selectedItems.Cast<SysUser>())
+                    foreach (var item in users)
                     {
                         _userService.DeleteUser(item.UserId);
                     }
@@ -197,6 +215,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task ResetPwd(SysUser user)
         {
             if (user == null) return;
+            if (user.UserId == SecurityUtils.SUPER_ADMIN_USER_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员用户");
+                return;
+            }
 
             var result = await _dialogHostService.ConfirmAsync($"确定要重置用户 '{user.UserName}' 的密码吗？", "确认重置");
             if (result)
@@ -216,6 +239,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task AuthRole(SysUser user)
         {
             if (user == null) return;
+            if (user.UserId == SecurityUtils.SUPER_ADMIN_USER_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员用户");
+                return;
+            }
 
             await _dialogHostService.ShowDialogAsync<AuthRoleView>(vm =>
             {

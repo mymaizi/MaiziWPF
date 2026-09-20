@@ -52,6 +52,7 @@ create table sys_user (
     key idx_sys_user_user_name (user_name),
     key idx_sys_user_phone     (phone_number)
 ) engine=innodb comment = '用户信息表';
+INSERT INTO sys_user ('user_id', 'dept_id', 'user_name', 'nick_name', 'user_type', 'email', 'phone_number', 'gender', 'avatar', 'password', 'status', 'del_flag', 'login_ip', 'login_date', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark') VALUES (1761100000000000001, 1761000000000000103, 'admin', '麦子', 'sys_user', '', '', '1', 0, '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2026-09-10 16:46:14.000', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:14.000', 0, '0001-01-01 00:00:00.000', '管理员');
 -- ----------------------------
 -- 3、岗位信息表
 -- ----------------------------
@@ -127,6 +128,7 @@ create table sys_menu (
     primary key (menu_id)
 ) engine=innodb comment = '菜单权限表';
 -- ==================== 首页（C）====================
+-- 1. 首页
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
 VALUES (1, '首页', 0, 0, 'MaiziWPF.Modules.Sys', 'DashboardView', 'C', '0', '0', '', 'Home', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
 
@@ -135,11 +137,11 @@ VALUES (1, '首页', 0, 0, 'MaiziWPF.Modules.Sys', 'DashboardView', 'C', '0', '0
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
 VALUES (2, '系统管理', 0, 1, '', '', 'M', '0', '0', '', 'Cog', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
 
--- 4. 日志管理
+-- 3. 日志管理
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
 VALUES (3, '日志管理', 0, 2, '', '', 'M', '0', '0', '', 'TextBoxSearch', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
 
--- 5. 文件管理
+-- 4. 文件管理
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
 VALUES (4, '文件管理', 0, 3, '', '', 'M', '0', '0', '', 'FolderOpen', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
 

@@ -1,4 +1,5 @@
-﻿﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Common;
+using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
@@ -100,6 +101,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task EditRole(SysRole role)
         {
             if (role == null) return;
+            if (role.RoleId == SecurityUtils.SUPER_ADMIN_ROLE_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员角色");
+                return;
+            }
 
             await _dialogHostService.ShowDialogAsync<RoleFormView>(vm =>
             {
@@ -122,6 +128,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task DeleteRole(SysRole role)
         {
             if (role == null) return;
+            if (role.RoleId == SecurityUtils.SUPER_ADMIN_ROLE_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员角色");
+                return;
+            }
 
             try
             {
@@ -148,6 +159,12 @@ namespace MaiziWPF.Modules.Sys
             }
 
             var roles = selectedItems.Cast<SysRole>().ToList();
+            if (roles.Any(r => r.RoleId == SecurityUtils.SUPER_ADMIN_ROLE_ID))
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员角色");
+                return;
+            }
+
             var names = string.Join("、", roles.Select(r => r.RoleName));
             var result = await _dialogHostService.ConfirmAsync($"确定要删除选中的 {roles.Count} 个角色（{names}）吗？", "确认批量删除");
             if (result)
@@ -169,6 +186,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task OpenDataScope(SysRole role)
         {
             if (role == null) return;
+            if (role.RoleId == SecurityUtils.SUPER_ADMIN_ROLE_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员角色");
+                return;
+            }
 
             await _dialogHostService.ShowDialogAsync<RolePermissionView>(vm =>
             {
@@ -190,6 +212,11 @@ namespace MaiziWPF.Modules.Sys
         private async Task OpenAuthUser(SysRole role)
         {
             if (role == null) return;
+            if (role.RoleId == SecurityUtils.SUPER_ADMIN_ROLE_ID)
+            {
+                _snackbarService.EnqueueWarning("不允许操作超级管理员角色");
+                return;
+            }
 
             await _dialogHostService.ShowDialogAsync<RoleAuthUserView>(vm =>
             {

@@ -180,7 +180,7 @@ namespace MaiziWPF.Modules.Sys
 
         private void LoadMenuTree()
         {
-            var menus = _menuService.SelectMenuList(new SysMenu(), _currentUserService.UserId);
+            var menus = _menuService.SelectMenuTreeByUserId(_currentUserService.UserId);
             MenuTreeItems.Clear();
             foreach (var menu in menus)
             {

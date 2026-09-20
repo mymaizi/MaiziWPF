@@ -90,29 +90,17 @@ namespace MaiziWPF.Services.Application
             }
         }
 
-        private static void SetTreeLevel(List<SysMenu> nodes, int level)
-        {
-            if (nodes == null) return;
-            foreach (var node in nodes)
-            {
-                node.Level = level;
-                if (node.Childs != null && node.Childs.Count > 0)
-                    SetTreeLevel(node.Childs, level + 1);
-            }
-        }
-
         private static List<SysMenu> BuildTree(List<SysMenu> flatList)
         {
-            var tree = flatList.BuildTreeList(
+            return flatList.BuildTreeList(
                 m => m.Id,
                 m => m.ParentId,
                 (p, c) =>
                 {
                     p.Childs ??= new List<SysMenu>();
                     p.Childs.Add(c);
-                });
-            SetTreeLevel(tree, 1);
-            return tree;
+                },
+                m => m.Childs);
         }
     }
 }

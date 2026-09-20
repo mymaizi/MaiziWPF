@@ -35,7 +35,12 @@ namespace MaiziWPF.ViewModels
         public ICommand MenuSelectionCommand { get; }
         public ICommand ToggleMoreMenuCommand { get; }
         public ICommand LogoutCommand { get; }
-        public List<SysMenu> MenuItems { get; set; }
+        private List<SysMenu> _menuItems;
+        public List<SysMenu> MenuItems
+        {
+            get { return _menuItems; }
+            set { SetProperty(ref _menuItems, value); }
+        }
         public object _selectedItem;
         public object SelectedItem
         {

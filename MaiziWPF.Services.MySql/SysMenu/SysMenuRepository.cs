@@ -25,7 +25,7 @@ namespace MaiziWPF.Services.MySql
             if (!string.IsNullOrEmpty(menu.MenuType))
                 where = where.And(w => menu.MenuType.Split(',').Contains(w.MenuType));
 
-            return _fsql.Select<SysMenu>().Where(where).OrderBy(o => o.OrderNum).ToTreeList();
+            return _fsql.Select<SysMenu>().Where(where).OrderBy(o => o.OrderNum).ToList();
         }
 
         public List<SysMenu> SelectMenuListByUserId(SysMenu menu, long userId)
@@ -43,7 +43,7 @@ namespace MaiziWPF.Services.MySql
                      .WithTempQuery((m, rm, ur) => m)
                      .Where(where)
                      .OrderBy(o => o.OrderNum)
-                     .ToTreeList();
+                     .ToList();
         }
 
         public SysMenu SelectMenuById(long menuId)

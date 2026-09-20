@@ -6,7 +6,9 @@ namespace MaiziWPF.Services.Application.Contracts
 {
     public interface ISysMenuService : ITransientDependency
     {
-        List<SysMenu> SelectMenuList(SysMenu menu, long userId);
+        List<SysMenu> SelectMenuList(SysMenu menu);
+
+        List<SysMenu> SelectMenuTreeByUserId(long userId);
 
         SysMenu SelectMenuById(long menuId);
 
