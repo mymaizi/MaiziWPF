@@ -23,9 +23,9 @@ namespace MaiziWPF.Services.Application
             return _repository.InsertOperLog(operLog);
         }
 
-        public int DeleteOperLogById(long operId)
+        public int DeleteOperLogByIds(long[] operIds)
         {
-            return _repository.DeleteOperLogById(operId);
+            return _repository.DeleteOperLogByIds(operIds);
         }
 
         public int CleanOperLog()

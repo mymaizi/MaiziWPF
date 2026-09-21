@@ -5,9 +5,9 @@ using System.Windows.Media;
 
 namespace MaiziWPF.Modules.Sys
 {
-    public partial class OperLogListView : UserControl
+    public partial class LoginInfoListView : UserControl
     {
-        public OperLogListView()
+        public LoginInfoListView()
         {
             InitializeComponent();
         }
@@ -17,9 +17,9 @@ namespace MaiziWPF.Modules.Sys
             if (sender is CheckBox selectAllCheckBox && selectAllCheckBox.IsChecked.HasValue)
             {
                 bool isChecked = selectAllCheckBox.IsChecked.Value;
-                for (int i = 0; i < OperLogDataGrid.Items.Count; i++)
+                for (int i = 0; i < LoginInfoDataGrid.Items.Count; i++)
                 {
-                    if (OperLogDataGrid.ItemContainerGenerator.ContainerFromIndex(i) is DataGridRow row)
+                    if (LoginInfoDataGrid.ItemContainerGenerator.ContainerFromIndex(i) is DataGridRow row)
                     {
                         row.IsSelected = isChecked;
                     }

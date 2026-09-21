@@ -4,7 +4,7 @@ using System;
 namespace MaiziWPF.Services.Domain
 {
     [Table(Name = "sys_oper_log")]
-    public class SysOperLog : BaseEntity
+    public class SysOperLog 
     {
         [Column(Name = "oper_id", IsIdentity = true, IsPrimary = true)]
         public Int64 OperId { get; set; }

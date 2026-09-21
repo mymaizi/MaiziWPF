@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -29,7 +29,7 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterForNavigation<DictListView>();
             containerRegistry.RegisterForNavigation<ConfigListView>();
             containerRegistry.RegisterForNavigation<OperLogListView>();
-            containerRegistry.RegisterForNavigation<LoginLogListView>();
+            containerRegistry.RegisterForNavigation<LoginInfoListView>();
             containerRegistry.RegisterForNavigation<NoticeListView>();
             containerRegistry.RegisterForNavigation<OssListView>();
             containerRegistry.RegisterDialog<UserFormView>();

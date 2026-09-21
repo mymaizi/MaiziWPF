@@ -23,9 +23,9 @@ namespace MaiziWPF.Services.Application
             return _repository.InsertLogininfor(logininfor);
         }
 
-        public int DeleteLogininforById(long infoId)
+        public int DeleteLogininforByIds(long[] infoIds)
         {
-            return _repository.DeleteLogininforById(infoId);
+            return _repository.DeleteLogininforByIds(infoIds);
         }
 
         public int CleanLogininfor()

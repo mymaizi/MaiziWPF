@@ -10,7 +10,7 @@ namespace MaiziWPF.Services.Application.Contracts
 
         int InsertLogininfor(SysLogininfo logininfor);
 
-        int DeleteLogininforById(long infoId);
+        int DeleteLogininforByIds(long[] infoIds);
 
         int CleanLogininfor();
     }

@@ -4,6 +4,10 @@ using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MaiziWPF.Modules.Sys
@@ -15,6 +19,8 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISnackbarService _snackbarService;
 
         public ICommand CleanLogCommand { get; }
+        public ICommand BatchDeleteCommand { get; }
+        public ICommand ViewDetailCommand { get; }
 
         public OperLogListViewModel(ISysOperLogService operLogService, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
@@ -27,10 +33,9 @@ namespace MaiziWPF.Modules.Sys
                 return _operLogService.SelectOperLogList(input);
             }, new QueryOperLogInput() { PageNumber = 1, PageSize = 10 });
 
-            DeleteButtonCommand = new DelegateCommand<SysOperLog>(async (log) =>
-            {
-                await DeleteLog(log);
-            });
+            BatchDeleteCommand = new DelegateCommand<IList>(async (selectedItems) => await BatchDeleteLogs(selectedItems));
+
+            ViewDetailCommand = new DelegateCommand<SysOperLog>(async (log) => await ViewDetail(log));
 
             CleanLogCommand = new DelegateCommand(async () =>
             {
@@ -40,26 +45,44 @@ namespace MaiziWPF.Modules.Sys
             SearchButtonCommand.Execute(this);
         }
 
-        private async System.Threading.Tasks.Task DeleteLog(SysOperLog log)
+        private async Task BatchDeleteLogs(IList selectedItems)
         {
-            if (log == null) return;
+            if (selectedItems == null || selectedItems.Count == 0)
+            {
+                _snackbarService.EnqueueWarning("请先选择要删除的日志");
+                return;
+            }
 
-            var result = await _dialogHostService.ConfirmAsync($"确定要删除该操作日志吗？", "删除确认");
+            var logs = selectedItems.Cast<SysOperLog>().ToList();
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除选中的 {logs.Count} 条操作日志吗？", "确认删除");
             if (!result) return;
 
             try
             {
-                _operLogService.DeleteOperLogById(log.OperId);
-                _snackbarService.EnqueueSuccess("删除成功");
+                var ids = logs.Select(x => x.OperId).ToArray();
+                _operLogService.DeleteOperLogByIds(ids);
+                _snackbarService.EnqueueSuccess("批量删除成功");
                 SearchButtonCommand.Execute(this);
             }
             catch (Exception ex)
             {
-                _snackbarService.EnqueueError(ex.Message);
+                _snackbarService.EnqueueError($"删除失败：{ex.Message}");
             }
         }
 
-        private async System.Threading.Tasks.Task CleanLog()
+        private async Task ViewDetail(SysOperLog log)
+        {
+            if (log == null) return;
+
+            await _dialogHostService.ShowDialogAsync<OperLogDetailView>(vm =>
+            {
+                var detailVm = (OperLogDetailViewModel)vm;
+                detailVm.DialogTitle = "操作日志详情";
+                detailVm.SetOperLog(log);
+            });
+        }
+
+        private async Task CleanLog()
         {
             var result = await _dialogHostService.ConfirmAsync("确定要清空所有操作日志吗？", "清空确认");
             if (!result) return;

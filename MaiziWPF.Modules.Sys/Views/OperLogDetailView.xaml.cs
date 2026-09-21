@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace MaiziWPF.Modules.Sys
 {
-    public partial class LoginLogListView : UserControl
+    public partial class OperLogDetailView : UserControl
     {
-        public LoginLogListView()
+        public OperLogDetailView()
         {
             InitializeComponent();
         }

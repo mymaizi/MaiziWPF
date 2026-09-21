@@ -16,7 +16,7 @@ namespace MaiziWPF.Services.MySql
 
         public List<SysLogininfo> SelectLogininforList(QueryLoginInfoInput input)
         {
-            System.Linq.Expressions.Expression<Func<SysLogininfo, bool>> where = d => d.DelFlag == "0";
+            System.Linq.Expressions.Expression<Func<SysLogininfo, bool>> where = d => true;
             if (!string.IsNullOrEmpty(input.UserName))
                 where = where.And(d => d.UserName.Contains(input.UserName));
             if (!string.IsNullOrEmpty(input.Ipaddr))
@@ -35,14 +35,14 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertLogininfor(SysLogininfo logininfor)
         {
-            logininfor.CreateTime = DateTime.Now;
+            logininfor.LoginTime = DateTime.Now;
             return (int)_fsql.Insert(logininfor).ExecuteAffrows();
         }
 
-        public int DeleteLogininforById(long infoId)
+        public int DeleteLogininforByIds(long[] infoIds)
         {
             return _fsql.Delete<SysLogininfo>()
-                .Where(d => d.InfoId == infoId)
+                .Where(d => infoIds.Contains(d.InfoId))
                 .ExecuteAffrows();
         }
 

@@ -172,7 +172,7 @@ INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component,
 VALUES (300, '操作日志', 3, 1, 'MaiziWPF.Modules.Sys', 'OperLogListView', NULL, 'N', 'C', '0', 'monitor:operlog:list', 'TextBox', 0, 1, NOW(), 1, NOW(), '', '0');
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (301, '登录日志', 3, 2, 'MaiziWPF.Modules.Sys', 'LoginLogListView', NULL, 'N', 'C', '0', 'monitor:logininfor:list', 'LoginVariant', 0, 1, NOW(), 1, NOW(), '', '0');
+VALUES (301, '登录日志', 3, 2, 'MaiziWPF.Modules.Sys', 'LoginInfoListView', NULL, 'N', 'C', '0', 'monitor:logininfor:list', 'LoginVariant', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 文件管理 子菜单（C）====================
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
@@ -338,17 +338,13 @@ create table sys_oper_log (
     title             varchar(50)     default ''                 comment '模块标题',
     business_type     int(2)          default 0                  comment '业务类型（0其它 1新增 2修改 3删除）',
     method            varchar(100)    default ''                 comment '方法名称',
-    request_method    varchar(10)     default ''                 comment '请求方式',
-    operator_type     int(1)          default 0                  comment '操作类别（0其它 1后台用户 2手机端用户）',
     oper_name         varchar(50)     default ''                 comment '操作人员',
     user_id           bigint(20)      default null               comment '操作用户ID',
     dept_id           bigint(20)      default null               comment '操作部门ID',
     dept_name         varchar(50)     default ''                 comment '部门名称',
-    client_key        varchar(32)     default ''                 comment '客户端',
-    device_type       varchar(32)     default ''                 comment '设备类型',
-    browser           varchar(50)     default ''                 comment '浏览器类型',
+    client_version    varchar(32)     default ''                 comment '客户端版本',
+    mac_address       varchar(50)     default ''                 comment 'MAC地址',
     os                varchar(50)     default ''                 comment '操作系统',
-    oper_url          varchar(255)    default ''                 comment '请求URL',
     oper_ip           varchar(128)    default ''                 comment '主机地址',
     oper_location     varchar(255)    default ''                 comment '操作地点',
     oper_param        varchar(4000)   default ''                 comment '请求参数',
@@ -460,11 +456,10 @@ INSERT INTO sys_config ('config_id', 'config_name', 'config_key', 'config_value'
 create table sys_login_info (
     info_id        bigint(20)     not null                  comment '访问ID',
     user_name      varchar(50)    default ''                comment '用户账号',
-    client_key     varchar(32)    default ''                comment '客户端',
-    device_type    varchar(32)    default ''                comment '设备类型',
+    client_version varchar(32)    default ''                comment '客户端版本',
     ipaddr         varchar(128)   default ''                comment '登录IP地址',
     login_location varchar(255)   default ''                comment '登录地点',
-    browser        varchar(50)    default ''                comment '浏览器类型',
+    mac_address    varchar(50)    default ''                comment 'MAC地址',
     os             varchar(50)    default ''                comment '操作系统',
     status         char(1)        default '0'               comment '登录状态（0正常 1异常）',
     msg            varchar(255)   default ''                comment '提示消息',

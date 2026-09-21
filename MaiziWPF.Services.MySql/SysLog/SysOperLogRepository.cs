@@ -16,7 +16,7 @@ namespace MaiziWPF.Services.MySql
 
         public List<SysOperLog> SelectOperLogList(QueryOperLogInput input)
         {
-            System.Linq.Expressions.Expression<Func<SysOperLog, bool>> where = d => d.DelFlag == "0";
+            System.Linq.Expressions.Expression<Func<SysOperLog, bool>> where = d => true;
             if (!string.IsNullOrEmpty(input.Title))
                 where = where.And(d => d.Title.Contains(input.Title));
             if (input.BusinessType.HasValue)
@@ -37,14 +37,14 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertOperLog(SysOperLog operLog)
         {
-            operLog.CreateTime = DateTime.Now;
+            operLog.OperTime = DateTime.Now;
             return (int)_fsql.Insert(operLog).ExecuteAffrows();
         }
 
-        public int DeleteOperLogById(long operId)
+        public int DeleteOperLogByIds(long[] operIds)
         {
             return _fsql.Delete<SysOperLog>()
-                .Where(d => d.OperId == operId)
+                .Where(d => operIds.Contains(d.OperId))
                 .ExecuteAffrows();
         }
 

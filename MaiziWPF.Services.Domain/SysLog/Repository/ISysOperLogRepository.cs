@@ -10,7 +10,7 @@ namespace MaiziWPF.Services.Domain
 
         int InsertOperLog(SysOperLog operLog);
 
-        int DeleteOperLogById(long operId);
+        int DeleteOperLogByIds(long[] operIds);
 
         int CleanOperLog();
     }
