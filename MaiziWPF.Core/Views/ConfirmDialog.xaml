@@ -4,40 +4,121 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
-    Width="400"
+    Width="440"
     Height="200"
+    Background="Transparent"
     prism:ViewModelLocator.AutoWireViewModel="True">
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="WindowStyle" Value="None" />
+            <Setter Property="AllowsTransparency" Value="True" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Window">
+                        <Border Background="Transparent">
+                            <AdornerDecorator>
+                                <ContentPresenter />
+                            </AdornerDecorator>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <Border Background="#ffffff" BorderBrush="#e8e8e8" BorderThickness="1" CornerRadius="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <TextBlock
-            Grid.Row="0"
-            FontSize="14"
-            Text="{Binding Message}"
-            TextWrapping="Wrap"
-            VerticalAlignment="Center" />
+            <!--  标题栏  -->
+            <Grid Grid.Row="0" Margin="24,12,16,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Title}" Foreground="#333333" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <Button
+                    Grid.Column="1"
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Command="{Binding CancelCommand}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="border"
+                                Width="32"
+                                Height="32"
+                                CornerRadius="16"
+                                Background="Transparent">
+                                <materialDesign:PackIcon
+                                    x:Name="icon"
+                                    Width="16"
+                                    Height="16"
+                                    Kind="Close"
+                                    Foreground="#999999"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#fff1f0" />
+                                    <Setter TargetName="icon" Property="Foreground" Value="#ff4d4f" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
 
-        <StackPanel
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            Orientation="Horizontal"
-            Margin="0,16,0,0">
-            <Button
-                Width="80"
-                Height="36"
-                Margin="0,0,10,0"
-                Command="{Binding CancelCommand}"
-                Content="取消"
-                Style="{StaticResource MaterialDesignOutlinedButton}" />
-            <Button
-                Width="80"
-                Height="36"
-                Command="{Binding ConfirmCommand}"
-                Content="确定"
-                Style="{StaticResource MaterialDesignRaisedButton}" />
-        </StackPanel>
-    </Grid>
+            <!--  消息内容（图标 + 文本同行）  -->
+            <Border Grid.Row="1" Padding="24,8,24,16">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="HelpCircle" Foreground="#faad14" Width="24" Height="24" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="#606266"
+                        Text="{Binding Message}"
+                        TextWrapping="Wrap"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!--  分隔线  -->
+            <Border Grid.Row="2" Background="#f0f0f0" />
+
+            <!--  按钮区域  -->
+            <StackPanel
+                Grid.Row="3"
+                Margin="24,16,24,20"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="0,0,12,0"
+                    Padding="28,8"
+                    Background="#1890ff"
+                    BorderBrush="#1890ff"
+                    Command="{Binding ConfirmCommand}"
+                    Content="确定"
+                    Foreground="#fff"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                <Button
+                    Padding="28,8"
+                    BorderBrush="#dcdfe6"
+                    Command="{Binding CancelCommand}"
+                    Content="取消"
+                    Foreground="#606266"
+                    Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>
