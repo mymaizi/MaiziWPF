@@ -77,22 +77,10 @@ namespace MaiziWPF.Services.Domain
         public String IsFrame { get; set; }
 
         /// <summary>
-        /// 是否缓存（Y缓存 N不缓存）
-        /// </summary>
-        [Column(Name = "is_cache", DbType = "char(1)")]
-        public String IsCache { get; set; }
-
-        /// <summary>
         /// 菜单类型（M目录 C菜单 F按钮）
         /// </summary>
         [Column(Name = "menu_type", DbType = "char(1)")]
         public String MenuType { get; set; }
-
-        /// <summary>
-        /// 显示状态（0显示 1隐藏）
-        /// </summary>
-        [Column(Name = "visible", DbType = "char(1)")]
-        public String Visible { get; set; }
 
         /// <summary>
         /// 菜单状态（0正常 1停用）
@@ -111,18 +99,6 @@ namespace MaiziWPF.Services.Domain
         /// </summary>
         [Column(Name = "icon", DbType = "varchar(100)")]
         public String Icon { get; set; }
-
-        /// <summary>
-        /// 激活菜单路径
-        /// </summary>
-        [Column(Name = "active_menu", DbType = "varchar(255)")]
-        public String ActiveMenu { get; set; }
-
-        /// <summary>
-        /// 扩展字段
-        /// </summary>
-        [Column(Name = "ext", DbType = "varchar(2000)")]
-        public String Ext { get; set; }
 
         /// <summary>
         /// 子菜单

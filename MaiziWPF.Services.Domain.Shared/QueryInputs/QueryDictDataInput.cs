@@ -6,6 +6,5 @@ namespace MaiziWPF.Services.Domain.Shared
     {
         public string DictType { get; set; }
         public string DictLabel { get; set; }
-        public string Status { get; set; }
     }
 }

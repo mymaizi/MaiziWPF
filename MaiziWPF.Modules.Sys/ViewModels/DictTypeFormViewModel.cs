@@ -38,13 +38,6 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _dictType, value); }
         }
 
-        private string _status = "0";
-        public string Status
-        {
-            get { return _status; }
-            set { SetProperty(ref _status, value); }
-        }
-
         private string _remark;
         public string Remark
         {
@@ -81,7 +74,6 @@ namespace MaiziWPF.Modules.Sys
                 DictId = DictId,
                 DictName = DictName,
                 DictType = DictType,
-                Status = Status,
                 Remark = Remark
             };
 

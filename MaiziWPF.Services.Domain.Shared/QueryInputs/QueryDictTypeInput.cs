@@ -10,6 +10,5 @@ namespace MaiziWPF.Services.Domain.Shared
         public DateTime? EndDate { get; set; }
         public String DictType { get; set; }
         public String DictName { get; set; }
-        public String Status { get; set; }
     }
 }

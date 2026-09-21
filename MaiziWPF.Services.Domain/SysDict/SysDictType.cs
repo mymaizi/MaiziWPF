@@ -28,11 +28,5 @@ namespace MaiziWPF.Services.Domain
         /// </summary>
         [Column(Name = "dict_type", DbType = "varchar(100)")]
         public String DictType { get; set; }
-
-        /// <summary>
-        /// 是否停用（Y是 N否）
-        /// </summary>
-        [Column(Name = "status", DbType = "char(1)")]
-        public String Status { get; set; }
     }
 }

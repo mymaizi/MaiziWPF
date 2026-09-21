@@ -110,14 +110,10 @@ create table sys_menu (
     component         varchar(255)    default null               comment '组件路径',
     query_param       varchar(255)    default null               comment '路由参数',
     is_frame          char(1)         default 'N'                comment '是否为外链（Y是 N否）',
-    is_cache          char(1)         default 'Y'                comment '是否缓存（Y缓存 N不缓存）',
     menu_type         char(1)         default ''                 comment '菜单类型（M目录 C菜单 F按钮）',
-    visible           char(1)         default 0                  comment '显示状态（0显示 1隐藏）',
     status            char(1)         default 0                  comment '菜单状态（0正常 1停用）',
     perms             varchar(100)    default null               comment '权限标识',
     icon              varchar(100)    default '#'                comment '菜单图标',
-    active_menu       varchar(255)    default ''                 comment '激活菜单路径',
-    ext               varchar(2000)   default ''                 comment '扩展字段',
     create_dept       bigint(20)      default null               comment '创建部门',
     create_by         bigint(20)      default null               comment '创建者',
     create_time       datetime                                   comment '创建时间',
@@ -129,127 +125,175 @@ create table sys_menu (
 ) engine=innodb comment = '菜单权限表';
 -- ==================== 首页（C）====================
 -- 1. 首页
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (1, '首页', 0, 0, 'MaiziWPF.Modules.Sys', 'DashboardView', 'C', '0', '0', '', 'Home', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (1, '首页', 0, 0, 'MaiziWPF.Modules.Sys', 'DashboardView', NULL, 'N', 'C', '0', '', 'Home', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 目录（M）====================
 -- 2. 系统管理
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (2, '系统管理', 0, 1, '', '', 'M', '0', '0', '', 'Cog', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2, '系统管理', 0, 1, '', '', NULL, 'N', 'M', '0', '', 'Cog', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- 3. 日志管理
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (3, '日志管理', 0, 2, '', '', 'M', '0', '0', '', 'TextBoxSearch', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3, '日志管理', 0, 2, '', '', NULL, 'N', 'M', '0', '', 'TextBoxSearch', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- 4. 文件管理
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (4, '文件管理', 0, 3, '', '', 'M', '0', '0', '', 'FolderOpen', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (4, '文件管理', 0, 3, '', '', NULL, 'N', 'M', '0', '', 'FolderOpen', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 系统管理 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (200, '用户管理', 2, 1, 'MaiziWPF.Modules.Sys', 'UserListView', 'C', '0', '0', 'system:user:list', 'Account', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (200, '用户管理', 2, 1, 'MaiziWPF.Modules.Sys', 'UserListView', NULL, 'N', 'C', '0', 'system:user:list', 'Account', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (201, '角色管理', 2, 2, 'MaiziWPF.Modules.Sys', 'RoleListView', 'C', '0', '0', 'system:role:list', 'AccountGroup', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (201, '角色管理', 2, 2, 'MaiziWPF.Modules.Sys', 'RoleListView', NULL, 'N', 'C', '0', 'system:role:list', 'AccountGroup', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (202, '菜单管理', 2, 3, 'MaiziWPF.Modules.Sys', 'MenuListView', 'C', '0', '0', 'system:menu:list', 'Menu', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (202, '菜单管理', 2, 3, 'MaiziWPF.Modules.Sys', 'MenuListView', NULL, 'N', 'C', '0', 'system:menu:list', 'Menu', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (203, '部门管理', 2, 4, 'MaiziWPF.Modules.Sys', 'DeptListView', 'C', '0', '0', 'system:dept:list', 'Domain', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (203, '部门管理', 2, 4, 'MaiziWPF.Modules.Sys', 'DeptListView', NULL, 'N', 'C', '0', 'system:dept:list', 'Domain', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (204, '岗位管理', 2, 5, 'MaiziWPF.Modules.Sys', 'PostListView', 'C', '0', '0', 'system:post:list', 'BadgeAccount', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (204, '岗位管理', 2, 5, 'MaiziWPF.Modules.Sys', 'PostListView', NULL, 'N', 'C', '0', 'system:post:list', 'BadgeAccount', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (205, '字典管理', 2, 6, 'MaiziWPF.Modules.Sys', 'DictListView', 'C', '0', '0', 'system:dict:list', 'BookOpenVariant', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (205, '字典管理', 2, 6, 'MaiziWPF.Modules.Sys', 'DictListView', NULL, 'N', 'C', '0', 'system:dict:list', 'BookOpenVariant', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (206, '参数设置', 2, 7, 'MaiziWPF.Modules.Sys', 'ConfigListView', 'C', '0', '0', 'system:config:list', 'CogOutline', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (206, '参数设置', 2, 7, 'MaiziWPF.Modules.Sys', 'ConfigListView', NULL, 'N', 'C', '0', 'system:config:list', 'CogOutline', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (207, '通知公告', 2, 8, 'MaiziWPF.Modules.Sys', 'NoticeListView', 'C', '0', '0', 'system:notice:list', 'BellRing', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (207, '通知公告', 2, 8, 'MaiziWPF.Modules.Sys', 'NoticeListView', NULL, 'N', 'C', '0', 'system:notice:list', 'BellRing', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 日志管理 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (300, '操作日志', 3, 1, 'MaiziWPF.Modules.Sys', 'OperLogListView', 'C', '0', '0', 'monitor:operlog:list', 'TextBox', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (300, '操作日志', 3, 1, 'MaiziWPF.Modules.Sys', 'OperLogListView', NULL, 'N', 'C', '0', 'monitor:operlog:list', 'TextBox', 0, 1, NOW(), 1, NOW(), '', '0');
 
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (301, '登录日志', 3, 2, 'MaiziWPF.Modules.Sys', 'LoginLogListView', 'C', '0', '0', 'monitor:logininfor:list', 'LoginVariant', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (301, '登录日志', 3, 2, 'MaiziWPF.Modules.Sys', 'LoginLogListView', NULL, 'N', 'C', '0', 'monitor:logininfor:list', 'LoginVariant', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 文件管理 子菜单（C）====================
-INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, menu_type, visible, status, perms, icon, is_frame, is_cache, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
-VALUES (400, '文件管理', 4, 1, 'MaiziWPF.Modules.Sys', 'OssListView', 'C', '0', '0', 'system:oss:list', 'FileDocument', 'N', 'Y', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (400, '文件管理', 4, 1, 'MaiziWPF.Modules.Sys', 'OssListView', NULL, 'N', 'C', '0', 'system:oss:list', 'FileDocument', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 用户管理 按钮（F）====================
-insert into sys_menu values(2001, '用户查询', 200, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:user:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2002, '用户新增', 200, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:user:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2003, '用户修改', 200, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:user:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2004, '用户删除', 200, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:user:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2005, '重置密码', 200, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:user:resetPwd', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2006, '分配角色', 200, 6, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:user:assignRole', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2001, '用户查询', 200, 1, '', '', NULL, 'N', 'F', '0', 'system:user:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2002, '用户新增', 200, 2, '', '', NULL, 'N', 'F', '0', 'system:user:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2003, '用户修改', 200, 3, '', '', NULL, 'N', 'F', '0', 'system:user:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2004, '用户删除', 200, 4, '', '', NULL, 'N', 'F', '0', 'system:user:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2005, '重置密码', 200, 5, '', '', NULL, 'N', 'F', '0', 'system:user:resetPwd', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2006, '分配角色', 200, 6, '', '', NULL, 'N', 'F', '0', 'system:user:assignRole', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 角色管理 按钮（F）====================
-insert into sys_menu values(2011, '角色查询', 201, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:role:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2012, '角色新增', 201, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:role:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2013, '角色修改', 201, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:role:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2014, '角色删除', 201, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:role:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2015, '分配权限', 201, 5, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:role:assignPerms', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2016, '分配用户', 201, 6, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:role:assignUser', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2011, '角色查询', 201, 1, '', '', NULL, 'N', 'F', '0', 'system:role:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2012, '角色新增', 201, 2, '', '', NULL, 'N', 'F', '0', 'system:role:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2013, '角色修改', 201, 3, '', '', NULL, 'N', 'F', '0', 'system:role:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2014, '角色删除', 201, 4, '', '', NULL, 'N', 'F', '0', 'system:role:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2015, '分配权限', 201, 5, '', '', NULL, 'N', 'F', '0', 'system:role:assignPerms', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2016, '分配用户', 201, 6, '', '', NULL, 'N', 'F', '0', 'system:role:assignUser', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 菜单管理 按钮（F）====================
-insert into sys_menu values(2021, '菜单查询', 202, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:menu:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2022, '菜单新增', 202, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:menu:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2023, '菜单修改', 202, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:menu:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2024, '菜单删除', 202, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:menu:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2021, '菜单查询', 202, 1, '', '', NULL, 'N', 'F', '0', 'system:menu:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2022, '菜单新增', 202, 2, '', '', NULL, 'N', 'F', '0', 'system:menu:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2023, '菜单修改', 202, 3, '', '', NULL, 'N', 'F', '0', 'system:menu:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2024, '菜单删除', 202, 4, '', '', NULL, 'N', 'F', '0', 'system:menu:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 部门管理 按钮（F）====================
-insert into sys_menu values(2031, '部门查询', 203, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dept:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2032, '部门新增', 203, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dept:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2033, '部门修改', 203, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dept:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2034, '部门删除', 203, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dept:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2031, '部门查询', 203, 1, '', '', NULL, 'N', 'F', '0', 'system:dept:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2032, '部门新增', 203, 2, '', '', NULL, 'N', 'F', '0', 'system:dept:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2033, '部门修改', 203, 3, '', '', NULL, 'N', 'F', '0', 'system:dept:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2034, '部门删除', 203, 4, '', '', NULL, 'N', 'F', '0', 'system:dept:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 岗位管理 按钮（F）====================
-insert into sys_menu values(2041, '岗位查询', 204, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:post:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2042, '岗位新增', 204, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:post:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2043, '岗位修改', 204, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:post:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2044, '岗位删除', 204, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:post:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2041, '岗位查询', 204, 1, '', '', NULL, 'N', 'F', '0', 'system:post:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2042, '岗位新增', 204, 2, '', '', NULL, 'N', 'F', '0', 'system:post:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2043, '岗位修改', 204, 3, '', '', NULL, 'N', 'F', '0', 'system:post:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2044, '岗位删除', 204, 4, '', '', NULL, 'N', 'F', '0', 'system:post:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 字典管理 按钮（F）====================
-insert into sys_menu values(2051, '字典查询', 205, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dict:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2052, '字典新增', 205, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dict:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2053, '字典修改', 205, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dict:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2054, '字典删除', 205, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:dict:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2051, '字典查询', 205, 1, '', '', NULL, 'N', 'F', '0', 'system:dict:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2052, '字典新增', 205, 2, '', '', NULL, 'N', 'F', '0', 'system:dict:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2053, '字典修改', 205, 3, '', '', NULL, 'N', 'F', '0', 'system:dict:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2054, '字典删除', 205, 4, '', '', NULL, 'N', 'F', '0', 'system:dict:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 参数设置 按钮（F）====================
-insert into sys_menu values(2061, '参数查询', 206, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:config:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2062, '参数新增', 206, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:config:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2063, '参数修改', 206, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:config:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2064, '参数删除', 206, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:config:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2061, '参数查询', 206, 1, '', '', NULL, 'N', 'F', '0', 'system:config:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2062, '参数新增', 206, 2, '', '', NULL, 'N', 'F', '0', 'system:config:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2063, '参数修改', 206, 3, '', '', NULL, 'N', 'F', '0', 'system:config:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2064, '参数删除', 206, 4, '', '', NULL, 'N', 'F', '0', 'system:config:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 通知公告 按钮（F）====================
-insert into sys_menu values(2071, '公告查询', 207, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:notice:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2072, '公告新增', 207, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:notice:add', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2073, '公告修改', 207, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:notice:edit', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(2074, '公告删除', 207, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:notice:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2071, '公告查询', 207, 1, '', '', NULL, 'N', 'F', '0', 'system:notice:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2072, '公告新增', 207, 2, '', '', NULL, 'N', 'F', '0', 'system:notice:add', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2073, '公告修改', 207, 3, '', '', NULL, 'N', 'F', '0', 'system:notice:edit', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (2074, '公告删除', 207, 4, '', '', NULL, 'N', 'F', '0', 'system:notice:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 操作日志 按钮（F）====================
-insert into sys_menu values(3001, '日志查询', 300, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:operlog:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(3002, '日志删除', 300, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:operlog:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(3003, '日志清空', 300, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:operlog:clean', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(3004, '日志导出', 300, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:operlog:export', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3001, '日志查询', 300, 1, '', '', NULL, 'N', 'F', '0', 'monitor:operlog:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3002, '日志删除', 300, 2, '', '', NULL, 'N', 'F', '0', 'monitor:operlog:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3003, '日志清空', 300, 3, '', '', NULL, 'N', 'F', '0', 'monitor:operlog:clean', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3004, '日志导出', 300, 4, '', '', NULL, 'N', 'F', '0', 'monitor:operlog:export', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 登录日志 按钮（F）====================
-insert into sys_menu values(3011, '日志查询', 301, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:logininfor:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(3012, '日志删除', 301, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:logininfor:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(3013, '日志清空', 301, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:logininfor:clean', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(3014, '日志导出', 301, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'monitor:logininfor:export', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3011, '日志查询', 301, 1, '', '', NULL, 'N', 'F', '0', 'monitor:logininfor:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3012, '日志删除', 301, 2, '', '', NULL, 'N', 'F', '0', 'monitor:logininfor:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3013, '日志清空', 301, 3, '', '', NULL, 'N', 'F', '0', 'monitor:logininfor:clean', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (3014, '日志导出', 301, 4, '', '', NULL, 'N', 'F', '0', 'monitor:logininfor:export', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ==================== 文件管理 按钮（F）====================
-insert into sys_menu values(4001, '文件查询', 400, 1, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:oss:query', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(4002, '文件上传', 400, 2, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:oss:upload', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(4003, '文件删除', 400, 3, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:oss:remove', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
-insert into sys_menu values(4004, '文件下载', 400, 4, '', '', '', 'N', 'Y', 'F', '0', '0', 'system:oss:download', '#', '', '', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (4001, '文件查询', 400, 1, '', '', NULL, 'N', 'F', '0', 'system:oss:query', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (4002, '文件上传', 400, 2, '', '', NULL, 'N', 'F', '0', 'system:oss:upload', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (4003, '文件删除', 400, 3, '', '', NULL, 'N', 'F', '0', 'system:oss:remove', '#', 0, 1, NOW(), 1, NOW(), '', '0');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query_param, is_frame, menu_type, status, perms, icon, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) 
+VALUES (4004, '文件下载', 400, 4, '', '', NULL, 'N', 'F', '0', 'system:oss:download', '#', 0, 1, NOW(), 1, NOW(), '', '0');
 
 -- ----------------------------
 -- 6、用户和角色关联表  用户N-1角色
@@ -332,7 +376,6 @@ create table sys_dict_type
     update_by        bigint(20)      default null               comment '更新者',
     update_time      datetime                                   comment '更新时间',
     remark           varchar(500)    default null               comment '备注',
-    status           char(1)         default 'N'                comment '是否停用（Y是 N否）',
     del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (dict_id),
     unique (dict_type)
@@ -354,7 +397,6 @@ create table sys_dict_data
     update_by        bigint(20)      default null               comment '更新者',
     update_time      datetime                                   comment '更新时间',
     remark           varchar(500)    default null               comment '备注',
-    status           char(1)         default 'N'                comment '是否停用（Y是 N否）',
     del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (dict_code),
     key idx_sys_dict_data_type (dict_type)

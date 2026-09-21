@@ -74,8 +74,6 @@ namespace MaiziWPF.Modules.Sys
                 form.Path = menu.Path;
                 form.Query = menu.QueryParam;
                 form.IsFrame = menu.IsFrame == "Y";
-                form.IsCache = menu.IsCache == "Y";
-                form.IsVisible = menu.Visible == "0";
                 form.OnSaveSuccessCallback = () =>
                 {
                     SearchButtonCommand.Execute(this);

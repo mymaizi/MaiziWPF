@@ -38,24 +38,6 @@
                         FontSize="16"
                         Text="{Binding QueryPageInfo.DictType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </materialDesign:Card>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <ComboBox
-                        maiziWPF:DataDictAssist.Type="sys_normal_disable"
-                        materialDesign:HintAssist.Hint="字典状态"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        SelectedItem="{Binding QueryPageInfo.Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate DataType="{x:Type domain:SysDictData}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding DictLabel}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </materialDesign:Card>
                 <materialDesign:Card Width="280" Style="{StaticResource FormCardStyle}">
                     <maiziWPF:DateRangeControl EndDateTime="{Binding QueryPageInfo.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" StartDateTime="{Binding QueryPageInfo.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </materialDesign:Card>
@@ -120,23 +102,6 @@
                         Binding="{Binding DictType}"
                         Header="字典类型"
                         IsReadOnly="True" />
-                    <DataGridTemplateColumn Header="状态">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type domain:SysDictType}">
-                                <Label x:Name="statusLabel" HorizontalAlignment="Center" />
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding Status}" Value="1">
-                                        <Setter TargetName="statusLabel" Property="Content" Value="停用" />
-                                        <Setter TargetName="statusLabel" Property="Foreground" Value="#999999" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Status}" Value="0">
-                                        <Setter TargetName="statusLabel" Property="Content" Value="正常" />
-                                        <Setter TargetName="statusLabel" Property="Foreground" Value="#1890ff" />
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
                     <DataGridTextColumn
                         Binding="{Binding Remark}"
                         Header="备注"

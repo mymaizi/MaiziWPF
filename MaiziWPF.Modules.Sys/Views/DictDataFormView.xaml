@@ -43,7 +43,6 @@
                 <RowDefinition Height="60" />
                 <RowDefinition Height="60" />
                 <RowDefinition Height="60" />
-                <RowDefinition Height="60" />
                 <RowDefinition Height="88" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -132,27 +131,9 @@
                 Grid.Row="4"
                 Grid.Column="0"
                 Style="{StaticResource FormLabel}"
-                Text="状态：" />
-            <StackPanel
-                Grid.Row="4"
-                Grid.Column="1"
-                Style="{StaticResource FormRadioGroup}">
-                <RadioButton
-                    Margin="0,0,16,0"
-                    Content="启用"
-                    IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='1'}" />
-                <RadioButton
-                    Content="禁用"
-                    IsChecked="{Binding Status, Converter={StaticResource BooleanConverter}, ConverterParameter='0'}" />
-            </StackPanel>
-
-            <TextBlock
-                Grid.Row="5"
-                Grid.Column="0"
-                Style="{StaticResource FormLabel}"
                 Text="备注：" />
             <TextBox
-                Grid.Row="5"
+                Grid.Row="4"
                 Grid.Column="1"
                 Height="60"
                 materialDesign:HintAssist.Hint="请输入备注"
@@ -162,7 +143,7 @@
                 TextWrapping="Wrap" />
 
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="5"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Margin="0,16,0,0"

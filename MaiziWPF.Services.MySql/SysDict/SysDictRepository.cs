@@ -16,7 +16,7 @@ namespace MaiziWPF.Services.MySql
 
         public List<SysDictData> SelectDictDataByType(string dictType)
         {
-            return _fsql.Select<SysDictData>().Where(w => w.Status == "N" && w.DictType == dictType).OrderBy(o => o.DictSort).ToList();
+            return _fsql.Select<SysDictData>().Where(w => w.DictType == dictType).OrderBy(o => o.DictSort).ToList();
         }
 
         public List<SysDictType> SelectDictTypeList(QueryDictTypeInput input)
@@ -24,8 +24,6 @@ namespace MaiziWPF.Services.MySql
             System.Linq.Expressions.Expression<Func<SysDictType, bool>> where = w => w.DelFlag == "0";
             if (!string.IsNullOrEmpty(input.DictName))
                 where = where.And(w => w.DictName.Contains(input.DictName));
-            if (!string.IsNullOrEmpty(input.Status))
-                where = where.And(w => w.Status == input.Status);
             if (!string.IsNullOrEmpty(input.DictType))
                 where = where.And(w => w.DictType.Contains(input.DictType));
             if (input.StartDate.HasValue && input.EndDate.HasValue)
@@ -37,7 +35,7 @@ namespace MaiziWPF.Services.MySql
         public SysDictType SelectDictTypeById(long dictId)
         {
             return _fsql.Select<SysDictType>()
-                .Where(d => d.DictId == dictId && d.DelFlag == "0"&& d.Status == "N")
+                .Where(d => d.DictId == dictId && d.DelFlag == "0")
                 .First();
         }
 
@@ -77,8 +75,6 @@ namespace MaiziWPF.Services.MySql
                 where = where.And(d => d.DictType == input.DictType);
             if (!string.IsNullOrEmpty(input.DictLabel))
                 where = where.And(d => d.DictLabel.Contains(input.DictLabel));
-            if (!string.IsNullOrEmpty(input.Status))
-                where = where.And(d => d.Status == input.Status);
 
             return _fsql.Select<SysDictData>()
                 .Where(where)

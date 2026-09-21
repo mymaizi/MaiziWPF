@@ -120,19 +120,6 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _query, value); }
         }
 
-        private bool _isCache = true;
-        public bool IsCache
-        {
-            get { return _isCache; }
-            set { SetProperty(ref _isCache, value); }
-        }
-
-        private bool _isVisible = true;
-        public bool IsVisible
-        {
-            get { return _isVisible; }
-            set { SetProperty(ref _isVisible, value); }
-        }
         private bool _isFrame = false;
         public bool IsFrame
         {
@@ -176,8 +163,6 @@ namespace MaiziWPF.Modules.Sys
                 Path = Path,
                 QueryParam = Query,
                 IsFrame = IsFrame ? "Y" : "N",
-                IsCache = IsCache ? "Y" : "N",
-                Visible = IsVisible ? "0" : "1",
             };
 
             if (!_menuService.CheckMenuNameUnique(menu))

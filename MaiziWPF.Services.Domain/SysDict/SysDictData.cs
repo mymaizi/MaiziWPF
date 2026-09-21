@@ -46,11 +46,5 @@ namespace MaiziWPF.Services.Domain
         /// </summary>
         [Column(Name = "is_default", DbType = "char(1)")]
         public String IsDefault { get; set; }
-
-        /// <summary>
-        /// 是否停用（Y是 N否）
-        /// </summary>
-        [Column(Name = "status", DbType = "char(1)")]
-        public String Status { get; set; }
     }
 }

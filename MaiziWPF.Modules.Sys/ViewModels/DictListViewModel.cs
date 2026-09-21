@@ -61,7 +61,6 @@ namespace MaiziWPF.Modules.Sys
                     model.DictId = dictType.DictId;
                     model.DictName = dictType.DictName;
                     model.DictType = dictType.DictType;
-                    model.Status = dictType.Status;
                     model.Remark = dictType.Remark;
                 }
                 else

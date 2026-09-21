@@ -299,19 +299,6 @@
                         FontSize="13"
                         Text="{Binding Query}"
                         materialDesign:HintAssist.Hint="请输入路由参数" />
-                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="是否缓存" />
-                    <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
-                        <RadioButton
-                            Content="缓存"
-                            GroupName="IsCache"
-                            IsChecked="{Binding IsCache}"
-                            Style="{StaticResource RadioStyle}" />
-                        <RadioButton
-                            Content="不缓存"
-                            GroupName="IsCache"
-                            IsChecked="{Binding IsCache, Converter={StaticResource InverseBooleanConverter}}"
-                            Style="{StaticResource RadioStyle}" />
-                    </StackPanel>
                 </Grid>
 
                 <Grid Margin="0,0,0,12">
@@ -332,25 +319,9 @@
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="12" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="显示状态" />
+                    <TextBlock Grid.Column="0" Style="{StaticResource FormLabel}" Text="菜单状态" />
                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                        <RadioButton
-                            Content="显示"
-                            GroupName="IsVisible"
-                            IsChecked="{Binding IsVisible}"
-                            Style="{StaticResource RadioStyle}" />
-                        <RadioButton
-                            Content="隐藏"
-                            GroupName="IsVisible"
-                            IsChecked="{Binding IsVisible, Converter={StaticResource InverseBooleanConverter}}"
-                            Style="{StaticResource RadioStyle}" />
-                    </StackPanel>
-                    <TextBlock Grid.Column="3" Style="{StaticResource FormLabel}" Text="菜单状态" />
-                    <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
                         <RadioButton
                             Content="正常"
                             GroupName="Status"
