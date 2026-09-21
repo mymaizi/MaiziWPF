@@ -45,32 +45,32 @@ namespace MaiziWPF.Core
         }
 
         public void RegisterQueryFunc(Func<T1, List<T>> loadDataFunc, T1 t1,
-            Action<T1> resetAction = null, Action<Exception> onError = null)
+            Action<T1> resetAction = null, Action<Exception> onError = null, Action loadedAction = null)
         {
-            RegisterQueryFunc(input => Task.FromResult(loadDataFunc(input)), t1, resetAction, onError);
+            RegisterQueryFunc(input => Task.FromResult(loadDataFunc(input)), t1, resetAction, onError, loadedAction);
         }
 
         public void RegisterQueryFunc(Func<T1, Task<List<T>>> loadDataFuncAsync, T1 t1,
-            Action<T1> resetAction = null, Action<Exception> onError = null)
+            Action<T1> resetAction = null, Action<Exception> onError = null, Action loadedAction = null)
         {
             QueryPageInfo = t1;
 
             SearchButtonCommand = new DelegateCommand(async () =>
             {
                 QueryPageInfo.PageNumber = 1;
-                await LoadDataAsync(loadDataFuncAsync, onError);
+                await LoadDataAsync(loadDataFuncAsync, onError, loadedAction);
             });
 
             PrevButtonCommand = new DelegateCommand(async () =>
             {
                 QueryPageInfo.PageNumber--;
-                await LoadDataAsync(loadDataFuncAsync, onError);
+                await LoadDataAsync(loadDataFuncAsync, onError, loadedAction);
             });
 
             NextButtonCommand = new DelegateCommand(async () =>
             {
                 QueryPageInfo.PageNumber++;
-                await LoadDataAsync(loadDataFuncAsync, onError);
+                await LoadDataAsync(loadDataFuncAsync, onError, loadedAction);
             });
 
             PageSizeChangedCommand = new DelegateCommand<int?>(async size =>
@@ -78,7 +78,7 @@ namespace MaiziWPF.Core
                 if (size.HasValue && size.Value > 0)
                 {
                     QueryPageInfo.PageSize = size.Value;
-                    await LoadDataAsync(loadDataFuncAsync, onError);
+                    await LoadDataAsync(loadDataFuncAsync, onError, loadedAction);
                 }
             });
 
@@ -93,7 +93,7 @@ namespace MaiziWPF.Core
 
         #region 私有方法
 
-        private async Task LoadDataAsync(Func<T1, Task<List<T>>> loadDataFuncAsync, Action<Exception> onError)
+        private async Task LoadDataAsync(Func<T1, Task<List<T>>> loadDataFuncAsync, Action<Exception> onError, Action loadedAction = null)
         {
             try
             {
@@ -103,6 +103,7 @@ namespace MaiziWPF.Core
                 PageNumber = QueryPageInfo.PageNumber;
                 PageSize = QueryPageInfo.PageSize;
                 Count = QueryPageInfo.Count;
+                loadedAction?.Invoke();
             }
             catch (Exception ex)
             {

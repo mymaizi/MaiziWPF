@@ -2,7 +2,6 @@ using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
-using System;
 
 namespace MaiziWPF.Modules.Sys
 {
@@ -56,7 +55,7 @@ namespace MaiziWPF.Modules.Sys
             });
         }
 
-        private async void SaveDictType()
+        private void SaveDictType()
         {
             if (string.IsNullOrWhiteSpace(DictName))
             {
@@ -83,24 +82,19 @@ namespace MaiziWPF.Modules.Sys
                 return;
             }
 
-            try
+            if (IsEditMode)
             {
-                if (IsEditMode)
-                {
-                    _dictService.UpdateDictType(dictType);
-                }
-                else
-                {
-                    _dictService.InsertDictType(dictType);
-                }
-                OnSaveSuccessCallback?.Invoke();
-                ShowSuccess("保存成功");
-                CloseDialog();
+                _dictService.UpdateDictType(dictType);
+                ShowSuccess("修改成功");
             }
-            catch (Exception ex)
+            else
             {
-                ShowError(ex.Message);
+                _dictService.InsertDictType(dictType);
+                ShowSuccess("新增成功");
             }
+
+            OnSaveSuccessCallback?.Invoke();
+            CloseDialog();
         }
     }
 }

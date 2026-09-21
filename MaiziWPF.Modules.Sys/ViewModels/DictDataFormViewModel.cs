@@ -2,7 +2,6 @@ using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using Prism.Commands;
-using System;
 
 namespace MaiziWPF.Modules.Sys
 {
@@ -52,20 +51,6 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _dictSort, value); }
         }
 
-        private string _cssClass = string.Empty;
-        public string CssClass
-        {
-            get { return _cssClass; }
-            set { SetProperty(ref _cssClass, value); }
-        }
-
-        private string _listClass = string.Empty;
-        public string ListClass
-        {
-            get { return _listClass; }
-            set { SetProperty(ref _listClass, value); }
-        }
-
         private string _isDefault = "N";
         public string IsDefault
         {
@@ -91,7 +76,7 @@ namespace MaiziWPF.Modules.Sys
             });
         }
 
-        private async void SaveDictData()
+        private void SaveDictData()
         {
             if (string.IsNullOrWhiteSpace(DictLabel))
             {
@@ -115,24 +100,19 @@ namespace MaiziWPF.Modules.Sys
                 Remark = Remark
             };
 
-            try
+            if (IsEditMode)
             {
-                if (IsEditMode)
-                {
-                    _dictService.UpdateDictData(dictData);
-                }
-                else
-                {
-                    _dictService.InsertDictData(dictData);
-                }
-                OnSaveSuccessCallback?.Invoke();
-                ShowSuccess("保存成功");
-                CloseDialog();
+                _dictService.UpdateDictData(dictData);
+                ShowSuccess("修改成功");
             }
-            catch (Exception ex)
+            else
             {
-                ShowError(ex.Message);
+                _dictService.InsertDictData(dictData);
+                ShowSuccess("新增成功");
             }
+
+            OnSaveSuccessCallback?.Invoke();
+            CloseDialog();
         }
     }
 }
