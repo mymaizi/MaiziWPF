@@ -449,8 +449,11 @@ create table sys_config (
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
     remark            varchar(500)    default null               comment '备注',
+    del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (config_id)
 ) engine=innodb comment = '参数配置表';
+INSERT INTO sys_config ('config_id', 'config_name', 'config_key', 'config_value', 'config_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761700000000000001, '用户管理-账号初始密码', 'sys.user.initPassword', '123456', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '初始化密码 123456', '0');
+INSERT INTO sys_config ('config_id', 'config_name', 'config_key', 'config_value', 'config_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761700000000000003, 'OSS预览列表资源开关', 'sys.oss.previewListResource', 'true', 'Y', 0, 0, '0001-01-01 00:00:00.000', 0, '2026-09-21 16:09:54.472', 'true:开启, false:关闭', '0');
 -- ----------------------------
 -- 14、系统访问记录
 -- ----------------------------

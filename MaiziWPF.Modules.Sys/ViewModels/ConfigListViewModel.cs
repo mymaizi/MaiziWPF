@@ -16,7 +16,22 @@ namespace MaiziWPF.Modules.Sys
         private readonly IDialogHostService _dialogHostService;
         private readonly ISnackbarService _snackbarService;
 
+        private string _selectedConfigTypeFilter;
+
+        public string SelectedConfigTypeFilter
+        {
+            get => _selectedConfigTypeFilter;
+            set
+            {
+                SetProperty(ref _selectedConfigTypeFilter, value);
+                QueryPageInfo.ConfigType = value == "全部" ? null : (value == "系统内置" ? "Y" : "N");
+                QueryPageInfo.PageNumber = 1;
+                SearchButtonCommand.Execute(this);
+            }
+        }
+
         public ICommand AddConfigCommand { get; }
+        public ICommand ResetButtonCommand { get; }
 
         public ConfigListViewModel(ISysConfigService configService, IContainerProvider containerProvider, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
@@ -24,6 +39,8 @@ namespace MaiziWPF.Modules.Sys
             _containerProvider = containerProvider;
             _dialogHostService = dialogHostService;
             _snackbarService = snackbarService;
+
+            _selectedConfigTypeFilter = "全部";
 
             RegisterQueryFunc(input =>
             {
@@ -33,6 +50,13 @@ namespace MaiziWPF.Modules.Sys
             AddConfigCommand = new DelegateCommand(() =>
             {
                 OpenConfigForm(null);
+            });
+
+            ResetButtonCommand = new DelegateCommand(() =>
+            {
+                SelectedConfigTypeFilter = "全部";
+                QueryPageInfo = new QueryConfigInput() { PageNumber = 1, PageSize = 10 };
+                SearchButtonCommand.Execute(this);
             });
 
             NewOrEditButtonCommand = new DelegateCommand<SysConfig>((config) =>

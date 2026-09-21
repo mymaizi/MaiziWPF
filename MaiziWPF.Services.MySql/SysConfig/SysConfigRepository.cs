@@ -51,7 +51,7 @@ namespace MaiziWPF.Services.MySql
         public int DeleteConfigById(long configId)
         {
             return _fsql.Update<SysConfig>()
-                .Set(c => c.DelFlag, "2")
+                .Set(c => c.DelFlag, "1")
                 .Where(c => c.ConfigId == configId)
                 .ExecuteAffrows();
         }
