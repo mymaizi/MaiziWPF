@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-**MaiziWPF** 是一个使用 **WPF（.NET 10）** 技术栈构建的桌面端后台管理系统，参考了 **若依（RuoYi）** 管理系统的功能设计理念，并借鉴了 **ABP（Volo.Abp）** 框架的模块化分层架构思想。项目采用 **Prism** 实现 MVVM 模式与模块化加载，使用 **Material Design Themes** 提供现代化的 Material Design 风格 UI 界面。
+**MaiziWPF** 是一个使用 **WPF（.NET 10）** 技术栈构建的桌面端后台管理系统，参考了 **若依（RuoYi-Vue-Plus）** 管理系统的功能设计理念，并借鉴了 **ABP（Volo.Abp）** 框架的模块化分层架构思想。项目采用 **Prism** 实现 MVVM 模式与模块化加载，使用 **Material Design Themes** 提供现代化的 Material Design 风格 UI 界面。
 
 ## 技术栈
 
@@ -105,8 +105,8 @@ MaiziWPF ────────────► MaiziWPF.Core
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/mymaizi/wpfdemo.git
-cd wpfdemo
+git clone https://github.com/mymaizi/MaiziWPF.git
+cd MaiziWPF
 ```
 
 ### 2. 配置数据库
