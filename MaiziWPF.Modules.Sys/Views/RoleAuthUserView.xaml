@@ -189,8 +189,8 @@
                             <Button
                                 Grid.Column="4"
                                 Padding="10,4"
-                                Background="#1890ff"
-                                BorderBrush="#1890ff"
+                                Background="#07bf96"
+                                BorderBrush="#07bf96"
                                 Command="{Binding LoadDataCommand}"
                                 Foreground="#fff"
                                 FontSize="12"

@@ -21,10 +21,17 @@ namespace MaiziWPF.Services.MySql
                 where = where.And(d => d.FileName.Contains(input.FileName));
             if (!string.IsNullOrEmpty(input.OriginalName))
                 where = where.And(d => d.OriginalName.Contains(input.OriginalName));
+            if (!string.IsNullOrEmpty(input.FileSuffix))
+                where = where.And(d => d.FileSuffix.Contains(input.FileSuffix));
             if (!string.IsNullOrEmpty(input.Service))
                 where = where.And(d => d.Service == input.Service);
+            if (input.StartDate.HasValue)
+                where = where.And(d => d.CreateTime >= input.StartDate.Value);
+            if (input.EndDate.HasValue)
+                where = where.And(d => d.CreateTime <= input.EndDate.Value);
 
             return _fsql.Select<SysOss>()
+                .Include(n => n.CreateUser)
                 .Where(where)
                 .OrderByDescending(d => d.CreateTime)
                 .Page(input)
@@ -34,6 +41,7 @@ namespace MaiziWPF.Services.MySql
         public SysOss SelectOssById(long ossId)
         {
             return _fsql.Select<SysOss>()
+                .Include(n => n.CreateUser)
                 .Where(d => d.OssId == ossId)
                 .First();
         }

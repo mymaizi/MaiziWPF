@@ -27,6 +27,7 @@ namespace MaiziWPF.Services.MySql
                 where = where.And(d => d.CreateTime.Between(input.StartDate.Value, input.EndDate.Value));
 
             return _fsql.Select<SysNotice>()
+                .Include(n => n.CreateUser)
                 .Where(where)
                 .OrderByDescending(d => d.CreateTime)
                 .Page(input)
@@ -36,6 +37,7 @@ namespace MaiziWPF.Services.MySql
         public SysNotice SelectNoticeById(long noticeId)
         {
             return _fsql.Select<SysNotice>()
+                .Include(n => n.CreateUser)
                 .Where(d => d.NoticeId == noticeId && d.DelFlag == "0")
                 .First();
         }

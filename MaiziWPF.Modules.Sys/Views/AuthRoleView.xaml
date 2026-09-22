@@ -188,8 +188,8 @@
                             <Button
                                 Grid.Column="4"
                                 Padding="10,4"
-                                Background="#1890ff"
-                                BorderBrush="#1890ff"
+                                Background="#07bf96"
+                                BorderBrush="#07bf96"
                                 Command="{Binding LoadDataCommand}"
                                 Foreground="#fff"
                                 FontSize="12"
@@ -311,12 +311,11 @@
             <Button
                 Width="80" Height="36"
                 Margin="0,0,12,0"
-                Background="#1890ff"
-                BorderBrush="#1890ff"
+                BorderBrush="#d9d9d9"
                 Command="{Binding CancelCommand}"
                 Content="关闭"
-                Foreground="#fff"
-                Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                Foreground="#606266"
+                Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
         </StackPanel>
     </Grid>
 </UserControl>

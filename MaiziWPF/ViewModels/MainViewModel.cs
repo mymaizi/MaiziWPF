@@ -35,6 +35,7 @@ namespace MaiziWPF.ViewModels
         public ICommand MenuSelectionCommand { get; }
         public ICommand ToggleMoreMenuCommand { get; }
         public ICommand LogoutCommand { get; }
+        public ICommand OpenProfileCommand { get; }
         private List<SysMenu> _menuItems;
         public List<SysMenu> MenuItems
         {
@@ -118,6 +119,32 @@ namespace MaiziWPF.ViewModels
                 _currentUserService.Clear();
                 _regionManager.Regions[RegionNames.TabRegion].RemoveAll();
                 _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(Views.LoginView));
+            });
+            OpenProfileCommand = new DelegateCommand(() =>
+            {
+                IsMoreMenuOpen = false;
+                var tabRegion = _regionManager.Regions[RegionNames.TabRegion];
+                if (!tabRegion.Views.Any(v => v.GetType().Name == "ProfileView"))
+                {
+                    var view = ContainerLocator.Container.Resolve(typeof(MaiziWPF.Modules.Sys.ProfileView)) as FrameworkElement;
+                    if (view != null)
+                    {
+                        (view.DataContext as ITabItemInfo)?.Header = "个人信息";
+                        (view.DataContext as ITabItemInfo)?.Component = "ProfileView";
+                        tabRegion.Add(view);
+                        SelectedItem = view;
+                        SelectedComponent = "ProfileView";
+                    }
+                }
+                else
+                {
+                    var view = tabRegion.Views.FirstOrDefault(v => v.GetType().Name == "ProfileView");
+                    if (view != null)
+                    {
+                        SelectedItem = view;
+                        SelectedComponent = "ProfileView";
+                    }
+                }
             });
 
             MenuItems = _currentUserService.MenuTree;

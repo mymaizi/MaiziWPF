@@ -38,8 +38,6 @@ namespace MaiziWPF.Modules.Sys
             {
                 await CleanLog();
             });
-
-            SearchButtonCommand.Execute(this);
         }
 
         private async Task BatchDeleteLogs(IList selectedItems)

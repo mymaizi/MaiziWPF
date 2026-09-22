@@ -92,7 +92,7 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                <Button Margin="0,0,8,0" Padding="16,6" Background="#1890ff" BorderBrush="#1890ff" Command="{Binding SearchButtonCommand}" Content="搜索" Foreground="#fff" Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                                <Button Margin="0,0,8,0" Padding="16,6" Background="#07bf96" BorderBrush="#07bf96" Command="{Binding SearchButtonCommand}" Content="搜索" Foreground="#fff" Style="{StaticResource MaterialDesignRaisedLightButton}" />
                                 <Button Padding="16,6" BorderBrush="#dcdfe6" Command="{Binding ResetButtonCommand}" Content="重置" Foreground="#606266" Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
                             </StackPanel>
                         </WrapPanel>
@@ -116,8 +116,8 @@
                     <Button
                         Grid.Column="1"
                         Padding="12,6"
-                        Background="#1890ff"
-                        BorderBrush="#1890ff"
+                        Background="#07bf96"
+                        BorderBrush="#07bf96"
                         Command="{Binding AddConfigCommand}"
                         Foreground="#fff"
                         Style="{StaticResource MaterialDesignRaisedLightButton}">

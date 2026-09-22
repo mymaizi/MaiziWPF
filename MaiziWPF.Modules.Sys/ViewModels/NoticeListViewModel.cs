@@ -5,7 +5,9 @@ using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
 using Prism.Ioc;
 using System;
-using System.Windows.Input;
+using System.Collections;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MaiziWPF.Modules.Sys
 {
@@ -15,8 +17,6 @@ namespace MaiziWPF.Modules.Sys
         private readonly IContainerProvider _containerProvider;
         private readonly IDialogHostService _dialogHostService;
         private readonly ISnackbarService _snackbarService;
-
-        public ICommand AddNoticeCommand { get; }
 
         public NoticeListViewModel(ISysNoticeService noticeService, IContainerProvider containerProvider, IDialogHostService dialogHostService, ISnackbarService snackbarService)
         {
@@ -30,67 +30,112 @@ namespace MaiziWPF.Modules.Sys
                 return _noticeService.SelectNoticeList(input);
             }, new QueryNoticeInput() { PageNumber = 1, PageSize = 10 });
 
-            AddNoticeCommand = new DelegateCommand(() =>
-            {
-                OpenNoticeForm(null);
-            });
-
-            NewOrEditButtonCommand = new DelegateCommand<SysNotice>((notice) =>
-            {
-                OpenNoticeForm(notice);
-            });
-
-            DeleteButtonCommand = new DelegateCommand<SysNotice>(async (notice) =>
-            {
-                await DeleteNotice(notice);
-            });
-
-            SearchButtonCommand.Execute(this);
+            AddButtonCommand = new DelegateCommand(async () => await AddNotice());
+            EditButtonCommand = new DelegateCommand<SysNotice>(async (notice) => await EditNotice(notice));
+            ViewButtonCommand = new DelegateCommand<SysNotice>(async (notice) => await ViewNotice(notice));
+            DeleteButtonCommand = new DelegateCommand<SysNotice>(async (notice) => await DeleteNotice(notice));
+            BatchDeleteCommand = new DelegateCommand<IList>(async (selectedItems) => await BatchDeleteNotices(selectedItems));
         }
 
-        private async System.Threading.Tasks.Task OpenNoticeForm(SysNotice notice)
+        public DelegateCommand AddButtonCommand { get; }
+        public DelegateCommand<SysNotice> EditButtonCommand { get; }
+        public DelegateCommand<SysNotice> ViewButtonCommand { get; }
+        public DelegateCommand<SysNotice> DeleteButtonCommand { get; }
+        public DelegateCommand<IList> BatchDeleteCommand { get; }
+
+        private async Task AddNotice()
         {
             await _dialogHostService.ShowDialogAsync<NoticeFormView>(vm =>
             {
-                var model = (NoticeFormViewModel)vm;
-
-                if (notice != null)
-                {
-                    model.IsEditMode = true;
-                    model.NoticeId = notice.NoticeId;
-                    model.NoticeTitle = notice.NoticeTitle;
-                    model.NoticeType = notice.NoticeType;
-                    model.NoticeContent = notice.NoticeContent;
-                    model.Status = notice.Status;
-                }
-                else
-                {
-                    model.IsEditMode = false;
-                }
-
-                model.OnSaveSuccessCallback = () =>
+                var form = (NoticeFormViewModel)vm;
+                form.DialogTitle = "新增公告";
+                form.IsEditMode = false;
+                form.NoticeId = 0;
+                form.OnSaveSuccessCallback = () =>
                 {
                     SearchButtonCommand.Execute(this);
                 };
             });
         }
 
-        private async System.Threading.Tasks.Task DeleteNotice(SysNotice notice)
+        private async Task EditNotice(SysNotice notice)
         {
             if (notice == null) return;
 
-            var result = await _dialogHostService.ConfirmAsync($"确定要删除公告【{notice.NoticeTitle}】吗？", "删除确认");
-            if (!result) return;
+            await _dialogHostService.ShowDialogAsync<NoticeFormView>(vm =>
+            {
+                var form = (NoticeFormViewModel)vm;
+                form.DialogTitle = "修改公告";
+                form.IsEditMode = true;
+                form.NoticeId = notice.NoticeId;
+                form.NoticeTitle = notice.NoticeTitle;
+                form.NoticeType = notice.NoticeType;
+                form.NoticeContent = notice.NoticeContent;
+                form.Status = notice.Status;
+                form.Remark = notice.Remark;
+                form.OnSaveSuccessCallback = () =>
+                {
+                    SearchButtonCommand.Execute(this);
+                };
+            });
+        }
+
+        private async Task ViewNotice(SysNotice notice)
+        {
+            if (notice == null) return;
+
+            await _dialogHostService.ShowDialogAsync<NoticeDetailView>(vm =>
+            {
+                var detail = (NoticeDetailViewModel)vm;
+                detail.SetNotice(notice);
+            });
+        }
+
+        private async Task DeleteNotice(SysNotice notice)
+        {
+            if (notice == null) return;
 
             try
             {
-                _noticeService.DeleteNoticeById(notice.NoticeId);
-                _snackbarService.EnqueueSuccess("删除成功");
-                SearchButtonCommand.Execute(this);
+                var result = await _dialogHostService.ConfirmAsync($"确定要删除公告 '{notice.NoticeTitle}' 吗？", "确认删除");
+                if (result)
+                {
+                    _noticeService.DeleteNoticeById(notice.NoticeId);
+                    _snackbarService.EnqueueSuccess("删除成功");
+                    SearchButtonCommand.Execute(this);
+                }
             }
             catch (Exception ex)
             {
-                _snackbarService.EnqueueError(ex.Message);
+                _snackbarService.EnqueueError($"删除失败：{ex.Message}");
+            }
+        }
+
+        private async Task BatchDeleteNotices(IList selectedItems)
+        {
+            if (selectedItems == null || selectedItems.Count == 0)
+            {
+                _snackbarService.EnqueueWarning("请先选择要删除的公告");
+                return;
+            }
+
+            var notices = selectedItems.Cast<SysNotice>().ToList();
+
+            var titles = string.Join("、", notices.Select(n => n.NoticeTitle));
+            var result = await _dialogHostService.ConfirmAsync($"确定要删除选中的 {notices.Count} 条公告（{titles}）吗？", "确认批量删除");
+            if (result)
+            {
+                try
+                {
+                    foreach (var notice in notices)
+                        _noticeService.DeleteNoticeById(notice.NoticeId);
+                    _snackbarService.EnqueueSuccess($"成功删除 {notices.Count} 条公告");
+                    SearchButtonCommand.Execute(this);
+                }
+                catch (Exception ex)
+                {
+                    _snackbarService.EnqueueError($"批量删除失败：{ex.Message}");
+                }
             }
         }
     }

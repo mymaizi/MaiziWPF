@@ -112,8 +112,8 @@
                                 <Button
                                     Margin="0,0,8,0"
                                     Padding="16,6"
-                                    Background="#1890ff"
-                                    BorderBrush="#1890ff"
+                                    Background="#07bf96"
+                                    BorderBrush="#07bf96"
                                     Command="{Binding SearchButtonCommand}"
                                     Content="搜索"
                                     Foreground="#fff"
@@ -150,8 +150,8 @@
                         <Button
                             Margin="0,0,8,0"
                             Padding="12,6"
-                            Background="#1890ff"
-                            BorderBrush="#1890ff"
+                            Background="#07bf96"
+                            BorderBrush="#07bf96"
                             Command="{Binding AddButtonCommand}"
                             Foreground="#fff"
                             maiziWPF:PermsAssist.Perms="system:dept:add"

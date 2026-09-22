@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -21,6 +21,7 @@ namespace MaiziWPF.Modules.Sys
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<DashboardView>();
+            containerRegistry.RegisterForNavigation<ProfileView>();
             containerRegistry.RegisterForNavigation<UserListView>();
             containerRegistry.RegisterForNavigation<RoleListView>();
             containerRegistry.RegisterForNavigation<MenuListView>();
@@ -45,6 +46,7 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterDialog<DictDataFormView>();
             containerRegistry.RegisterDialog<ConfigFormView>();
             containerRegistry.RegisterDialog<NoticeFormView>();
+            containerRegistry.RegisterDialog<NoticeDetailView>();
             containerRegistry.RegisterDialog<ConfirmDialog, ConfirmDialogViewModel>();
             containerRegistry.RegisterDialog<MessageDialog, MessageDialogViewModel>();
         }

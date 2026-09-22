@@ -483,6 +483,7 @@ create table sys_notice (
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
     remark            varchar(255)    default null               comment '备注',
+    del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (notice_id)
 ) engine=innodb comment = '通知公告表';
 -- ----------------------------
@@ -504,6 +505,8 @@ create table sys_message (
     create_time       datetime                                   comment '创建时间',
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
+    remark            varchar(255)    default null               comment '备注',
+    del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (message_id),
     key idx_sys_message_category_time (category, create_time)
 ) engine=innodb comment = '消息记录表';
@@ -523,5 +526,7 @@ create table sys_oss (
     update_time     datetime              default null      comment '更新时间',
     update_by       bigint(20)            default null      comment '更新人',
     service         varchar(20)  not null default 'minio'   comment '服务商',
+    remark            varchar(255)    default null          comment '备注',
+    del_flag          char(1)         default '0'           comment '删除标志（0代表存在 1代表删除）',
     primary key (oss_id)
 ) engine=innodb comment ='OSS对象存储表';

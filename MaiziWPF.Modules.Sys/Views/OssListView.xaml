@@ -7,103 +7,421 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:prism="http://prismlibrary.com/"
     prism:ViewModelLocator.AutoWireViewModel="True">
-    <UserControl.Resources>
-        <maiziWPF:DateTimeConverter x:Key="DateTimeConverter" />
-    </UserControl.Resources>
+
     <Border Background="WhiteSmoke" CornerRadius="0 0 10 0">
-        <Grid Margin="10,6,0,0">
+        <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <WrapPanel>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <TextBox
-                        materialDesign:HintAssist.Hint="文件名称"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        Text="{Binding QueryPageInfo.FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </materialDesign:Card>
-                <materialDesign:Card Width="200" Style="{StaticResource FormCardStyle}">
-                    <TextBox
-                        materialDesign:HintAssist.Hint="原始名称"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        materialDesign:TextFieldAssist.HasClearButton="True"
-                        BorderThickness="0"
-                        FontSize="16"
-                        Text="{Binding QueryPageInfo.OriginalName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </materialDesign:Card>
-                <StackPanel Margin="6,0,0,6" Orientation="Horizontal">
-                    <Button
-                        Margin="0,0,8,0"
-                        Background="#1890ff"
-                        BorderBrush="#1890ff"
-                        Command="{Binding SearchButtonCommand}"
-                        Content="搜索"
-                        Foreground="#fff"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}" />
-                    <Button
-                        BorderBrush="#dcdfe6"
-                        Content="重置"
-                        Foreground="#606266"
-                        Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
-                </StackPanel>
-            </WrapPanel>
-            <DataGrid
-                Grid.Row="1"
-                AutoGenerateColumns="False"
-                CanUserAddRows="False"
-                GridLinesVisibility="None"
-                ItemsSource="{Binding DataList}">
-                <DataGrid.CellStyle>
-                    <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="BorderThickness" Value="0" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.CellStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding OssId}" Header="文件编号" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding OriginalName}" Header="原始名称" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding FileName}" Header="文件名称" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding FileSuffix}" Header="文件后缀" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Url}" Header="URL地址" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Service}" Header="存储服务" IsReadOnly="True" />
-                    <DataGridTextColumn
-                        Binding="{Binding CreateTime, Converter={StaticResource DateTimeConverter}, ConverterParameter='yyyy-MM-dd HH:mm:ss'}"
-                        Header="上传时间"
-                        IsReadOnly="True" />
-                    <DataGridTemplateColumn Header="操作">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button
-                                        Padding="5"
-                                        Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding}"
-                                        Content="删除"
-                                        Foreground="#cf3539"
-                                        Style="{StaticResource MaterialDesignFlatLightButton}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+
+            <!--  筛选条件  -->
+            <Border Grid.Row="0" Margin="12,12,12,6" Background="#ffffff" CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="16,12,16,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="筛选条件" Foreground="#333333" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <ToggleButton x:Name="FilterToggle" Grid.Column="1" Width="24" Height="24" IsChecked="True">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <materialDesign:PackIcon Kind="ChevronUp" Foreground="#595959" Width="16" Height="16" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="0">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <materialDesign:PackIcon Kind="ChevronDown" Foreground="#595959" Width="16" Height="16" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </Grid>
+
+                    <Border x:Name="FilterPanel" Grid.Row="1" Padding="16,0,16,16">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=FilterToggle}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <WrapPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="文件名" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox Width="200" Height="36" Padding="8,6" FontSize="13" Text="{Binding FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="原名" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox Width="200" Height="36" Padding="8,6" FontSize="13" Text="{Binding OriginalName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="文件后缀" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox Width="200" Height="36" Padding="8,6" FontSize="13" Text="{Binding FileSuffix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="服务商" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox Width="200" Height="36" Padding="8,6" FontSize="13" Text="{Binding Service, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,16,0">
+                                <TextBlock Width="72" Text="创建时间" TextAlignment="Right" Foreground="#666666" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <maiziWPF:DateRangeControl Width="320" Height="36" StartDateTime="{Binding QueryPageInfo.StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" EndDateTime="{Binding QueryPageInfo.EndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <Button
+                                    Margin="0,0,8,0"
+                                    Padding="16,6"
+                                    Background="#07bf96"
+                                    BorderBrush="#07bf96"
+                                    Command="{Binding SearchButtonCommand}"
+                                    Content="搜索"
+                                    Foreground="#fff"
+                                    Style="{StaticResource MaterialDesignRaisedLightButton}" />
+                                <Button
+                                    Padding="16,6"
+                                    BorderBrush="#dcdfe6"
+                                    Command="{Binding ResetButtonCommand}"
+                                    Content="重置"
+                                    Foreground="#606266"
+                                    Style="{StaticResource MaterialDesignOutlinedDarkButton}" />
+                            </StackPanel>
+                        </WrapPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!--  文件列表标题栏  -->
+            <Border Grid.Row="1" Margin="12,6,12,6" Background="#ffffff" CornerRadius="8">
+                <Grid Margin="16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="文件列表" Foreground="#333333" FontSize="16" FontWeight="SemiBold" />
+                        <TextBlock Text="文件管理，支持文件上传、预览切换和 OSS 配置跳转。" Foreground="#999999" FontSize="12" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Background="#07bf96"
+                            BorderBrush="#07bf96"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Upload" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="上传文件" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Background="#07bf96"
+                            BorderBrush="#07bf96"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Image" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="上传图片" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Background="#ff4d4f"
+                            BorderBrush="#ff4d4f"
+                            Command="{Binding BatchDeleteCommand}"
+                            CommandParameter="{Binding SelectedItems, ElementName=OssDataGrid}"
+                            Foreground="#fff"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14" Margin="0,0,4,0" />
+                                <TextBlock Text="删除" FontSize="12" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!--  表格  -->
+            <Border Grid.Row="2" Margin="12,0,12,0">
+                <DataGrid
+                    Grid.Row="0"
+                    x:Name="OssDataGrid"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    GridLinesVisibility="None"
+                    SelectionMode="Extended"
+                    ItemsSource="{Binding DataList}">
+                    <DataGrid.Resources>
+                        <Style x:Key="ServiceBadgeStyle" TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10" />
+                            <Setter Property="Padding" Value="10,2" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Background" Value="#e6f7ff" />
+                            <Setter Property="BorderBrush" Value="#91d5ff" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Service}" Value="minio">
+                                    <Setter Property="Background" Value="#f6ffed" />
+                                    <Setter Property="BorderBrush" Value="#b7eb8f" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Service}" Value="aliyun">
+                                    <Setter Property="Background" Value="#fff7e6" />
+                                    <Setter Property="BorderBrush" Value="#ffd591" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#fafafa" />
+                            <Setter Property="Foreground" Value="#333333" />
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="BorderBrush" Value="#e8e8e8" />
+                            <Setter Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter Property="Padding" Value="16,0" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="60" IsReadOnly="False">
+                            <DataGridTemplateColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <CheckBox x:Name="SelectAllCheckBox"
+                                              Click="SelectAllCheckBox_Click"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.HeaderTemplate>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox HorizontalAlignment="Center"
+                                              PreviewMouseLeftButtonDown="RowCheckBox_PreviewMouseLeftButtonDown">
+                                        <CheckBox.Style>
+                                            <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" Value="True">
+                                                        <Setter Property="IsChecked" Value="True" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </CheckBox.Style>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding FileName}" Header="文件名" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding OriginalName}" Header="原名" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding FileSuffix}" Header="文件后缀" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Width="*" Header="文件展示">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Width="60" Height="60" CornerRadius="6" HorizontalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="#f5f5f5" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding FileSuffix}" Value=".png">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <ImageBrush ImageSource="{Binding Url}" Stretch="UniformToFill" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding FileSuffix}" Value=".jpg">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <ImageBrush ImageSource="{Binding Url}" Stretch="UniformToFill" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding FileSuffix}" Value=".jpeg">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <ImageBrush ImageSource="{Binding Url}" Stretch="UniformToFill" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding FileSuffix}" Value=".gif">
+                                                        <Setter Property="Background">
+                                                            <Setter.Value>
+                                                                <ImageBrush ImageSource="{Binding Url}" Stretch="UniformToFill" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding FileSuffix}" Foreground="#999999" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding FileSuffix}" Value=".png">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding FileSuffix}" Value=".jpg">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding FileSuffix}" Value=".jpeg">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding FileSuffix}" Value=".gif">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding CreateTime, StringFormat='{}{0:yyyy-MM-dd}'}" Header="创建时间" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Width="*" Binding="{Binding CreateUser.UserName}" Header="上传人" IsReadOnly="True">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Center" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Width="*" Header="服务商">
+                            <DataGridTemplateColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="HorizontalAlignment" Value="Center" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+                            </DataGridTemplateColumn.CellStyle>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource ServiceBadgeStyle}" HorizontalAlignment="Center">
+                                        <TextBlock FontSize="11" HorizontalAlignment="Center" Text="{Binding Service}" />
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="*" Header="操作">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button
+                                            Width="26"
+                                            Height="24"
+                                            Margin="0,0,4,0"
+                                            Background="#e6f7ff"
+                                            BorderBrush="#91d5ff"
+                                            BorderThickness="1"
+                                            Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="删除">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <materialDesign:PackIcon Kind="Delete" Foreground="#91d5ff" Width="14" Height="14" />
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
             <maiziWPF:PageControl
-                Grid.Row="2"
-                Margin="0,0,10,10"
+                Grid.Row="3"
+                Margin="0,8,12,12"
                 HorizontalAlignment="Right"
                 Count="{Binding Count}"
+                IsBusy="{Binding IsBusy}"
                 NextCommand="{Binding NextButtonCommand}"
                 PageNumber="{Binding PageNumber}"
                 PageSize="{Binding PageSize}"
+                PageSizeChangedCommand="{Binding PageSizeChangedCommand}"
                 PrevCommand="{Binding PrevButtonCommand}" />
         </Grid>
     </Border>

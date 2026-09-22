@@ -88,10 +88,13 @@ MaiziWPF ────────────► MaiziWPF.Core
 
 ## 截图预览
 
-![登录界面](https://raw.githubusercontent.com/mymaizi/wpfdemo/refs/heads/master/login.png "登录界面")
-![菜单管理](https://raw.githubusercontent.com/mymaizi/wpfdemo/refs/heads/master/menu.png "菜单管理")
-![部门管理](https://raw.githubusercontent.com/mymaizi/wpfdemo/refs/heads/master/dept.png "部门管理")
-![岗位管理](https://raw.githubusercontent.com/mymaizi/wpfdemo/refs/heads/master/post.png "岗位管理")
+![登录界面](https://github.com/mymaizi/MaiziWPF/blob/master/temp/login.png "登录界面")
+![菜单管理](https://github.com/mymaizi/MaiziWPF/blob/master/temp/menu.png "菜单管理")
+![部门管理](https://github.com/mymaizi/MaiziWPF/blob/master/temp/dept.png "部门管理")
+![岗位管理](https://github.com/mymaizi/MaiziWPF/blob/master/temp/post.png "岗位管理")
+![字典管理](https://github.com/mymaizi/MaiziWPF/blob/master/temp/dict.png "字典管理")
+![参数配置](https://github.com/mymaizi/MaiziWPF/blob/master/temp/user.png "参数配置")
+![角色管理](https://github.com/mymaizi/MaiziWPF/blob/master/temp/role.png "角色管理")
 
 ## 开发环境
 

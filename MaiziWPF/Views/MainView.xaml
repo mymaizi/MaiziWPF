@@ -355,6 +355,7 @@
                                                     HorizontalContentAlignment="Left"
                                                     Background="Transparent"
                                                     BorderThickness="0"
+                                                    Command="{Binding OpenProfileCommand}"
                                                     Cursor="Hand">
                                                     <Button.Style>
                                                         <Style TargetType="Button">

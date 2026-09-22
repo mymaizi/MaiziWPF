@@ -104,8 +104,8 @@
                 Orientation="Horizontal">
                 <Button
                     Padding="28,8"
-                    Background="#1890ff"
-                    BorderBrush="#1890ff"
+                    Background="#07bf96"
+                    BorderBrush="#07bf96"
                     Command="{Binding CloseCommand}"
                     Content="确定"
                     Foreground="#fff"
