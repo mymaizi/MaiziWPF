@@ -15,7 +15,9 @@ namespace MaiziWPF.Views
     public partial class MainView : UserControl
     {
         private System.Windows.Threading.DispatcherTimer _closeTimer;
+        private System.Windows.Threading.DispatcherTimer _messageCloseTimer;
         private bool _isMouseInPopup;
+        private bool _isMouseInMessagePopup;
 
         public MainView()
         {
@@ -23,6 +25,9 @@ namespace MaiziWPF.Views
             _closeTimer = new System.Windows.Threading.DispatcherTimer();
             _closeTimer.Interval = System.TimeSpan.FromMilliseconds(150);
             _closeTimer.Tick += CloseTimer_Tick;
+            _messageCloseTimer = new System.Windows.Threading.DispatcherTimer();
+            _messageCloseTimer.Interval = System.TimeSpan.FromMilliseconds(150);
+            _messageCloseTimer.Tick += MessageCloseTimer_Tick;
         }
 
         private void UserAvatarBorder_MouseEnter(object sender, MouseEventArgs e)
@@ -57,10 +62,18 @@ namespace MaiziWPF.Views
 
         private void UserMenuPopup_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // 点击 Popup 外部关闭
-            if (e.OriginalSource is Border border && border == (sender as Popup)?.Child)
+            var popup = sender as Popup;
+            if (popup?.Child is FrameworkElement child)
             {
-                return;
+                DependencyObject current = e.OriginalSource as DependencyObject;
+                while (current != null)
+                {
+                    if (current == child)
+                    {
+                        return;
+                    }
+                    current = VisualTreeHelper.GetParent(current);
+                }
             }
             if (DataContext is MainViewModel vm)
             {
@@ -74,6 +87,66 @@ namespace MaiziWPF.Views
             if (!_isMouseInPopup && DataContext is MainViewModel vm)
             {
                 vm.IsMoreMenuOpen = false;
+            }
+        }
+
+        private void MessageIconBorder_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _messageCloseTimer.Stop();
+            _isMouseInMessagePopup = false;
+            if (DataContext is MainViewModel vm)
+            {
+                vm.IsMessagePopupOpen = true;
+            }
+        }
+
+        private void MessageIconBorder_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!_isMouseInMessagePopup)
+            {
+                _messageCloseTimer.Start();
+            }
+        }
+
+        private void MessagePopup_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _messageCloseTimer.Stop();
+            _isMouseInMessagePopup = true;
+        }
+
+        private void MessagePopup_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _isMouseInMessagePopup = false;
+            _messageCloseTimer.Start();
+        }
+
+        private void MessagePopup_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var popup = sender as Popup;
+            if (popup?.Child is FrameworkElement child)
+            {
+                DependencyObject current = e.OriginalSource as DependencyObject;
+                while (current != null)
+                {
+                    if (current == child)
+                    {
+                        return;
+                    }
+                    current = VisualTreeHelper.GetParent(current);
+                }
+            }
+            if (DataContext is MainViewModel vm)
+            {
+                vm.IsMessagePopupOpen = false;
+            }
+        }
+
+        private void MessageCloseTimer_Tick(object sender, object e)
+        {
+            _messageCloseTimer.Stop();
+            if (!_isMouseInMessagePopup && DataContext is MainViewModel vm)
+            {
+                vm.IsMessagePopupOpen = false;
             }
         }
 

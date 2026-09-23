@@ -248,6 +248,427 @@
                     <Grid>
                         <!--  窗口控制按钮 + 用户信息  -->
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                            <!--  消息图标（悬停显示消息盒子）  -->
+                            <Border x:Name="MessageIconBorder"
+                                Width="32"
+                                Height="32"
+                                Margin="0,0,12,0"
+                                CornerRadius="16"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"
+                                MouseEnter="MessageIconBorder_MouseEnter"
+                                MouseLeave="MessageIconBorder_MouseLeave">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#f0f0f0" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMessagePopupOpen}" Value="True">
+                                                <Setter Property="Background" Value="#07bf96" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <materialDesign:PackIcon Kind="Bell" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <materialDesign:PackIcon.Style>
+                                            <Style TargetType="materialDesign:PackIcon">
+                                                <Setter Property="Foreground" Value="#ffffff" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMessagePopupOpen}" Value="False">
+                                                        <Setter Property="Foreground" Value="#666666" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </materialDesign:PackIcon.Style>
+                                    </materialDesign:PackIcon>
+                                    <Border Width="8" Height="8" CornerRadius="4" Background="#ff4d4f" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-2,-2,0">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasUnreadMessage}" Value="False">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <!--  消息盒子 Popup  -->
+                            <Popup
+                                x:Name="MessagePopup"
+                                DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                IsOpen="{Binding IsMessagePopupOpen, Mode=TwoWay}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=MessageIconBorder}"
+                                HorizontalOffset="-140"
+                                VerticalOffset="6"
+                                AllowsTransparency="True"
+                                StaysOpen="True"
+                                MouseDown="MessagePopup_MouseDown">
+                                <Border
+                                    Width="360"
+                                    Background="#ffffff"
+                                    CornerRadius="12"
+                                    BorderBrush="#e0e0e0"
+                                    BorderThickness="1"
+                                    Margin="6"
+                                    MouseEnter="MessagePopup_MouseEnter"
+                                    MouseLeave="MessagePopup_MouseLeave">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="15"
+                                            Opacity="0.15"
+                                            ShadowDepth="2"
+                                            Direction="270" />
+                                    </Border.Effect>
+                                    <Border
+                                        CornerRadius="12"
+                                        ClipToBounds="True"
+                                        Background="#ffffff">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
+                                                <!--  标题栏  -->
+                                                <Grid Grid.Row="0" Margin="20,16,20,12">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="消息盒子" FontSize="16" FontWeight="SemiBold" Foreground="#333333" VerticalAlignment="Center" />
+                                                    <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="8,4" Margin="0,0,4,0"
+                                                        Command="{Binding MarkAllReadCommand}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border x:Name="hoverBorder" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="4">
+                                                                                <ContentPresenter />
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#e6f7f1" />
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <TextBlock Text="全部已读" FontSize="13">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="#07bf96" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                                            <Setter Property="Foreground" Value="#059b7a" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </Button>
+                                                    <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="8,4"
+                                                        Command="{Binding ClearMessagesCommand}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border x:Name="hoverBorder" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="4">
+                                                                                <ContentPresenter />
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#fff1f0" />
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <TextBlock Text="清空消息" FontSize="13">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="#ff4d4f" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                                            <Setter Property="Foreground" Value="#cf1322" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </Button>
+                                                </Grid>
+                                                <!--  Tab 切换  -->
+                                                <Border Grid.Row="1" Margin="20,0,20,12" BorderBrush="#e0e0e0" BorderThickness="0,0,0,1">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Background="Transparent" BorderThickness="0" Padding="0,0,24,12" Cursor="Hand"
+                                                            Command="{Binding SelectMessageTabCommand}" CommandParameter="1">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                                                    <ContentPresenter />
+                                                                                </Border>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Button.Style>
+                                                            <TextBlock FontSize="13" FontWeight="SemiBold">
+                                                                <Run Text="系统 " /><Run Text="{Binding SystemCount, Mode=OneWay}" />
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="#999999" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding SelectedMessageTab}" Value="1">
+                                                                                <Setter Property="Foreground" Value="#07bf96" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Button>
+                                                        <Button Background="Transparent" BorderThickness="0" Padding="0,0,24,12" Cursor="Hand"
+                                                            Command="{Binding SelectMessageTabCommand}" CommandParameter="2">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                                                    <ContentPresenter />
+                                                                                </Border>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Button.Style>
+                                                            <TextBlock FontSize="13">
+                                                                <Run Text="通知 " /><Run Text="{Binding NoticeCount, Mode=OneWay}" />
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="#999999" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding SelectedMessageTab}" Value="2">
+                                                                                <Setter Property="Foreground" Value="#07bf96" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Button>
+                                                        <Button Background="Transparent" BorderThickness="0" Padding="0,0,0,12" Cursor="Hand"
+                                                            Command="{Binding SelectMessageTabCommand}" CommandParameter="3">
+                                                            <Button.Style>
+                                                                <Style TargetType="Button">
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="Button">
+                                                                                <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                                                                    <ContentPresenter />
+                                                                                </Border>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+                                                            </Button.Style>
+                                                            <TextBlock FontSize="13">
+                                                                <Run Text="工作 " /><Run Text="{Binding WorkflowCount, Mode=OneWay}" />
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="#999999" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding SelectedMessageTab}" Value="3">
+                                                                                <Setter Property="Foreground" Value="#07bf96" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </Border>
+                                                <!--  消息列表  -->
+                                                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0" MaxHeight="400">
+                                                    <ScrollViewer.Style>
+                                                        <Style TargetType="ScrollViewer">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="ScrollViewer">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <ScrollContentPresenter Grid.Column="0" />
+                                                                            <ScrollBar Grid.Column="1" x:Name="PART_VerticalScrollBar" Width="6" Margin="4,0,0,0"
+                                                                                        Value="{TemplateBinding VerticalOffset}"
+                                                                                        Maximum="{TemplateBinding ScrollableHeight}"
+                                                                                        ViewportSize="{TemplateBinding ViewportHeight}"
+                                                                                        Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
+                                                                                <ScrollBar.Style>
+                                                                                    <Style TargetType="ScrollBar">
+                                                                                        <Setter Property="Background" Value="#f5f5f5" />
+                                                                                        <Setter Property="Template">
+                                                                                            <Setter.Value>
+                                                                                                <ControlTemplate TargetType="ScrollBar">
+                                                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="3" Width="6">
+                                                                                                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                                                                                            <Track.DecreaseRepeatButton>
+                                                                                                                <RepeatButton Command="ScrollBar.PageUpCommand" Background="Transparent" BorderThickness="0" />
+                                                                                                            </Track.DecreaseRepeatButton>
+                                                                                                            <Track.Thumb>
+                                                                                                                <Thumb Background="#d9d9d9" BorderThickness="0">
+                                                                                                                    <Thumb.Style>
+                                                                                                                        <Style TargetType="Thumb">
+                                                                                                                            <Setter Property="Template">
+                                                                                                                                <Setter.Value>
+                                                                                                                                    <ControlTemplate TargetType="Thumb">
+                                                                                                                                        <Border Background="{TemplateBinding Background}" CornerRadius="3" />
+                                                                                                                                    </ControlTemplate>
+                                                                                                                                </Setter.Value>
+                                                                                                                            </Setter>
+                                                                                                                        </Style>
+                                                                                                                    </Thumb.Style>
+                                                                                                                </Thumb>
+                                                                                                            </Track.Thumb>
+                                                                                                            <Track.IncreaseRepeatButton>
+                                                                                                                <RepeatButton Command="ScrollBar.PageDownCommand" Background="Transparent" BorderThickness="0" />
+                                                                                                            </Track.IncreaseRepeatButton>
+                                                                                                        </Track>
+                                                                                                    </Border>
+                                                                                                </ControlTemplate>
+                                                                                            </Setter.Value>
+                                                                                        </Setter>
+                                                                                    </Style>
+                                                                                </ScrollBar.Style>
+                                                                            </ScrollBar>
+                                                                        </Grid>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </ScrollViewer.Style>
+                                                    <ItemsControl Margin="20,8,20,16" ItemsSource="{Binding FilteredMessages}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Padding="0,12" BorderBrush="#f0f0f0" BorderThickness="0,0,0,1">
+                                                                    <Border.Style>
+                                                                        <Style TargetType="Border">
+                                                                            <Setter Property="Cursor" Value="Arrow" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Message.Category}" Value="notice">
+                                                                                    <Setter Property="Cursor" Value="Hand" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Message.Category}" Value="workflow">
+                                                                                    <Setter Property="Cursor" Value="Hand" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Border.Style>
+                                                                    <Border.InputBindings>
+                                                                        <MouseBinding MouseAction="LeftClick" 
+                                                                                      Command="{Binding DataContext.MessageClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                                      CommandParameter="{Binding}" />
+                                                                    </Border.InputBindings>
+                                                                    <Grid>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="Auto" />
+                                                                        </Grid.RowDefinitions>
+                                                                        <Grid Grid.Row="0" VerticalAlignment="Center">
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                                <ColumnDefinition Width="Auto" />
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock Text="{Binding Message.Title}" FontSize="13" FontWeight="SemiBold" Foreground="#333333" VerticalAlignment="Center" />
+                                                                            <Border Grid.Column="1" CornerRadius="10" Padding="8,2" Margin="0,0,6,0" VerticalAlignment="Center">
+                                                                                <Border.Style>
+                                                                                    <Style TargetType="Border">
+                                                                                        <Setter Property="Background" Value="#f6ffed" />
+                                                                                        <Style.Triggers>
+                                                                                            <DataTrigger Binding="{Binding IsRead}" Value="False">
+                                                                                                <Setter Property="Background" Value="#fff1f0" />
+                                                                                            </DataTrigger>
+                                                                                        </Style.Triggers>
+                                                                                    </Style>
+                                                                                </Border.Style>
+                                                                                <TextBlock FontSize="11">
+                                                                                    <TextBlock.Style>
+                                                                                        <Style TargetType="TextBlock">
+                                                                                            <Setter Property="Text" Value="已读" />
+                                                                                            <Setter Property="Foreground" Value="#52c41a" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IsRead}" Value="False">
+                                                                                                    <Setter Property="Text" Value="未读" />
+                                                                                                    <Setter Property="Foreground" Value="#ff4d4f" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </TextBlock.Style>
+                                                                                </TextBlock>
+                                                                            </Border>
+                                                                            <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="4"
+                                                                                Command="{Binding DataContext.DeleteMessageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                                CommandParameter="{Binding}">
+                                                                                <Button.Style>
+                                                                                    <Style TargetType="Button">
+                                                                                        <Setter Property="Template">
+                                                                                            <Setter.Value>
+                                                                                                <ControlTemplate TargetType="Button">
+                                                                                                    <Border x:Name="deleteBorder" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="4">
+                                                                                                        <ContentPresenter />
+                                                                                                    </Border>
+                                                                                                    <ControlTemplate.Triggers>
+                                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                                            <Setter TargetName="deleteBorder" Property="Background" Value="#fff1f0" />
+                                                                                                        </Trigger>
+                                                                                                    </ControlTemplate.Triggers>
+                                                                                                </ControlTemplate>
+                                                                                            </Setter.Value>
+                                                                                        </Setter>
+                                                                                    </Style>
+                                                                                </Button.Style>
+                                                                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14">
+                                                                                    <materialDesign:PackIcon.Style>
+                                                                                        <Style TargetType="materialDesign:PackIcon">
+                                                                                            <Setter Property="Foreground" Value="#ff4d4f" />
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                                                                    <Setter Property="Foreground" Value="#cf1322" />
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </materialDesign:PackIcon.Style>
+                                                                                </materialDesign:PackIcon>
+                                                                            </Button>
+                                                                        </Grid>
+                                                                        <TextBlock Grid.Row="1" Text="{Binding Message.Message}" FontSize="13" Foreground="#666666" Margin="0,8,0,4" TextWrapping="Wrap" />
+                                                                        <TextBlock Grid.Row="2" Text="{Binding Message.CreateTime, StringFormat='{}{0:yyyy/M/d HH:mm:ss}'}" FontSize="11" Foreground="#999999" />
+                                                                    </Grid>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ScrollViewer>
+                                            </Grid>
+                                        </Border>
+                                    </Border>
+                            </Popup>
                             <!--  用户头像（悬停显示下拉菜单）  -->
                             <Border x:Name="UserAvatarBorder"
                                 Width="32"
@@ -295,26 +716,26 @@
                                 AllowsTransparency="True"
                                 StaysOpen="True"
                                 MouseDown="UserMenuPopup_MouseDown">
-                                <Border Background="Transparent" Margin="6">
+                                <Border
+                                    Width="240"
+                                    Background="#ffffff"
+                                    CornerRadius="8"
+                                    BorderBrush="#e0e0e0"
+                                    BorderThickness="1"
+                                    Margin="6"
+                                    MouseEnter="UserMenuPopup_MouseEnter"
+                                    MouseLeave="UserMenuPopup_MouseLeave">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="15"
+                                            Opacity="0.2"
+                                            ShadowDepth="2"
+                                            Direction="270" />
+                                    </Border.Effect>
                                     <Border
-                                        Width="240"
-                                        Background="#ffffff"
                                         CornerRadius="8"
-                                        BorderBrush="#e0e0e0"
-                                        BorderThickness="1">
-                                        <Border.Effect>
-                                            <DropShadowEffect
-                                                BlurRadius="15"
-                                                Opacity="0.2"
-                                                ShadowDepth="2"
-                                                Direction="270" />
-                                        </Border.Effect>
-                                        <Border
-                                            CornerRadius="8"
-                                            ClipToBounds="True"
-                                            Background="#ffffff"
-                                            MouseEnter="UserMenuPopup_MouseEnter"
-                                            MouseLeave="UserMenuPopup_MouseLeave">
+                                        ClipToBounds="True"
+                                        Background="#ffffff">
                                             <StackPanel Margin="0,8">
                                                 <!--  顶部：头像 + 昵称 + 操作链接  -->
                                                 <Grid Margin="16,14,16,10">
@@ -440,7 +861,6 @@
                                             </StackPanel>
                                         </Border>
                                     </Border>
-                                </Border>
                             </Popup>
                             <!--  最小化  -->
                             <Button Width="40" Command="{Binding MinimizeWindowCommand}">

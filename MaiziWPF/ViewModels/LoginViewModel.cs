@@ -1,8 +1,9 @@
-﻿using MaiziWPF.Core;
+﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using MaiziWPF.Views;
+using Microsoft.Extensions.Options;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
@@ -21,6 +22,9 @@ namespace MaiziWPF.ViewModels
         private readonly ISysUserService _userService;
         private readonly ICurrentUserService _currentUserService;
         private readonly IPermissionService _permissionService;
+        private readonly IMqttService _mqttService;
+        private readonly ISysUserRepository _userRepository;
+        private readonly MqttOptions _mqttOptions;
 
         public ICommand CloseWindowCommand { get; }
         public ICommand LoginCommand { get; }
@@ -33,12 +37,18 @@ namespace MaiziWPF.ViewModels
             IRegionManager regionManager,
             ISysUserService userService,
             ICurrentUserService currentUserService,
-            IPermissionService permissionService)
+            IPermissionService permissionService,
+            IMqttService mqttService,
+            ISysUserRepository userRepository,
+            IOptions<MqttOptions> mqttOptions)
         {
             _regionManager = regionManager;
             _userService = userService;
             _currentUserService = currentUserService;
             _permissionService = permissionService;
+            _mqttService = mqttService;
+            _userRepository = userRepository;
+            _mqttOptions = mqttOptions.Value;
             CloseWindowCommand = new DelegateCommand(() =>
             {
                 System.Windows.Application.Current.Shutdown();
@@ -78,6 +88,10 @@ namespace MaiziWPF.ViewModels
                 _currentUserService.SetRoles(roles.Select(r => r.RoleKey).ToList());
 
                 _permissionService.LoadUserPermissions(user.UserId);
+
+                _userRepository.UpdateOnlineStatus(user.UserId, 1);
+
+                _ = _mqttService.StartAsync(user.UserId, _mqttOptions.ServerIp, _mqttOptions.ServerPort);
 
                 _regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(MainView));
             }

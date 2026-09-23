@@ -82,5 +82,9 @@ namespace MaiziWPF.Services.Domain
         int InsertAuthRoles(long userId, long[] roleIds);
 
         int CancelAuthRole(long userId, long roleId);
+
+        void UpdateOnlineStatus(long userId, int onlineStatus);
+
+        void UpdateHeartbeat(long userId);
     }
 }

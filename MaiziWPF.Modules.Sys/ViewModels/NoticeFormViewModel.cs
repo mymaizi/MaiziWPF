@@ -9,6 +9,7 @@ namespace MaiziWPF.Modules.Sys
     public class NoticeFormViewModel : FormBindableBase
     {
         private readonly ISysNoticeService _noticeService;
+        private readonly IMessagePublisher _messagePublisher;
 
         private bool _isEditMode;
         public bool IsEditMode
@@ -59,10 +60,11 @@ namespace MaiziWPF.Modules.Sys
             set { SetProperty(ref _remark, value); }
         }
 
-        public NoticeFormViewModel(ISysNoticeService noticeService, ISnackbarService snackbarService)
+        public NoticeFormViewModel(ISysNoticeService noticeService, IMessagePublisher messagePublisher, ISnackbarService snackbarService)
             : base(snackbarService)
         {
             _noticeService = noticeService;
+            _messagePublisher = messagePublisher;
 
             AcceptCommand = new DelegateCommand(() =>
             {
@@ -97,6 +99,10 @@ namespace MaiziWPF.Modules.Sys
                 else
                 {
                     _noticeService.InsertNotice(notice);
+                    if (notice.NoticeId > 0 && notice.Status == "0")
+                    {
+                        _messagePublisher.PublishNotice(notice);
+                    }
                 }
                 OnSaveSuccessCallback?.Invoke();
                 ShowSuccess("保存成功");

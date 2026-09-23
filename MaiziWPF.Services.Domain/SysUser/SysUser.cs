@@ -48,6 +48,12 @@ namespace MaiziWPF.Services.Domain
         /** 最后登录时间 */
         [Column(Name = "login_date")]
         public DateTime LoginDate { get; set; }
+        /** 在线状态（0离线 1在线） */
+        [Column(Name = "online_status", DbType = "tinyint default 0")]
+        public Int32 OnlineStatus { get; set; }
+        /** 最后心跳时间 */
+        [Column(Name = "last_heartbeat")]
+        public DateTime? LastHeartbeat { get; set; }
 
         [Navigate(nameof(DeptId))]
         public SysDept Dept { get; set; }

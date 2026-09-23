@@ -52,12 +52,6 @@ namespace MaiziWPF.Services.Domain
         public String Service { get; set; }
 
         /// <summary>
-        /// 备注
-        /// </summary>
-        [Column(Name = "remark", DbType = "varchar(255)")]
-        public String Remark { get; set; }
-
-        /// <summary>
         /// 上传人导航属性
         /// </summary>
         [Navigate(nameof(CreateBy))]

@@ -14,9 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\MaiziWPF.Services.Domain.Shared\MaiziWPF.Services.Domain.Shared.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SysMessage\" />
-  </ItemGroup>
-
 </Project>

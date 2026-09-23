@@ -217,5 +217,22 @@ namespace MaiziWPF.Services.MySql
                 .Where(r => r.UserId == userId && r.RoleId == roleId)
                 .ExecuteAffrows();
         }
+
+        public void UpdateOnlineStatus(long userId, int onlineStatus)
+        {
+            _fsql.Update<SysUser>()
+                .Set(u => u.OnlineStatus, onlineStatus)
+                .Set(u => u.LastHeartbeat, DateTime.Now)
+                .Where(u => u.UserId == userId)
+                .ExecuteAffrows();
+        }
+
+        public void UpdateHeartbeat(long userId)
+        {
+            _fsql.Update<SysUser>()
+                .Set(u => u.LastHeartbeat, DateTime.Now)
+                .Where(u => u.UserId == userId)
+                .ExecuteAffrows();
+        }
     }
 }

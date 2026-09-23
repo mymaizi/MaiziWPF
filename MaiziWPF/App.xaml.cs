@@ -1,7 +1,8 @@
-﻿using MaiziWPF.Core;
+﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using MaiziWPF.Modules.Sys;
 using MaiziWPF.Views;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Prism.Container.DryIoc;
 using Prism.Ioc;
@@ -58,13 +59,11 @@ namespace MaiziWPF
             var containerExtension = base.CreateContainerExtension() as DryIocContainerExtension;
             var app = AbpApplicationFactory.Create<MaiziWPFModule>(options =>
             {
-                //Configure your application options here
-                //var builder = new ConfigurationBuilder();
-                //builder.AddJsonFile("appsettings.json", optional: false);
-                //options.Services.ReplaceConfiguration(builder.Build());
-                //or
-                //IConfigurationRoot configuration = builder.Build();
-                //options.Services.Configure<T>(configuration.GetSection(""));
+                var builder = new ConfigurationBuilder();
+                builder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                var configuration = builder.Build();
+                options.Services.ReplaceConfiguration(configuration);
+                options.Services.Configure<MqttOptions>(configuration.GetSection("Mqtt"));
 
                 Log.Logger = new LoggerConfiguration()
 #if DEBUG
