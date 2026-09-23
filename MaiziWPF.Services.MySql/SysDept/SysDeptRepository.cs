@@ -39,13 +39,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertDept(SysDept dept)
         {
-            dept.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(dept).ExecuteAffrows();
         }
 
         public int UpdateDept(SysDept dept)
         {
-            dept.UpdateTime = DateTime.Now;
             return _fsql.Update<SysDept>()
                 .SetSource(dept)
                 .ExecuteAffrows();

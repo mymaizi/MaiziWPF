@@ -46,13 +46,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertPost(SysPost post)
         {
-            post.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(post).ExecuteAffrows();
         }
 
         public int UpdatePost(SysPost post)
         {
-            post.UpdateTime = DateTime.Now;
             return _fsql.Update<SysPost>().SetSource(post).ExecuteAffrows();
         }
 

@@ -41,13 +41,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertDictType(SysDictType dictType)
         {
-            dictType.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(dictType).ExecuteAffrows();
         }
 
         public int UpdateDictType(SysDictType dictType)
         {
-            dictType.UpdateTime = DateTime.Now;
             return _fsql.Update<SysDictType>().SetSource(dictType).ExecuteAffrows();
         }
 
@@ -92,13 +90,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertDictData(SysDictData dictData)
         {
-            dictData.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(dictData).ExecuteAffrows();
         }
 
         public int UpdateDictData(SysDictData dictData)
         {
-            dictData.UpdateTime = DateTime.Now;
             return _fsql.Update<SysDictData>().SetSource(dictData).ExecuteAffrows();
         }
 

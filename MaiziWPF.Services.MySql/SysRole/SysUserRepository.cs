@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿using FreeSql;
+﻿﻿﻿﻿﻿﻿using FreeSql;
 using MaiziWPF.Services.Domain;
 using MaiziWPF.Services.Domain.Shared;
 using System;
@@ -43,13 +43,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertRole(SysRole role)
         {
-            role.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(role).ExecuteAffrows();
         }
 
         public int UpdateRole(SysRole role)
         {
-            role.UpdateTime = DateTime.Now;
             return _fsql.Update<SysRole>().SetSource(role).ExecuteAffrows();
         }
 

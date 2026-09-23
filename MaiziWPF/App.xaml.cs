@@ -1,6 +1,8 @@
-﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using MaiziWPF.Modules.Sys;
+using MaiziWPF.Services.Domain.Shared;
+using MaiziWPF.Services.MySql;
 using MaiziWPF.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +39,7 @@ namespace MaiziWPF
         protected override void InitializeShell(Window shell)
         {
             base.InitializeShell(shell);
+            MySqlModule.SetAuditProvider(Container.Resolve<IAuditUserProvider>());
             var regionManager = Container.Resolve<IRegionManager>();
             var snackbarService = Container.Resolve<ISnackbarService>();
             regionManager.RequestNavigate(RegionNames.ContentRegion, nameof(LoginView));

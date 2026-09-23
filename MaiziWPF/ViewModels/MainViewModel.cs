@@ -314,6 +314,7 @@ namespace MaiziWPF.ViewModels
                                     NoticeContent = item.Message.Content ?? item.Message.Message,
                                     Status = "0",
                                     CreateBy = item.Message.CreateBy,
+                                    CreateTime = item.Message.CreateTime,
                                     CreateUser = item.Message.CreateUser
                                 };
                                 detailVm.SetNotice(notice);

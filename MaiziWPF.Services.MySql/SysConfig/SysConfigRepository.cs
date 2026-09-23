@@ -38,13 +38,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertConfig(SysConfig config)
         {
-            config.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(config).ExecuteAffrows();
         }
 
         public int UpdateConfig(SysConfig config)
         {
-            config.UpdateTime = DateTime.Now;
             return _fsql.Update<SysConfig>().SetSource(config).ExecuteAffrows();
         }
 

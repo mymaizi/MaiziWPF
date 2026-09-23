@@ -44,7 +44,6 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertNotice(SysNotice notice)
         {
-            notice.CreateTime = DateTime.Now;
             var id = _fsql.Insert(notice).ExecuteIdentity();
             notice.NoticeId = id;
             return (int)id;
@@ -52,7 +51,6 @@ namespace MaiziWPF.Services.MySql
 
         public int UpdateNotice(SysNotice notice)
         {
-            notice.UpdateTime = DateTime.Now;
             return _fsql.Update<SysNotice>().SetSource(notice).ExecuteAffrows();
         }
 

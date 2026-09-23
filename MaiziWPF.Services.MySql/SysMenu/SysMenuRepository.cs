@@ -53,13 +53,11 @@ namespace MaiziWPF.Services.MySql
 
         public int InsertMenu(SysMenu menu)
         {
-            menu.CreateTime = DateTime.Now;
             return (int)_fsql.Insert(menu).ExecuteAffrows();
         }
 
         public int UpdateMenu(SysMenu menu)
         {
-            menu.UpdateTime = DateTime.Now;
             return _fsql.Update<SysMenu>().SetSource(menu).ExecuteAffrows();
         }
 

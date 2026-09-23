@@ -43,7 +43,6 @@ namespace MaiziWPF.Services.MySql
 
         public long InsertMessage(SysMessage msg)
         {
-            msg.CreateTime = DateTime.Now;
             return _fsql.Insert(msg).ExecuteIdentity();
         }
 
