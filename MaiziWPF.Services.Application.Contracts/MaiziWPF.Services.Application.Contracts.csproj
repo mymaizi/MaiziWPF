@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MaiziWPF.Common\MaiziWPF.Common.csproj" />
     <ProjectReference Include="..\MaiziWPF.Services.Domain\MaiziWPF.Services.Domain.csproj" />
   </ItemGroup>
 

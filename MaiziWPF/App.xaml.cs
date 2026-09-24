@@ -1,4 +1,5 @@
-﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Common.Oss;
+using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using MaiziWPF.Modules.Sys;
 using MaiziWPF.Services.Domain.Shared;
@@ -67,6 +68,8 @@ namespace MaiziWPF
                 var configuration = builder.Build();
                 options.Services.ReplaceConfiguration(configuration);
                 options.Services.Configure<MqttOptions>(configuration.GetSection("Mqtt"));
+                options.Services.Configure<OssOptions>(configuration.GetSection("Oss"));
+                options.Services.AddSingleton<IS3ClientService, S3ClientService>();
 
                 Log.Logger = new LoggerConfiguration()
 #if DEBUG

@@ -1,3 +1,4 @@
+using MaiziWPF.Common.Oss;
 using MaiziWPF.Core;
 using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
@@ -5,6 +6,7 @@ using MaiziWPF.Services.Domain.Shared;
 using Prism.Commands;
 using System;
 using System.Collections;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -15,6 +17,7 @@ namespace MaiziWPF.Modules.Sys
         private readonly ISysOssService _ossService;
         private readonly IDialogHostService _dialogHostService;
         private readonly ISnackbarService _snackbarService;
+        private readonly IS3ClientService _s3Client;
 
         private string _fileName;
         public string FileName
@@ -45,12 +48,15 @@ namespace MaiziWPF.Modules.Sys
         }
 
         public ICommand BatchDeleteCommand { get; }
+        public ICommand UploadCommand { get; }
+        public ICommand DownloadCommand { get; }
 
-        public OssListViewModel(ISysOssService ossService, IDialogHostService dialogHostService, ISnackbarService snackbarService)
+        public OssListViewModel(ISysOssService ossService, IDialogHostService dialogHostService, ISnackbarService snackbarService, IS3ClientService s3Client)
         {
             _ossService = ossService;
             _dialogHostService = dialogHostService;
             _snackbarService = snackbarService;
+            _s3Client = s3Client;
 
             RegisterQueryFunc(input =>
             {
@@ -63,7 +69,40 @@ namespace MaiziWPF.Modules.Sys
 
             DeleteButtonCommand = new DelegateCommand<SysOss>(async (oss) => await DeleteOss(oss));
             BatchDeleteCommand = new DelegateCommand<IList>(async (selectedItems) => await BatchDeleteOss(selectedItems));
+            UploadCommand = new DelegateCommand(async () => await OpenUploadDialog());
+            DownloadCommand = new DelegateCommand<SysOss>(async (oss) => await DownloadOss(oss));
             ResetButtonCommand = new DelegateCommand(ResetQuery);
+        }
+
+        private async Task OpenUploadDialog()
+        {
+            await _dialogHostService.ShowDialogAsync<OssUploadView>();
+            SearchButtonCommand.Execute(this);
+        }
+
+        private async Task DownloadOss(SysOss oss)
+        {
+            if (oss == null) return;
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = oss.OriginalName,
+                Title = "保存文件"
+            };
+
+            if (dialog.ShowDialog() != true) return;
+
+            try
+            {
+                using var stream = await _s3Client.DownloadAsync(oss.Url);
+                using var fileStream = File.Create(dialog.FileName);
+                await stream.CopyToAsync(fileStream);
+                _snackbarService.EnqueueSuccess("下载成功");
+            }
+            catch (Exception ex)
+            {
+                _snackbarService.EnqueueError($"下载失败: {ex.Message}");
+            }
         }
 
         private void ResetQuery()

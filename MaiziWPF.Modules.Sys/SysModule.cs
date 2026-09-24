@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using MaiziWPF.Core;
 using MaiziWPF.Core.Views;
 using Prism.Ioc;
 using Prism.Modularity;
@@ -47,6 +47,7 @@ namespace MaiziWPF.Modules.Sys
             containerRegistry.RegisterDialog<ConfigFormView>();
             containerRegistry.RegisterDialog<NoticeFormView>();
             containerRegistry.RegisterDialog<NoticeDetailView>();
+            containerRegistry.RegisterDialog<OssUploadView, OssUploadViewModel>();
             containerRegistry.RegisterDialog<ConfirmDialog, ConfirmDialogViewModel>();
             containerRegistry.RegisterDialog<MessageDialog, MessageDialogViewModel>();
         }

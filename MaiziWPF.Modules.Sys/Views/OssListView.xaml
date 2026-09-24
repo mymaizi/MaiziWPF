@@ -143,22 +143,11 @@
                             Background="#07bf96"
                             BorderBrush="#07bf96"
                             Foreground="#fff"
+                            Command="{Binding UploadCommand}"
                             Style="{StaticResource MaterialDesignRaisedLightButton}">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Upload" Width="14" Height="14" Margin="0,0,4,0" />
                                 <TextBlock Text="上传文件" FontSize="12" />
-                            </StackPanel>
-                        </Button>
-                        <Button
-                            Margin="0,0,8,0"
-                            Padding="12,6"
-                            Background="#07bf96"
-                            BorderBrush="#07bf96"
-                            Foreground="#fff"
-                            Style="{StaticResource MaterialDesignRaisedLightButton}">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Image" Width="14" Height="14" Margin="0,0,4,0" />
-                                <TextBlock Text="上传图片" FontSize="12" />
                             </StackPanel>
                         </Button>
                         <Button
@@ -180,7 +169,7 @@
             </Border>
 
             <!--  表格  -->
-            <Border Grid.Row="2" Margin="12,0,12,0">
+            <Border Grid.Row="2">
                 <DataGrid
                     Grid.Row="0"
                     x:Name="OssDataGrid"
@@ -218,13 +207,12 @@
                             <Setter Property="BorderBrush" Value="#e8e8e8" />
                             <Setter Property="BorderThickness" Value="0,0,0,1" />
                             <Setter Property="Padding" Value="16,0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.CellStyle>
-                        <Style TargetType="DataGridCell">
+                        <Style BasedOn="{StaticResource MaterialDesignDataGridCell}" TargetType="DataGridCell">
                             <Setter Property="VerticalAlignment" Value="Center" />
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Center" />
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="BorderThickness" Value="0" />
@@ -286,7 +274,7 @@
                         <DataGridTemplateColumn Width="*" Header="文件展示">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border Width="60" Height="60" CornerRadius="6" HorizontalAlignment="Center">
+                                    <Border Width="40" Height="40" CornerRadius="6" HorizontalAlignment="Center">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="#f5f5f5" />
@@ -364,16 +352,30 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTemplateColumn Width="*" Header="服务商">
-                            <DataGridTemplateColumn.CellStyle>
-                                <Style TargetType="DataGridCell">
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                </Style>
-                            </DataGridTemplateColumn.CellStyle>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border Style="{StaticResource ServiceBadgeStyle}" HorizontalAlignment="Center">
-                                        <TextBlock FontSize="11" HorizontalAlignment="Center" Text="{Binding Service}" />
+                                        <TextBlock FontSize="11" HorizontalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#1890ff" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Service}" Value="minio">
+                                                            <Setter Property="Text" Value="Minio" />
+                                                            <Setter Property="Foreground" Value="#52c41a" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Service}" Value="aliyun">
+                                                            <Setter Property="Text" Value="阿里云" />
+                                                            <Setter Property="Foreground" Value="#fa8c16" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Service}" Value="rustfs">
+                                                            <Setter Property="Text" Value="RustFS" />
+                                                            <Setter Property="Foreground" Value="#1890ff" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -389,6 +391,28 @@
                                             Background="#e6f7ff"
                                             BorderBrush="#91d5ff"
                                             BorderThickness="1"
+                                            Command="{Binding DataContext.DownloadCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip="下载">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="3">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                            <materialDesign:PackIcon Kind="Download" Foreground="#91d5ff" Width="14" Height="14" />
+                                        </Button>
+                                        <Button
+                                            Width="26"
+                                            Height="24"
+                                            Margin="0,0,4,0"
+                                            Background="#fff1f0"
+                                            BorderBrush="#ffa39e"
+                                            BorderThickness="1"
                                             Command="{Binding DataContext.DeleteButtonCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"
                                             CommandParameter="{Binding}"
                                             ToolTip="删除">
@@ -402,7 +426,7 @@
                                                     </Border>
                                                 </ControlTemplate>
                                             </Button.Template>
-                                            <materialDesign:PackIcon Kind="Delete" Foreground="#91d5ff" Width="14" Height="14" />
+                                            <materialDesign:PackIcon Kind="Delete" Foreground="#ffa39e" Width="14" Height="14" />
                                         </Button>
                                     </StackPanel>
                                 </DataTemplate>
