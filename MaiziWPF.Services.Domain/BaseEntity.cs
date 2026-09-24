@@ -1,9 +1,10 @@
 ﻿using FreeSql.DataAnnotations;
+using MaiziWPF.Services.Domain.Shared;
 using System;
 
 namespace MaiziWPF.Services.Domain
 {
-    public class BaseEntity
+    public class BaseEntity : IDataPermission
     {
         /// <summary>
         /// 创建部门

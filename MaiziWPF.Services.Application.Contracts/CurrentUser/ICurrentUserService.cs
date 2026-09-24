@@ -1,4 +1,5 @@
 using MaiziWPF.Services.Domain;
+using MaiziWPF.Services.Domain.Shared;
 using System.Collections.Generic;
 using Volo.Abp.DependencyInjection;
 
@@ -8,7 +9,15 @@ namespace MaiziWPF.Services.Application.Contracts
     {
         SysUser CurrentUser { get; }
 
+        long UserId { get; }
+
+        long DeptId { get; }
+
+        string UserName { get; }
+
         bool IsAuthenticated { get; }
+
+        bool IsSuperAdmin { get; }
 
         List<SysMenu> MenuTree { get; }
 
@@ -16,13 +25,9 @@ namespace MaiziWPF.Services.Application.Contracts
 
         List<string> RoleKeys { get; }
 
-        bool IsSuperAdmin { get; }
+        List<DataScopeRule> GetDataScopeRules();
 
-        long UserId { get; }
-
-        string UserName { get; }
-
-        long DeptId { get; }
+        bool HasPermission(string perms);
 
         void SetCurrentUser(SysUser user);
 
@@ -32,7 +37,7 @@ namespace MaiziWPF.Services.Application.Contracts
 
         void SetRoles(List<string> roleKeys);
 
-        bool HasPermission(string perms);
+        void InitializeDataPermissions();
 
         void Clear();
     }
