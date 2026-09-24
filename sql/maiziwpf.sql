@@ -1,6 +1,7 @@
 -- ----------------------------
 -- 1、部门表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_dept;
 create table sys_dept (
     dept_id           bigint(20)      not null                   comment '部门id',
     parent_id         bigint(20)      default 0                  comment '父部门id',
@@ -25,6 +26,7 @@ create table sys_dept (
 -- ----------------------------
 -- 2、用户信息表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_user;
 create table sys_user (
     user_id           bigint(20)      not null                   comment '用户ID',
     dept_id           bigint(20)      default null               comment '部门ID',
@@ -52,10 +54,11 @@ create table sys_user (
     key idx_sys_user_user_name (user_name),
     key idx_sys_user_phone     (phone_number)
 ) engine=innodb comment = '用户信息表';
-INSERT INTO sys_user ('user_id', 'dept_id', 'user_name', 'nick_name', 'user_type', 'email', 'phone_number', 'gender', 'avatar', 'password', 'status', 'del_flag', 'login_ip', 'login_date', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark') VALUES (1761100000000000001, 1761000000000000103, 'admin', '麦子', 'sys_user', '', '', '1', 0, '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2026-09-10 16:46:14.000', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:14.000', 0, '0001-01-01 00:00:00.000', '管理员');
+INSERT INTO sys_user (user_id, dept_id, user_name, nick_name, user_type, email, phone_number, gender, avatar, password, status, del_flag, login_ip, login_date, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (1761100000000000001, 1761000000000000103, 'admin', '麦子', 'sys_user', '', '', '1', 0, '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2026-09-10 16:46:14.000', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:14.000', 0, '0001-01-01 00:00:00.000', '管理员');
 -- ----------------------------
 -- 3、岗位信息表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_post;
 create table sys_post
 (
     post_id       bigint(20)      not null                   comment '岗位ID',
@@ -78,6 +81,7 @@ create table sys_post
 -- ----------------------------
 -- 4、角色信息表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_role;
 create table sys_role (
     role_id              bigint(20)      not null                   comment '角色ID',
     role_name            varchar(30)     not null                   comment '角色名称',
@@ -98,10 +102,11 @@ create table sys_role (
     key idx_sys_role_create_dept (create_dept),
     key idx_sys_role_create_by   (create_by)
 ) engine=innodb comment = '角色信息表';
-INSERT INTO sys_role ('role_id', 'role_name', 'role_key', 'role_sort', 'data_scope', 'menu_check_strictly', 'dept_check_strictly', 'status', 'del_flag', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark') VALUES (1761300000000000001, '超级管理员', 'superadmin', 1, '1', 1, 1, '0', '0', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:14.000', 0, '0001-01-01 00:00:00.000', '超级管理员');
+INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, menu_check_strictly, dept_check_strictly, status, del_flag, create_dept, create_by, create_time, update_by, update_time, remark) VALUES (1761300000000000001, '超级管理员', 'superadmin', 1, '1', 1, 1, '0', '0', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:14.000', 0, '0001-01-01 00:00:00.000', '超级管理员');
 -- ----------------------------
 -- 5、菜单权限表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_menu;
 create table sys_menu (
     menu_id           bigint(20)      not null                   comment '菜单ID',
     menu_name         varchar(50)     not null                   comment '菜单名称',
@@ -299,6 +304,7 @@ VALUES (4004, '文件下载', 400, 4, '', '', NULL, 'N', 'F', '0', 'system:oss:d
 -- ----------------------------
 -- 6、用户和角色关联表  用户N-1角色
 -- ----------------------------
+DROP TABLE IF EXISTS sys_user_role;
 create table sys_user_role (
     user_id   bigint(20) not null comment '用户ID',
     role_id   bigint(20) not null comment '角色ID',
@@ -308,6 +314,7 @@ create table sys_user_role (
 -- ----------------------------
 -- 7、角色和菜单关联表  角色1-N菜单
 -- ----------------------------
+DROP TABLE IF EXISTS sys_role_menu;
 create table sys_role_menu (
     role_id   bigint(20) not null comment '角色ID',
     menu_id   bigint(20) not null comment '菜单ID',
@@ -316,6 +323,7 @@ create table sys_role_menu (
 -- ----------------------------
 -- 8、角色和部门关联表  角色1-N部门
 -- ----------------------------
+DROP TABLE IF EXISTS sys_role_dept;
 create table sys_role_dept (
     role_id   bigint(20) not null comment '角色ID',
     dept_id   bigint(20) not null comment '部门ID',
@@ -324,6 +332,7 @@ create table sys_role_dept (
 -- ----------------------------
 -- 9、用户与岗位关联表  用户1-N岗位
 -- ----------------------------
+DROP TABLE IF EXISTS sys_user_post;
 create table sys_user_post
 (
     user_id   bigint(20) not null comment '用户ID',
@@ -333,6 +342,7 @@ create table sys_user_post
 -- ----------------------------
 -- 10、操作日志记录
 -- ----------------------------
+DROP TABLE IF EXISTS sys_oper_log;
 create table sys_oper_log (
     oper_id           bigint(20)      not null                   comment '日志主键',
     title             varchar(50)     default ''                 comment '模块标题',
@@ -362,6 +372,7 @@ create table sys_oper_log (
 -- ----------------------------
 -- 11、字典类型表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_dict_type;
 create table sys_dict_type
 (
     dict_id          bigint(20)      not null                   comment '字典主键',
@@ -377,17 +388,18 @@ create table sys_dict_type
     primary key (dict_id),
     unique (dict_type)
 ) engine=innodb comment = '字典类型表';
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000001, '用户性别', 'sys_user_gender', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '用户性别列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000002, '菜单状态', 'sys_show_hide', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '菜单状态列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000003, '系统开关', 'sys_normal_disable', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统开关列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000006, '系统是否', 'sys_yes_no', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统是否列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000007, '通知类型', 'sys_notice_type', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '通知类型列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000008, '通知状态', 'sys_notice_status', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '通知状态列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000009, '操作类型', 'sys_oper_type', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '操作类型列表', '0');
-INSERT INTO sys_dict_type ('dict_id', 'dict_name', 'dict_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761500000000000010, '系统状态', 'sys_common_status', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '登录状态列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000001, '用户性别', 'sys_user_gender', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '用户性别列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000002, '菜单状态', 'sys_show_hide', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '菜单状态列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000003, '系统开关', 'sys_normal_disable', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统开关列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000006, '系统是否', 'sys_yes_no', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统是否列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000007, '通知类型', 'sys_notice_type', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '通知类型列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000008, '通知状态', 'sys_notice_status', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '通知状态列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000009, '操作类型', 'sys_oper_type', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '操作类型列表', '0');
+INSERT INTO sys_dict_type (dict_id, dict_name, dict_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761500000000000010, '系统状态', 'sys_common_status', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '登录状态列表', '0');
 -- ----------------------------
 -- 12、字典数据表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_dict_data;
 create table sys_dict_data
 (
     dict_code        bigint(20)      not null                   comment '字典编码',
@@ -406,33 +418,34 @@ create table sys_dict_data
     primary key (dict_code),
     key idx_sys_dict_data_type (dict_type)
 ) engine=innodb comment = '字典数据表';
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000001, 1, '男', '0', 'sys_user_gender', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '性别男', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000002, 2, '女', '1', 'sys_user_gender', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '性别女', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000003, 3, '未知', '2', 'sys_user_gender', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '性别未知', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000004, 1, '显示', '0', 'sys_show_hide', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '显示菜单', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000005, 2, '隐藏', '1', 'sys_show_hide', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '隐藏菜单', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000006, 1, '正常', '0', 'sys_normal_disable', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '正常状态', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000007, 2, '停用', '1', 'sys_normal_disable', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '停用状态', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000012, 1, '是', 'Y', 'sys_yes_no', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统默认是', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000013, 2, '否', 'N', 'sys_yes_no', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统默认否', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000014, 1, '通知', '1', 'sys_notice_type', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '通知', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000015, 2, '公告', '2', 'sys_notice_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '公告', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000016, 1, '正常', '0', 'sys_notice_status', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '正常状态', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000017, 2, '关闭', '1', 'sys_notice_status', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '关闭状态', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000018, 1, '新增', '1', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '新增操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000019, 2, '修改', '2', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '修改操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000020, 3, '删除', '3', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '删除操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000021, 4, '授权', '4', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '授权操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000022, 5, '导出', '5', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '导出操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000023, 6, '导入', '6', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '导入操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000024, 7, '强退', '7', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '强退操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000026, 9, '清空数据', '9', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '清空操作', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000027, 1, '成功', '0', 'sys_common_status', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '正常状态', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000028, 2, '失败', '1', 'sys_common_status', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '停用状态', '0');
-INSERT INTO sys_dict_data ('dict_code', 'dict_sort', 'dict_label', 'dict_value', 'dict_type', 'is_default', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761600000000000029, 99, '其他', '0', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '其他操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000001, 1, '男', '0', 'sys_user_gender', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '性别男', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000002, 2, '女', '1', 'sys_user_gender', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '性别女', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000003, 3, '未知', '2', 'sys_user_gender', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '性别未知', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000004, 1, '显示', '0', 'sys_show_hide', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '显示菜单', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000005, 2, '隐藏', '1', 'sys_show_hide', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '隐藏菜单', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000006, 1, '正常', '0', 'sys_normal_disable', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '正常状态', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000007, 2, '停用', '1', 'sys_normal_disable', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '停用状态', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000012, 1, '是', 'Y', 'sys_yes_no', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统默认是', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000013, 2, '否', 'N', 'sys_yes_no', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '系统默认否', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000014, 1, '通知', '1', 'sys_notice_type', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '通知', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000015, 2, '公告', '2', 'sys_notice_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '公告', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000016, 1, '正常', '0', 'sys_notice_status', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '正常状态', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000017, 2, '关闭', '1', 'sys_notice_status', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '关闭状态', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000018, 1, '新增', '1', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '新增操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000019, 2, '修改', '2', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '修改操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000020, 3, '删除', '3', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '删除操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000021, 4, '授权', '4', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '授权操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000022, 5, '导出', '5', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '导出操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000023, 6, '导入', '6', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '导入操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000024, 7, '强退', '7', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '强退操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000026, 9, '清空数据', '9', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '清空操作', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000027, 1, '成功', '0', 'sys_common_status', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '正常状态', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000028, 2, '失败', '1', 'sys_common_status', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '停用状态', '0');
+INSERT INTO sys_dict_data (dict_code, dict_sort, dict_label, dict_value, dict_type, is_default, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761600000000000029, 99, '其他', '0', 'sys_oper_type', 'N', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '其他操作', '0');
 -- ----------------------------
 -- 13、参数配置表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_config;
 create table sys_config (
     config_id         bigint(20)      not null                   comment '参数主键',
     config_name       varchar(100)    default ''                 comment '参数名称',
@@ -448,11 +461,12 @@ create table sys_config (
     del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     primary key (config_id)
 ) engine=innodb comment = '参数配置表';
-INSERT INTO sys_config ('config_id', 'config_name', 'config_key', 'config_value', 'config_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761700000000000001, '用户管理-账号初始密码', 'sys.user.initPassword', '123456', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '初始化密码 123456', '0');
-INSERT INTO sys_config ('config_id', 'config_name', 'config_key', 'config_value', 'config_type', 'create_dept', 'create_by', 'create_time', 'update_by', 'update_time', 'remark', 'del_flag') VALUES (1761700000000000003, 'OSS预览列表资源开关', 'sys.oss.previewListResource', 'true', 'Y', 0, 0, '0001-01-01 00:00:00.000', 0, '2026-09-21 16:09:54.472', 'true:开启, false:关闭', '0');
+INSERT INTO sys_config (config_id, config_name, config_key, config_value, config_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761700000000000001, '用户管理-账号初始密码', 'sys.user.initPassword', '123456', 'Y', 1761000000000000103, 1761100000000000001, '2026-09-10 16:46:15.000', 0, '0001-01-01 00:00:00.000', '初始化密码 123456', '0');
+INSERT INTO sys_config (config_id, config_name, config_key, config_value, config_type, create_dept, create_by, create_time, update_by, update_time, remark, del_flag) VALUES (1761700000000000003, 'OSS预览列表资源开关', 'sys.oss.previewListResource', 'true', 'Y', 0, 0, '0001-01-01 00:00:00.000', 0, '2026-09-21 16:09:54.472', 'true:开启, false:关闭', '0');
 -- ----------------------------
 -- 14、系统访问记录
 -- ----------------------------
+DROP TABLE IF EXISTS sys_login_info;
 create table sys_login_info (
     info_id        bigint(20)     not null                  comment '访问ID',
     user_name      varchar(50)    default ''                comment '用户账号',
@@ -471,6 +485,7 @@ create table sys_login_info (
 -- ----------------------------
 -- 15、通知公告表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_notice;
 create table sys_notice (
     notice_id         bigint(20)      not null                   comment '公告ID',
     notice_title      varchar(50)     not null                   comment '公告标题',
@@ -489,6 +504,7 @@ create table sys_notice (
 -- ----------------------------
 -- 16、消息记录表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_message;
 create table sys_message (
     message_id        bigint(20)      not null                   comment '消息ID',
     category          varchar(20)     not null                   comment '消息分组(system/notice/workflow)',
@@ -513,6 +529,7 @@ create table sys_message (
 -- ----------------------------
 -- 17、OSS对象存储表
 -- ----------------------------
+DROP TABLE IF EXISTS sys_oss;
 create table sys_oss (
     oss_id          bigint(20)   not null                   comment '对象存储主键',
     file_name       varchar(255) not null default ''        comment '文件名',
