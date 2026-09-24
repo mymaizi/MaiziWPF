@@ -1,21 +1,25 @@
 using FreeSql.Aop;
-using MaiziWPF.Services.Application.Contracts;
 using MaiziWPF.Services.Domain;
+using MaiziWPF.Services.Domain.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace MaiziWPF.Services.MySql.Audit
 {
-    public class AuditValueHandler
+    public static class AuditServiceExtensions
     {
-        private readonly ICurrentUserService _currentUser;
-
-        public AuditValueHandler(ICurrentUserService currentUser)
+        public static IServiceCollection AddAuditValue(this IServiceCollection services)
         {
-            _currentUser = currentUser;
+            return services;
         }
 
-        public void Handle(object? sender, AuditValueEventArgs e)
+        public static IFreeSql UseAuditValue(this IFreeSql fsql, IServiceProvider serviceProvider)
+        {
+            fsql.Aop.AuditValue += HandleAuditValue;
+            return fsql;
+        }
+
+        private static void HandleAuditValue(object? sender, AuditValueEventArgs e)
         {
             if (e.Object is not BaseEntity) return;
 
@@ -24,19 +28,19 @@ namespace MaiziWPF.Services.MySql.Audit
                 switch (e.Property.Name)
                 {
                     case nameof(BaseEntity.CreateBy):
-                        if (_currentUser.IsAuthenticated)
-                            e.Value = _currentUser.UserId;
+                        if (AuditUserContext.IsAuthenticated)
+                            e.Value = AuditUserContext.UserId;
                         break;
                     case nameof(BaseEntity.CreateDept):
-                        if (_currentUser.IsAuthenticated)
-                            e.Value = _currentUser.DeptId;
+                        if (AuditUserContext.IsAuthenticated)
+                            e.Value = AuditUserContext.DeptId;
                         break;
                     case nameof(BaseEntity.CreateTime):
                         e.Value = DateTime.Now;
                         break;
                     case nameof(BaseEntity.UpdateBy):
-                        if (_currentUser.IsAuthenticated)
-                            e.Value = _currentUser.UserId;
+                        if (AuditUserContext.IsAuthenticated)
+                            e.Value = AuditUserContext.UserId;
                         break;
                     case nameof(BaseEntity.UpdateTime):
                         e.Value = DateTime.Now;
@@ -48,30 +52,14 @@ namespace MaiziWPF.Services.MySql.Audit
                 switch (e.Property.Name)
                 {
                     case nameof(BaseEntity.UpdateBy):
-                        if (_currentUser.IsAuthenticated)
-                            e.Value = _currentUser.UserId;
+                        if (AuditUserContext.IsAuthenticated)
+                            e.Value = AuditUserContext.UserId;
                         break;
                     case nameof(BaseEntity.UpdateTime):
                         e.Value = DateTime.Now;
                         break;
                 }
             }
-        }
-    }
-
-    public static class AuditServiceExtensions
-    {
-        public static IServiceCollection AddAudit(this IServiceCollection services)
-        {
-            services.AddSingleton<AuditValueHandler>();
-            return services;
-        }
-
-        public static IFreeSql UseAuditValue(this IFreeSql fsql, IServiceProvider serviceProvider)
-        {
-            var handler = serviceProvider.GetRequiredService<AuditValueHandler>();
-            fsql.Aop.AuditValue += handler.Handle;
-            return fsql;
         }
     }
 }

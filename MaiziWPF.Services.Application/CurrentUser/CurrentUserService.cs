@@ -47,6 +47,10 @@ namespace MaiziWPF.Services.Application
         public void SetCurrentUser(SysUser user)
         {
             _currentUser = user;
+            if (user != null)
+                AuditUserContext.SetAuthenticated(user.UserId, user.DeptId);
+            else
+                AuditUserContext.Clear();
         }
 
         public void SetPermissions(HashSet<string> permissions)
@@ -129,53 +133,52 @@ namespace MaiziWPF.Services.Application
             if (_currentUser == null)
                 return new List<DataScopeRule>();
 
-            using (_fsql.GlobalFilter.Disable("DataPermission"))
+            var roles = _fsql.Select<SysRole>()
+                .DisableGlobalFilter("DataPermission")
+                .InnerJoin<SysUserRole>((r, ur) => r.RoleId == ur.RoleId && ur.UserId == _currentUser.UserId)
+                .Where(r => r.Status == "0" && r.DelFlag == "0")
+                .ToList();
+
+            if (roles == null || roles.Count == 0)
+                return new List<DataScopeRule>();
+
+            var rules = new List<DataScopeRule>();
+
+            foreach (var role in roles)
             {
-                var roles = _fsql.Select<SysRole>()
-                    .InnerJoin<SysUserRole>((r, ur) => r.RoleId == ur.RoleId && ur.UserId == _currentUser.UserId)
-                    .Where(r => r.Status == "0" && r.DelFlag == "0")
-                    .ToList();
+                if (!Enum.TryParse<DataScopeType>(role.DataScope, out var scopeType))
+                    continue;
 
-                if (roles == null || roles.Count == 0)
-                    return new List<DataScopeRule>();
-
-                var rules = new List<DataScopeRule>();
-
-                foreach (var role in roles)
+                var rule = new DataScopeRule
                 {
-                    if (!Enum.TryParse<DataScopeType>(role.DataScope, out var scopeType))
-                        continue;
+                    ScopeType = scopeType,
+                    RoleId = role.RoleId,
+                    DeptId = _currentUser.DeptId,
+                    UserId = _currentUser.UserId
+                };
 
-                    var rule = new DataScopeRule
-                    {
-                        ScopeType = scopeType,
-                        RoleId = role.RoleId,
-                        DeptId = _currentUser.DeptId,
-                        UserId = _currentUser.UserId
-                    };
+                switch (scopeType)
+                {
+                    case DataScopeType.CUSTOM:
+                        rule.CustomDeptIds = GetRoleCustomDeptIds(role.RoleId);
+                        break;
 
-                    switch (scopeType)
-                    {
-                        case DataScopeType.CUSTOM:
-                            rule.CustomDeptIds = GetRoleCustomDeptIds(role.RoleId);
-                            break;
-
-                        case DataScopeType.DEPT_AND_CHILD:
-                        case DataScopeType.DEPT_AND_CHILD_OR_SELF:
-                            rule.DeptAndChildIds = GetDeptAndChildIds(_currentUser.DeptId);
-                            break;
-                    }
-
-                    rules.Add(rule);
+                    case DataScopeType.DEPT_AND_CHILD:
+                    case DataScopeType.DEPT_AND_CHILD_OR_SELF:
+                        rule.DeptAndChildIds = GetDeptAndChildIds(_currentUser.DeptId);
+                        break;
                 }
 
-                return rules;
+                rules.Add(rule);
             }
+
+            return rules;
         }
 
         private List<long> GetRoleCustomDeptIds(long roleId)
         {
             return _fsql.Select<SysRoleDept>()
+                .DisableGlobalFilter("DataPermission")
                 .Where(rd => rd.RoleId == roleId)
                 .ToList(rd => rd.DeptId);
         }
@@ -190,6 +193,7 @@ namespace MaiziWPF.Services.Application
         private void CollectChildDeptIds(long parentId, List<long> result)
         {
             var childIds = _fsql.Select<SysDept>()
+                .DisableGlobalFilter("DataPermission")
                 .Where(d => d.ParentId == parentId && d.DelFlag == "0" && d.Status == "0")
                 .ToList(d => d.Id);
 
@@ -209,6 +213,7 @@ namespace MaiziWPF.Services.Application
             _menuTree = new List<SysMenu>();
             _permissions = new HashSet<string>();
             _roleKeys = new List<string>();
+            AuditUserContext.Clear();
             DataPermissionManager.Clear();
         }
     }

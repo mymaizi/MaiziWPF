@@ -16,7 +16,7 @@ namespace MaiziWPF.Services.MySql
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             IFreeSql fsql = new FreeSql.FreeSqlBuilder()
-                  .UseConnectionString(FreeSql.DataType.MySql, "Data Source=127.0.0.1;Port=3306;User ID=root;Password=123456; Initial Catalog=maiziwpf;Charset=utf8mb4; SslMode=none;Min pool size=1")
+                  .UseConnectionString(FreeSql.DataType.MySql, "Data Source=127.0.0.1;Port=3306;User ID=root;Password=; Initial Catalog=maiziwpf;Charset=utf8mb4; SslMode=none;Min pool size=1")
                   .UseMonitorCommand(cmd =>
                   {
                       var logger = context.Services.GetRequiredService<ILogger<MySqlModule>>();
@@ -31,16 +31,14 @@ namespace MaiziWPF.Services.MySql
                 a => DataPermissionManager.PermittedDeptIds.Contains(a.CreateDept)
                      || DataPermissionManager.PermittedUserIds.Contains(a.CreateBy));
 
-            var sp = context.Services.BuildServiceProvider();
-
-            var handler = sp.GetRequiredService<AuditValueHandler>();
-            fsql.Aop.AuditValue += handler.Handle;
+            var serviceProvider = context.Services.BuildServiceProvider();
+            fsql.UseAuditValue(serviceProvider);
 
             context.Services.AddSingleton<IFreeSql>(fsql);
             context.Services.AddFreeRepository();
             context.Services.AddScoped<IFreeSql>(r => r.GetService<UnitOfWorkManager>().Orm);
             context.Services.AddScoped<UnitOfWorkManager>(r => new UnitOfWorkManager(fsql));
-            TransactionalAttribute.SetServiceProvider(sp);
+            TransactionalAttribute.SetServiceProvider(serviceProvider);
         }
     }
 }
