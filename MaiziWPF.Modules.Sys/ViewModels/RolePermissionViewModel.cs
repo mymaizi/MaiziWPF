@@ -139,6 +139,58 @@ namespace MaiziWPF.Modules.Sys
                 SetNodeChecked(child, isChecked);
         }
 
+        private bool _deptExpandAll;
+        public bool DeptExpandAll
+        {
+            get { return _deptExpandAll; }
+            set
+            {
+                if (SetProperty(ref _deptExpandAll, value))
+                {
+                    SetAllDeptExpanded(value);
+                }
+            }
+        }
+
+        private bool _deptSelectAll;
+        public bool DeptSelectAll
+        {
+            get { return _deptSelectAll; }
+            set
+            {
+                if (SetProperty(ref _deptSelectAll, value))
+                {
+                    SetAllDeptChecked(value);
+                }
+            }
+        }
+
+        private void SetAllDeptExpanded(bool isExpanded)
+        {
+            foreach (var node in DeptTreeItems)
+                SetDeptNodeExpanded(node, isExpanded);
+        }
+
+        private void SetDeptNodeExpanded(DeptNode node, bool isExpanded)
+        {
+            node.IsExpanded = isExpanded;
+            foreach (var child in node.Children)
+                SetDeptNodeExpanded(child, isExpanded);
+        }
+
+        private void SetAllDeptChecked(bool isChecked)
+        {
+            foreach (var node in DeptTreeItems)
+                SetDeptNodeChecked(node, isChecked);
+        }
+
+        private void SetDeptNodeChecked(DeptNode node, bool isChecked)
+        {
+            node.IsChecked = isChecked;
+            foreach (var child in node.Children)
+                SetDeptNodeChecked(child, isChecked);
+        }
+
         public ObservableCollection<MenuItemNode> MenuTreeItems { get; set; } = new();
         public ObservableCollection<DeptNode> DeptTreeItems { get; set; } = new();
 
@@ -215,7 +267,7 @@ namespace MaiziWPF.Modules.Sys
 
         private void LoadDeptTree()
         {
-            var depts = _deptService.SelectDeptList(new SysDept(), false);
+            var depts = _deptService.SelectDeptList(new SysDept(), false, true);
             var rootDepts = depts.Where(d => d.ParentId == 0).OrderBy(d => d.OrderNum).ToList();
             DeptTreeItems.Clear();
             foreach (var dept in rootDepts)
@@ -453,7 +505,7 @@ namespace MaiziWPF.Modules.Sys
                 if (_isUpdating) return;
                 if (SetProperty(ref _isChecked, value))
                 {
-                    if (!_isStrict)
+                    if (_isStrict)
                     {
                         _isUpdating = true;
                         CascadeToChildren(value);

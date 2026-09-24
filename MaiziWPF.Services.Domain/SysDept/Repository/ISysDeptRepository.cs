@@ -8,7 +8,7 @@ namespace MaiziWPF.Services.Domain
 {
     public interface ISysDeptRepository : IBaseRepository<SysDept, int>, ITransientDependency
     {
-        List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery);
+        List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery, bool disableDataPermissionFilter = false);
 
         SysDept SelectDeptById(long deptId);
 

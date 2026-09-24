@@ -15,7 +15,7 @@ namespace MaiziWPF.Services.MySql
             _fsql = fsql;
         }
 
-        public List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true)
+        public List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true, bool disableDataPermissionFilter = false)
         {
             System.Linq.Expressions.Expression<Func<SysDept, bool>> where = d => d.DelFlag == "0";
             if (dept.Id != 0)
@@ -27,6 +27,8 @@ namespace MaiziWPF.Services.MySql
             if (!string.IsNullOrEmpty(dept.Status))
                 where = where.And(d => d.Status == dept.Status);
             var query = _fsql.Select<SysDept>().Where(where).OrderBy(a => new { a.ParentId, a.OrderNum });
+            if (disableDataPermissionFilter)
+                query = query.DisableGlobalFilter("DataPermission");
             var list = isTreeQuery ? query.ToTreeList() : query.ToList();
             PopulateLeaderNames(list);
             return list;

@@ -55,7 +55,7 @@ MaiziWPF.slnx
 | **Services.Application** | 应用服务层 | 业务逻辑实现、MqttService、LocalDbService、MessagePublisher、PermissionService |
 | **Services.Application.Contracts** | 服务契约层 | 全部服务接口定义、ICurrentUserService、IMqttService、ILocalDbService、IMessagePublisher |
 | **Services.Domain** | 领域层 | 实体定义（SysUser/SysRole/SysMenu/SysDept/SysMessage 等）、仓储接口 |
-| **Services.Domain.Shared** | 领域共享层 | 查询输入 DTO、UserStatus 枚举、IAuditUserProvider、TransactionalAttribute、IPagingInfo |
+| **Services.Domain.Shared** | 领域共享层 | 查询输入 DTO、UserStatus 枚举、AuditUserContext（审计用户静态上下文）、TransactionalAttribute、IPagingInfo |
 | **Services.MySql** | MySQL 仓储层 | 全部 FreeSql 仓储实现，MySQL 数据库访问 |
 
 ### 依赖关系
@@ -92,7 +92,7 @@ MaiziWPF ──────────────► MaiziWPF.Core
 |------|------|------|
 | **仪表盘** | `DashboardView` | 系统首页概览 |
 | **用户管理** | `UserListView` / `UserFormView` | 用户列表、新增/编辑、角色分配、数据权限 |
-| **角色管理** | `RoleListView` / `RoleFormView` / `RolePermissionView` / `RoleAuthUserView` / `AuthRoleView` | 角色列表、权限分配、用户授权 |
+| **角色管理** | `RoleListView` / `RoleFormView` / `RolePermissionView` / `RoleAuthUserView` / `AuthRoleView` | 角色列表、菜单权限分配、数据权限分配（全部/本部门/本部门及以下/自定义）、用户授权 |
 | **菜单管理** | `MenuListView` / `MenuFormView` | 菜单树管理、按钮权限 |
 | **部门管理** | `DeptListView` / `DeptFormView` | 组织架构树、部门选择 |
 | **岗位管理** | `PostListView` / `PostFormView` | 岗位列表、岗位分配 |
@@ -223,7 +223,8 @@ dotnet run --project MaiziWPF
 - **MVVM 模式**：Prism 驱动的 ViewModel-First 开发模式
 - **Material Design**：现代化 Material Design 风格界面
 - **权限控制**：RBAC 角色-菜单-按钮级权限控制（`PermsAssist` 附加属性）
-- **数据权限**：支持按部门的数据范围权限
+- **数据权限**：支持 5 种数据范围（全部/本部门/本部门及以下/自定义/仅本人），通过 `DataPermissionManager` 与 FreeSql `GlobalFilter` 实现；角色权限分配界面支持菜单权限与数据权限的可视化配置（展开/折叠、全选、父子联动）
+- **审计上下文**：`AuditUserContext` 静态类为 FreeSql AOP 审计提供用户信息，解耦 ORM 层与应用服务层
 - **实时消息**：MQTT 协议实现消息推送、在线状态管理、踢下线/禁用控制
 - **离线缓存**：SQLite 本地数据库缓存消息已读状态与同步位点
 - **双数据库**：MySQL（主库）+ SQLite（本地缓存），FreeSql 统一 ORM

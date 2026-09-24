@@ -139,40 +139,73 @@
             <!-- 数据权限 Tab -->
             <TabItem Header="数据权限">
                 <Grid Margin="20,16,20,12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="12" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontSize="13"
-                        Foreground="#606266"
-                        Text="权限范围" />
+                    <!-- 权限范围下拉框 -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="13"
+                            Foreground="#606266"
+                            Text="权限范围" />
+                        <ComboBox
+                            Grid.Column="2"
+                            Height="36"
+                            FontSize="13"
+                            ItemsSource="{Binding DataScopeOptions}"
+                            SelectedValuePath="Value"
+                            SelectedValue="{Binding DataScope}"
+                            DisplayMemberPath="Label"
+                            materialDesign:HintAssist.Hint="请选择数据权限范围" />
+                    </Grid>
 
-                    <ComboBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Height="36"
-                        FontSize="13"
-                        ItemsSource="{Binding DataScopeOptions}"
-                        SelectedValuePath="Value"
-                        SelectedValue="{Binding DataScope}"
-                        DisplayMemberPath="Label"
-                        materialDesign:HintAssist.Hint="请选择数据权限范围" />
+                    <!-- 工具栏（仅自定义数据权限时显示） -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Margin="0,12,0,12"
+                        Orientation="Horizontal"
+                        Visibility="{Binding IsCustomDataScope, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="#606266"
+                            Text="数据权限" />
+                        <CheckBox
+                            Content="展开/折叠"
+                            FontSize="12"
+                            Foreground="#606266"
+                            IsChecked="{Binding DeptExpandAll}"
+                            VerticalAlignment="Center" />
+                        <CheckBox
+                            Margin="20,0,0,0"
+                            Content="全选/全不选"
+                            FontSize="12"
+                            Foreground="#606266"
+                            IsChecked="{Binding DeptSelectAll}"
+                            VerticalAlignment="Center" />
+                        <CheckBox
+                            Margin="20,0,0,0"
+                            Content="父子联动"
+                            FontSize="12"
+                            Foreground="#606266"
+                            IsChecked="{Binding DeptCheckStrictly}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
 
                     <!-- 部门树（仅自定义数据权限时显示） -->
                     <Border
-                        Grid.Row="1"
-                        Grid.ColumnSpan="3"
-                        Margin="0,16,0,0"
+                        Grid.Row="2"
                         BorderBrush="#e8e8e8"
                         BorderThickness="1"
                         CornerRadius="4"
@@ -184,7 +217,7 @@
                                 ItemsSource="{Binding DeptTreeItems}">
                                 <TreeView.ItemContainerStyle>
                                     <Style TargetType="TreeViewItem">
-                                        <Setter Property="IsExpanded" Value="True" />
+                                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                                     </Style>
                                 </TreeView.ItemContainerStyle>
                                 <TreeView.ItemTemplate>

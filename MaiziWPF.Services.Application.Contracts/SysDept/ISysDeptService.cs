@@ -8,7 +8,7 @@ namespace MaiziWPF.Services.Application.Contracts
 {
     public interface ISysDeptService : ITransientDependency
     {
-        List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true);
+        List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true, bool disableDataPermissionFilter = false);
 
         SysDept SelectDeptById(long deptId);
 

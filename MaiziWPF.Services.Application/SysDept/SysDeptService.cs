@@ -15,9 +15,9 @@ namespace MaiziWPF.Services.Application
             _repository = repository;
         }
 
-        public List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true)
+        public List<SysDept> SelectDeptList(SysDept dept, bool isTreeQuery = true, bool disableDataPermissionFilter = false)
         {
-            return _repository.SelectDeptList(dept, isTreeQuery);
+            return _repository.SelectDeptList(dept, isTreeQuery, disableDataPermissionFilter);
         }
 
         public SysDept SelectDeptById(long deptId)
